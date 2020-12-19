@@ -13,7 +13,9 @@
  */
 
 /* 颜色变量 */
-
+/* 开发主题色 */
+@import 'uview-ui/theme.scss';
+$my-main-color:#1539AF;   //主题颜色
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
 $uni-color-success: #4cd964;
@@ -74,3 +76,235 @@ $uni-color-subtitle: #555555; // 二级标题颜色
 $uni-font-size-subtitle:36rpx;
 $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:30rpx;
+
+view,input{
+    box-sizing: border-box;
+  }
+  .nowrap{
+    white-space: nowrap;
+  }
+  .noCourse{
+    height: 120rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size:30rpx
+  }
+  .input-placeholder{
+    color: #AEAEAE;
+  font-size: 28rpx;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  }
+  .color1{
+  font-size: 30rpx;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #F13833;
+  }
+  .color-black{
+    color: #333333;
+  }
+  .color-light{
+    /* color:#CECECE; */
+    color: #4C4C4C;
+  }
+  .my-box{
+      width: 694rpx;
+      margin: 0 auto;
+      background: #ffffff;
+  }
+  /* 高度 */
+  .h-40{
+    height: 40rpx;
+  }
+  .h-50{
+    height: 40rpx;
+  }
+  .h-60{
+    height: 60rpx;
+  }
+  .h-70{
+    height: 70rpx;
+  }
+  .h-80{
+    height: 80rpx;
+  }
+  .h-100{
+    height: 100rpx;
+  }
+  .h-120{
+    height: 120rpx;
+  }
+  .h-140{
+    height: 140rpx;
+  }
+  /* 宽度 */
+  .w-100{
+    width: 100%;
+  }
+  .mt-10{
+    margin-top: 10rpx;
+  }
+  .mt-20{
+    margin-top: 20rpx;
+  }
+  .mt-30{
+    margin-top: 30rpx;
+  }
+  .mt-40{
+    margin-top: 40rpx;
+  }
+  .mb-10{
+    margin-bottom: 10rpx;
+  }
+  .mb-20{
+    margin-bottom: 20rpx;
+  }
+  .mb-30{
+    margin-bottom: 30rpx;
+  }
+  .mb-40{
+    margin-bottom: 40rpx;
+  }
+  
+  .ml-10{
+    margin-left: 10rpx;
+  }
+  .ml-20{
+    margin-left: 20rpx;
+  }
+  .ml-30{
+    margin-left: 30rpx;
+  }
+  .ml-40{
+    margin-left: 40rpx;
+  }
+  .mr-10{
+    margin-right: 10rpx;
+  }
+  .mr-20{
+    margin-right: 20rpx;
+  }
+  .mr-30{
+    margin-right: 30rpx;
+  }
+  .mr-40{
+    margin-right: 40rpx;
+  }
+  .mtb-24{
+    margin:24rpx 0;
+  }
+  .pt-10{
+    padding-top: 10rpx;
+  }
+  .pt-20{
+    padding-top: 20rpx;
+  }
+  .pt-30{
+    padding-top: 30rpx;
+  }
+  .pt-40{
+    padding-top: 40rpx;
+  }
+  .pb-10{
+    padding-bottom: 10rpx;
+  }
+  .pb-20{
+    padding-bottom: 20rpx;
+  }
+  .pb-30{
+    padding-bottom: 30rpx;
+  }
+  .pb-40{
+    padding-bottom: 40rpx;
+  }
+  .pl-10{
+    padding-left: 10rpx;
+  }
+  .pl-20{
+    padding-left: 20rpx;
+  }
+  .pl-30{
+    padding-left: 30rpx;
+  }
+  .pl-40{
+    padding-left: 40rpx;
+  }
+  .pr-10{
+    padding-right: 10rpx;
+  }
+  .pr-20{
+    padding-right: 20rpx;
+  }
+  .pr-30{
+    padding-right: 30rpx;
+  }
+  .pr-40{
+    padding-right: 40rpx;
+  }
+  .plr-24{
+    padding-left: 24rpx;
+    padding-right: 24rpx;
+  }
+  .font-s-24{
+    font-size: 24rpx;
+  }
+  .font-s-26{
+    font-size: 26rpx;
+  }
+  .font-s-28{
+    font-size: 28rpx;
+  }
+  .font-s-30{
+      font-size:30rpx;
+  }
+  .font-s-32{
+    font-size:32rpx;
+}
+.font-s-34{
+    font-size:34rpx;
+}
+.font-s-36{
+    font-size:36rpx;
+}
+  .font-w-400{
+    font-weight: 400;
+  }
+  .font-w-500{
+    font-weight: 500;
+  }
+  .font-w-600{
+    font-weight: 600;
+  }
+  .title{
+  font-size: 36rpx;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #000000;
+  }
+  .flex{
+    display: flex;
+  }
+  .flex-center{
+    display: flex;
+    align-items: center;
+  }
+  .flex-between{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .flex-around{
+    display: flex;
+    justify-content: space-around;
+  }
+  .flex-ver-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bor-bottom{
+    border-bottom: 1px solid #F6F6F6;
+  }
