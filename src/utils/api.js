@@ -38,3 +38,18 @@ export function getIndex(){
 // 获取未处理预警
 
 /* ------------- */
+
+/* 统计报表模块 */
+
+// 获取我的医院级联
+export function getMyHospitalCascadeList(){
+  let url = "/system/sysDepartment/getMyHospitalCascadeList";
+  return request.get(url)
+}
+// 根据医院查询统计方式
+export function listSelect(data){
+ let url = "/medical/mwTransitConfig/listSelect";
+ return request.get(url,data)
+}
+
+// /system/sysDepartment/getMyHospitalCascadeList
