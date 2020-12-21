@@ -46,10 +46,15 @@ export function getMyHospitalCascadeList(){
   let url = "/system/sysDepartment/getMyHospitalCascadeList";
   return request.get(url)
 }
-// 根据医院查询统计方式
+// 根据医院查询运输方式
 export function listSelect(data){
  let url = "/medical/mwTransitConfig/listSelect";
  return request.get(url,data)
+}
+// 查询医疗废物转移联单
+export function getTransformList(data){
+  let url="/report/getTransformList";
+  return request.get(url,data)
 }
 
 // /system/sysDepartment/getMyHospitalCascadeList

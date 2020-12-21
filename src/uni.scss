@@ -83,6 +83,11 @@ view,input{
   .nowrap{
     white-space: nowrap;
   }
+  .nowrap-hidden{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
   .noCourse{
     height: 120rpx;
     display: flex;
@@ -116,6 +121,12 @@ view,input{
       background: #ffffff;
   }
   /* 高度 */
+  .h100{
+      height: 100%;
+  }
+  .h50{
+    height: 50%;
+}
   .h-40{
     height: 40rpx;
   }
@@ -286,6 +297,11 @@ view,input{
   }
   .flex{
     display: flex;
+  }
+  .flex-column{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
   }
   .flex-center{
     display: flex;
