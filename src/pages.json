@@ -57,7 +57,7 @@
 
 		},
 		{
-			"path": "pages/admin/reports/depart-statistics",
+			"path": "pages/admin/reports/depart/statistics",
 			"style": {
 				"navigationBarTitleText": "科室产废记录",
 				"navigationBarBackgroundColor":"#1539AF",

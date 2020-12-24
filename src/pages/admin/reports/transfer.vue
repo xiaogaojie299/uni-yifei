@@ -20,84 +20,28 @@
             :disabled="!title1"
             @change="selectUnit"
           ></u-dropdown-item>
+          <!-- :disabled="!value2" -->
           <u-dropdown-item
             v-model="value3"
             :title="title3||'选择月份'"
             @change="selectMonth"
-            :disabled="!value2"
             :options="options3"
           ></u-dropdown-item>
         </u-dropdown>
       </view>
     </view>
-    <view class="main">
-      <view class="my-box">
+    <view class="main" v-if="tableTitle.length>0">
+      <view class="my-box pt-20">
         <view class="main-title"> 医疗废物转移联单 </view>
         <!-- 详情 -->
         <view class="detail-box">
-          <view class="">医疗卫生机构名称：中医院</view>
-          <view class="">医疗废物处置单位：韵达快递</view>
-          <view class="">时间：2020年09月</view>
+          <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
+          <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view>
+          <view class="">时间：2020年{{timeStar.split(" ")[0].split("-")[1]}}月</view>
         </view>
       </view>
       <!-- table表格 -->
-      <scroll-view class="scroll-view_H" scroll-x="true">
-      <view class="main-table">
-        <view class="t-header">
-          <view class="tr">
-            <view class="th"> 区域名称 </view>
-            <view class="th">
-              <view class="flex-ver-center h50"> 感染性 </view>
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 数量 </view>
-                <view class="flex-ver-center"> 重量(kg) </view>
-              </view>
-            </view>
-            <view class="th" v-for="(index) in 8" :key="index">
-              <view class="flex-ver-center h50"> 损伤性 </view>
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 数量 </view>
-                <view class="flex-ver-center"> 重量(kg) </view>
-              </view>
-            </view>
-          </view>
-        </view>
-        <view class="t-body">
-          <view class="tr" v-for="index in 10" :key="index">
-            <view class="th">西区</view>
-            <view class="th">
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 0 </view>
-                <view class="flex-ver-center"> 0 </view>
-              </view>
-            </view>
-            <view class="th">
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 0 </view>
-                <view class="flex-ver-center"> 0 </view>
-              </view>
-            </view>
-          </view>
-        </view>
-        <!-- <view class="t-footer">
-          <view class="tr" v-for="index in 10" :key="index">
-              <view class="th">合计</view>
-              <view class="th">
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 0 </view>
-                <view class="flex-ver-center"> 0 </view>
-              </view>
-            </view>
-              <view class="th">
-              <view class="flex col-span">
-                <view class="flex-ver-center"> 0 </view>
-                <view class="flex-ver-center"> 0 </view>
-              </view>
-            </view>
-          </view>
-        </view> -->
-      </view>
-      </scroll-view>
+      <transfer-table :tableData="tableData"></transfer-table>
     </view>
     <view class="footer"> </view>
   </view>
@@ -105,6 +49,7 @@
 <script>
 import { getMyHospitalCascadeList, listSelect,getTransformList } from "@/utils/api.js";
 import {getTimeType} from "@/utils/getData.js"
+import transferTable from "./tableCmps/transfer-table"
 export default {
   data() {
     return {
@@ -134,8 +79,19 @@ export default {
       selectIndex2:"",   //获取运输单位的下标
       selectIndex3:"",     //获取月份的下标
       timeStar:"",         //月份开始
-      timerEnd:""          //月份结束
+      timerEnd:"",          //月份结束
+      tableData:{},       //表格中的数据
+      tableTitle:[]
     };
+  },
+  computed:{
+    tableWidth(){
+       let length = this.tableTitle.length;
+      return `width:calc(${length} * 320rpx)`
+    }
+  },
+  components:{
+    transferTable
   },
   methods: {
     async init() {
@@ -164,7 +120,6 @@ export default {
       try {
         if (code == 200) {
           console.log("result==>", result);
-
           this.options2 = result.map((item, index) => {
             item.label = item.transitCompany;
             item.value = item.transitCompany;
@@ -178,16 +133,25 @@ export default {
     },
     // 获取表单数据
     async getTableList(){
+      /* 
       let params={
         departmentId:this.options1[this.value1].realValue, //医院区域ID
         transitCompany:this.value2, //运输处置中心
         startTime:this.timeStar,
         endTime:this.timerEnd
       }
+      */
+      let params={
+        departmentId:44, //医院区域ID
+        transitCompany:"处置中心", //运输处置中心
+        startTime:this.timeStar,
+        endTime:this.timerEnd
+      }
       try {
         let {code,result,message} = await getTransformList(params);
-        console.log(result);
-
+        this.tableData = result;
+        this.tableTitle=result.legend;  //表头菜单
+        //this.tableData =result.list;    //表格中的数据
       } catch (error) {
         
       }
@@ -198,6 +162,7 @@ export default {
       this.title1=this.options1[this.selectIndex1].label;
       // this.$refs.uDropdown()
       // this.title1=this.options1[value].label
+      
       this.watchMethod();
     },
     selectUnit(value){
@@ -294,12 +259,13 @@ export default {
     line-height: 34rpx;
   }
   .main-table {
-    view {
-      //  box-sizing:content-box;
-    }
+    .no-col {
+        min-width: 210rpx;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
     .t-header {
-      width: 3000rpx;
-
       height: 96rpx;
       background: $my-main-color;
       font-size: 24rpx;
@@ -307,12 +273,11 @@ export default {
       font-weight: 500;
       color: #ffffff;
       .tr {
-        // width: 100%;
-        // width: 3000rpx;
         height: 100%;
         display: flex;
         .th {
-          width: 270rpx;
+          width: 600rpx !important;
+          border: 1px solid red;
           height: 100%;
           display: flex;
           align-items: center;
@@ -332,12 +297,6 @@ export default {
             }
           }
         }
-      }
-      .tr .th:nth-of-type(1) {
-        width: 210rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
       .tr .th:nth-of-type(2) {
         border-left: 1px solid #3b5fd3;
@@ -380,12 +339,6 @@ export default {
             }
           }
         }
-      }
-      .tr .th:nth-of-type(1) {
-        width: 210rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
       .tr .th:nth-of-type(2) {
         border-left: 1px solid #eaeaea;

@@ -56,5 +56,10 @@ export function getTransformList(data){
   let url="/report/getTransformList";
   return request.get(url,data)
 }
+// 科室产废统计
+export function getOfficeReportList(data){
+  let url="/report/getOfficeReportList";
+  return request.get(url,data)
+}
 
 // /system/sysDepartment/getMyHospitalCascadeList
