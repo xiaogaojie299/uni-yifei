@@ -18,22 +18,12 @@
       </view>
     </view>
     <view class="main" v-if="tableTitle.length>0">
-      <view class="my-box pt-20">
-        <view class="main-title"> 医疗废物转移联单 </view>
-        <!-- 详情 -->
-        <view class="detail-box">
-          <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
-          <!-- <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view> -->
-          <view class="">时间：2020年{{timeStar.split(" ")[0].split("-")[1]}}月</view>
-        </view>
-      </view>
-      <!-- table表格 -->
-      <statistics-table :tableData="tableData"></statistics-table>
+        
     </view>
     <view class="footer"></view>
      <!-- 下拉选择框 -->
      <!-- 医院名称 -->
-      <u-select v-model="hospitalShow" mode="mutil-column-auto" :list="hospitalList" @confirm="confirmHospital"></u-select>
+      <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down>
     <!-- 统计方式 -->
     <u-select v-model="statisticalShow" mode="single-column" :list="statisticalList" @confirm="confirmStatistical"></u-select>
     <!-- 开始时间 -->
@@ -43,43 +33,18 @@
   </view>
 </template>
 <script>
-import { getMyHospitalCascadeList, listSelect,getTransformList,getOfficeReportList } from "@/utils/api.js";
+import { getMyHospitalCascadeList, listSelect,getTransformList,getHospitalReportList } from "@/utils/api.js";
 import {getTimeType} from "@/utils/getData.js"
-import statisticsTable from "../tableCmps/statistics-table"
 import fullYear from "@/utils/year"
+import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
 export default {
   data() {
     return {
-      value1: "",      // 选择医院值
-      value2: "",      // 选择运输单位值
-      value3: "",     // 选择月份值
-      options1: [],   // 医院列表
-      options2: [],   //运输列表
-      options3:[
-        {realValue:0, value:0,label:"一月",},
-        {realValue:1, value:1,label:"二月"},
-        {realValue:2, value:2,label:"三月"},
-        {realValue:3, value:3,label:"四月"},
-        {realValue:4, value:4,label:"五月"},
-        {realValue:5, value:5,label:"六月"},
-        {realValue:6, value:6,label:"七月"},
-        {realValue:7, value:7,label:"八月"},
-        {realValue:8, value:8,label:"九月"},
-        {realValue:9, value:9,label:"十月"},
-        {realValue:10, value:10,label:"十一月"},
-        {realValue:11, value:11,label:"十二月"},
-      ],    //月份列表
-      title1:"",      //选中的菜单标题1
-      title2:"",      //选中的菜单标题2
-      title3:"",      //选中的菜单标题3
-      selectIndex1:"",   //获取医院的下标
-      selectIndex2:"",   //获取运输单位的下标
-      selectIndex3:"",     //获取月份的下标
       timeStar:"",         //月份开始
       timeEnd:"",          //月份结束
       tableData:{},       //表格中的数据
       tableTitle:[],
-      hospitalList:{},    //医院列表
+      areaList:{},    //医院列表
       statisticalList:[
           // {
 					// 	value: '1',
@@ -135,7 +100,7 @@ export default {
     
   },
   components:{
-    statisticsTable
+    areaDropDown
   },
   watch:{
     selectStatistical(){
@@ -146,13 +111,15 @@ export default {
     deep:true
   },
   created(){
+      this.areaList = JSON.parse(uni.getStorageSync("area"));
     let year = fullYear();
     this.quarterList.unshift(year);
     console.log('hhh',this.quarterList);
   },
   methods: {
     handleHospitalShow(){   //多选框的显示与隐藏
-      this.hospitalShow=true;
+      this.childMethod=true;
+      this.$refs.childMethod.openShow()
     },
     handleStatisticalShow(){   //多选框的显示与隐藏
       this.statisticalShow=true;
@@ -163,9 +130,9 @@ export default {
     handleQuarterShow(){
       this.quarterShow=true;
     },
-    confirmHospital(e){ //点击确定
-    console.log(e[e.length-1]);
-      this.selectHos=e[e.length-1];
+    selectRow(row){ //点击确定
+      this.selectHos=row;
+      console.log(this.selectHos);
     },
     confirmStatistical(e){
       this.selectStatistical=e[0];
@@ -215,67 +182,6 @@ export default {
       this.getTableList()    //调用获取 表格数据的方法
     },
     async init() {
-      let lists=  [
-					{
-						value: 1,
-						label: '中国',
-						children: [
-							{
-								value: 2,
-								label: '广东',
-								children: [
-									{
-										value: 3,
-										label: '深圳'
-									},
-									{
-										value: 4,
-										label: '广州'
-									}
-								]
-							},
-							{
-								value: 5,
-								label: '广西',
-								children: [
-									{
-										value: 6,
-										label: '南宁'
-									},
-									{
-										value: 7,
-										label: '桂林'
-									}
-								]
-							}
-						]
-					},
-					{
-						value: 8,
-						label: '美国',
-						children: [
-							{
-								value: 9,
-								label: '纽约',
-								children: [
-									{
-										value: 10,
-										label: '皇后街区'
-									}
-								]
-							}
-						]
-					}
-        ]
-      let { code, message, result } = await getMyHospitalCascadeList();
-      try {
-        if (code == 200) {
-            this.hospitalList = result;
-            console.log('result==>',result);
-        }
-      } catch (error) {
-        console.log(error);
-      }
     },
     // 按照区域查询统计方式
     async watchMethod() {
@@ -306,7 +212,7 @@ export default {
         endTime:this.timeEnd
       }
       console.log("params=",params);
-      let {code,result,msg} =await getOfficeReportList(params);
+      let {code,result,msg} =await getHospitalReportList(params);
       try{
         if(code==200){
           console.log(result);

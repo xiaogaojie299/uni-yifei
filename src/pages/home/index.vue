@@ -44,7 +44,8 @@
 </template>
 <script>
 import { getMenu,getIndex } from "@/utils/api.js";
-import uCharts from "../../compontens/u-charts/u-charts"
+import uCharts from "../../compontens/u-charts/u-charts";
+import {getAreaList,getHosList,getProvinceCity} from "@/utils/menuList.js"
 var _self;
 var canvaColumn = null;
 export default {
@@ -178,6 +179,9 @@ export default {
   },
   },
   async onLoad(option) {
+    getAreaList();
+    getHosList();
+    getProvinceCity();
     let _self = this;
     //#ifdef MP-ALIPAY
     uni.getSystemInfo({

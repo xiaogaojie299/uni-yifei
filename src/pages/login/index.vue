@@ -45,7 +45,7 @@
   </view>
 </template>
 <script>
-import { login, getMenu } from "@/utils/api.js";
+import { login, getMenu, } from "@/utils/api.js";
 export default {
   data() {
     return {
@@ -121,11 +121,10 @@ export default {
     },
     goforgetPwd() {
       //跳转忘记密码页面
-      console.log("跳转");
       uni.navigateTo({
         url: "./forgetPwd",
       });
-    },
+    }
   },
 };
 </script>

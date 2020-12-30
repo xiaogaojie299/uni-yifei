@@ -41,9 +41,19 @@ export function getIndex(){
 
 /* 统计报表模块 */
 
-// 获取我的医院级联
+// 获取医院级联
 export function getMyHospitalCascadeList(){
   let url = "/system/sysDepartment/getMyHospitalCascadeList";
+  return request.get(url)
+}
+// 获取取区域级联
+export function getThreeAreaCascadeList(){
+  let url = "/system/sysDepartment/getThreeAreaCascadeList"
+  return request.get(url)
+}
+// 获取省。市，区，城市级联
+export function getSysDepartment(){
+  let url="/system/sysDepartment/getTwoAreaCascadeList"
   return request.get(url)
 }
 // 根据医院查询运输方式
@@ -61,5 +71,45 @@ export function getOfficeReportList(data){
   let url="/report/getOfficeReportList";
   return request.get(url,data)
 }
+// 医院产废记录
+export function getHospitalReportList(data){
+  let url="/report/getHospitalReportList";
+  return request.get(url,data)
+}
+// 区域产废记录
+export function getRegionReportList(data){
+  let url="/report/getRegionReportList";
+  return request.get(url,data)
+}
+// backend/statistics/getRangeStatistics
+// 医院产废排行榜（累计）
+export function getRangeStatistics(data){
+  let url="/statistics/getRangeStatistics";
+  return request.get(url,data)
+}
+// 医院产废排行榜（今日）
+export function getTodayRankStatistics(data){
+  let url ="/statistics/getTodayRankStatistics";
+  return request.get(url,data)
+}
+// 医院产废排行榜（昨日）
+export function getYesterdayRangeStatistics(data){
+  let url ="/statistics/getYesterdayRangeStatistics";
+  return request.get(url,data)
+}
+// 区域产废排行榜（累计）
+export function getRegionRangeStatistics(data){
+  let url="/statistics/getRegionRangeStatistics";
+  return request.get(url,data)
+}
+// 区域产废排行榜（今日）
+export function getRegionTodayRankStatistics(data){
+  let url="/statistics/getRegionTodayRankStatistics";
+  return request.get(url,data)
+}
+// 区域产废排行榜（昨日）
+export function getRegionYesterdayRangeStatistics(data){
+  let url="/statistics/getRegionYesterdayRangeStatistics";
+  return request.get(url,data)
+}
 
-// /system/sysDepartment/getMyHospitalCascadeList

@@ -69,6 +69,87 @@
 
 		},
 		{
+			"path": "pages/admin/reports/hospital/statistics",
+			"style": {
+				"navigationBarTitleText": "医院产废记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+
+		},
+		{
+			"path": "pages/admin/reports/area/statistics",
+			"style": {
+				"navigationBarTitleText": "区域产废记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+
+		},
+		{
+			"path": "pages/admin/analysis/type",
+			"style": {
+				"navigationBarTitleText": "医废类型分析",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+		},
+		{
+			"path": "pages/admin/analysis/area",
+			"style": {
+				"navigationBarTitleText": "区域产废分析",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+		},
+		{
+			"path": "pages/admin/analysis/weight",
+			"style": {
+				"navigationBarTitleText": "各环节重量分析",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+		},
+		{
+			"path": "pages/admin/analysis/hospital/rank",
+			"style": {
+				"navigationBarTitleText": "医院产废排行榜",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+		},
+		{
+			"path": "pages/admin/analysis/region/rank",
+			"style": {
+				"navigationBarTitleText": "区域产废排行榜",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36rpx"	
+				}
+			}
+		},
+		
+		
+		{
 			"path": "pages/people/index",
 			"style": {
 				"navigationBarTitleText": "个人中心",

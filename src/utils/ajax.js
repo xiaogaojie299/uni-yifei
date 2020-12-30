@@ -20,7 +20,7 @@ class Ajax {
             mask: false
         })
         return new Promise((resolve, reject) => {
-            wx.request({
+            uni.request({
                 url: this.baseURL + url,
                 data,
                 header: {
@@ -31,7 +31,14 @@ class Ajax {
                 dataType: 'json',
                 responseType: 'text',
                 success: res => {
-                    resolve(res.data)
+                    if(res.data.code==202){
+                        wx.navigateTo({
+                            path:"../pages/login/index.vue"
+                        })
+                    }else{
+                        resolve(res.data)
+                    }
+
                 },
                 fail: err => {
                     wx.showToast({
