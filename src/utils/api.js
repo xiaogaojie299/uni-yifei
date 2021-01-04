@@ -113,3 +113,18 @@ export function getRegionYesterdayRangeStatistics(data){
   return request.get(url,data)
 }
 
+// 医废类型分析
+export function getWasteTypeStatistics(data){
+  let url = "/statistics/getWasteTypeStatistics"
+  return request.get(url,data)
+}
+// 区域产废分析
+export function getRegionStatistics(data){
+  let url = "/statistics/getRegionStatistics"
+  return request.get(url,data)
+}
+// 各环节重量分析
+export function getSegmentWeightStatistics(data){
+  let url = "/statistics/getSegmentWeightStatistics"
+  return request.get(url,data)
+}

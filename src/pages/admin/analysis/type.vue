@@ -17,8 +17,25 @@
         </view>
       </view>
     </view>
-    <view class="main" v-if="tableTitle.length>0">
-        
+    <!-- <view class="main" v-if="tableTitle.length>0"> -->
+      <view class="main" v-if="tableTitle.length>0">
+          <view class="qiun-columns">
+            <view class="qiun-bg-white qiun-title-bar qiun-common-mt" >
+              <view class="qiun-title-dot-light">医废重量分析（kg）</view>
+            </view>
+            <view class="qiun-charts" >
+              <canvas canvas-id="canvasColumnStack" id="canvasColumnStack" class="charts"  @touchstart="touchColumn"></canvas>
+            </view>
+          </view>
+          <!-- 环状表格 -->
+          <view class="qiun-columns">
+            <view class="qiun-bg-white qiun-title-bar qiun-common-mt" >
+              <view class="qiun-title-dot-light">医废占比分析</view>
+            </view>
+            <view class="qiun-charts" >
+              <canvas canvas-id="canvasPie" id="canvasPie" class="charts" @touchstart="touchPie"></canvas>
+            </view>
+	      </view>
     </view>
     <view class="footer"></view>
      <!-- 下拉选择框 -->
@@ -33,10 +50,14 @@
   </view>
 </template>
 <script>
-import { getMyHospitalCascadeList, listSelect,getTransformList,getHospitalReportList } from "@/utils/api.js";
+import uCharts from '@/compontens/u-charts/u-charts.js';
+import { getMyHospitalCascadeList, listSelect,getTransformList,getWasteTypeStatistics } from "@/utils/api.js";
 import {getTimeType} from "@/utils/getData.js"
 import fullYear from "@/utils/year"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
+var _self;
+var canvaColumn=null;
+var canvaPie = null;
 export default {
   data() {
     return {
@@ -93,7 +114,11 @@ export default {
       selectTime:[],         // 选择统计时间
       selectQuarter:[],       //选择的季度
       quarterYear:"",          //选择季度的年份
-      timeText:""               //选择时间时候的文本
+      timeText:"",               //选择时间时候的文本
+				cWidth:'',
+				cHeight:'',
+				pixelRatio:1,
+				serverData:'',
     };
   },
   computed:{
@@ -110,6 +135,11 @@ export default {
     },
     deep:true
   },
+  onLoad(){
+   _self = this;
+			this.cWidth=uni.upx2px(750);
+			this.cHeight=uni.upx2px(400);
+  },
   created(){
       this.areaList = JSON.parse(uni.getStorageSync("area"));
     let year = fullYear();
@@ -117,6 +147,65 @@ export default {
     console.log('hhh',this.quarterList);
   },
   methods: {
+     showColumnStack(canvasId,chartData){   // 统计图
+				canvaColumn=new uCharts({
+          $this:this,
+          canvasId: canvasId,
+          type: 'column',
+          legend:{show:true},
+          fontSize:11,
+          background:'#FFFFFF',
+          pixelRatio:1,
+          animation: true,
+          categories: chartData.categories,
+          series: chartData.series,
+          xAxis: {
+            disableGrid:true,
+          },
+          yAxis: {
+            //disabled:true
+          },
+          dataLabel: true,
+          width: this.cWidth,
+          height: this.cHeight,
+          extra: {
+            column: {
+              type:'group',
+              width: 20
+            }
+            }
+        });
+      },
+      showPie(canvasId,chartData){  //饼图
+				canvaPie=new uCharts({
+					$this:_self,
+					canvasId: canvasId,
+					type: 'pie',
+					fontSize:11,
+          legend:{
+            show:true,
+            position:'right',
+					  float:'center',
+					  itemGap:10,
+					  padding:5,
+					  lineHeight:26,
+					  margin:5,
+					  borderWidth :1
+          },
+					background:'#FFFFFF',
+					pixelRatio:_self.pixelRatio,
+					series: chartData.series,
+					animation: true,
+					width: _self.cWidth*_self.pixelRatio,
+					height: _self.cHeight*_self.pixelRatio,
+					dataLabel: true,
+					extra: {
+						pie: {
+						  lableWidth:15
+						}
+					},
+				});
+			},
     handleHospitalShow(){   //多选框的显示与隐藏
       this.childMethod=true;
       this.$refs.childMethod.openShow()
@@ -205,22 +294,79 @@ export default {
     },
     // 获取表单数据
     async getTableList(){
+      // statisticalWayType:this.selectStatistical.value,
       let params = {
         departmentId:this.selectHos.value,
-        statisticalWayType:this.selectStatistical.value,
         startTime:this.timeStar,
         endTime:this.timeEnd
       }
       console.log("params=",params);
-      let {code,result,msg} =await getHospitalReportList(params);
+      let {code,result,msg} =await getWasteTypeStatistics(params);
       try{
         if(code==200){
-          console.log(result);
+          /* 
+            "chartData": {  // 条形统计图
+              "categories": ["2012", "2013", "2014", "2015", "2016", "2017"],
+              "series": [{
+              "name": "成交量1",
+              "data": [15, {"value": 20,"color": "#f04864"}, 45, 37, 43, 34]
+              }, {
+              "name": "成交量2",
+              "data": [30, {"value": 40,"color": "#facc14"}, 25, 14, 34, 18]
+              }]
+            }
+            "chartData": { // 原型统计图数据格式
+              "series": [{
+              "name": "一班",
+              "data": 50
+              }, {
+              "name": "二班",
+              "data": 30
+              }, {
+              "name": "三班",
+              "data": 20
+              }, {
+              "name": "四班",
+              "data": 18
+              }, {
+              "name": "五班",
+              "data": 8
+              }]
+            }
+          */
+         let colorArr = [
+           "#FFCF00","#FF7800","#7F68FF","#22B926","#E0E0E0","#82FFFF","#E0E0E0","#08B4FF"
+         ];
+         let arr = [];  //条形统计图格式转换
+         let arrPic=[...result.dataList]; //圆形统计图格式转换
+         result.dataList.forEach((item,index)=>{
+           let obj = {};
+           obj.value =item.data;
+           obj.color =colorArr[index];
+           arr.push(obj);
+         })
+         let ColumnStack ={categories:[],series:[]};  //条形统计图参数
+         let Pie={series:[]};                         //环形统计图参数
+         ColumnStack.categories = result.legend;
+         Pie.series = arrPic;
+         console.log("arrPic==>",arrPic);
+         arrPic.forEach((item,index)=>{
+           item.color = colorArr[index];
+         })
+         ColumnStack.series = [{
+              "name": "",
+              "data": arr
+              }];
+       
+         console.log(ColumnStack.series);
+        _self.showColumnStack("canvasColumnStack",ColumnStack);
+        _self.showPie("canvasPie",Pie);
           this.tableData=result;
-          this.tableTitle=result.departmentName;
+          this.tableTitle=result.dataList;
       }  
       }catch(e){
         //TODO handle the exception
+        console.log(e);
       }
       
     },
@@ -304,6 +450,7 @@ export default {
  
 }
 .main {
+
   .main-title {
     height: 40rpx;
     font-size: 28rpx;
@@ -412,4 +559,11 @@ export default {
     }
   }
 }
+  .qiun-columns{display:flex; flex-direction:column !important;}
+.qiun-common-mt{margin-top:10upx;}
+.qiun-bg-white{background:#FFFFFF;}
+.qiun-title-bar{width:96%; padding:10upx 2%; flex-wrap:nowrap;}
+.qiun-title-dot-light{border-left: 10upx solid #0ea391; padding-left: 10upx; font-size: 32upx;color: #000000}
+.qiun-charts{width: 750upx; height:500upx;background-color: #FFFFFF;}
+.charts{width: 750upx; height:500upx;background-color: #FFFFFF;}
 </style>

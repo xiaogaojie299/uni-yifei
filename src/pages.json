@@ -147,7 +147,18 @@
 				}
 			}
 		},
-		
+		{
+			"path": "pages/admin/monitor/list",
+			"style": {
+				"navigationBarTitleText": "实时监控",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"enablePullDownRefresh":false,
+				"app-plus":{
+					"titleSize":"36rpx"
+				}
+			}
+		},
 		
 		{
 			"path": "pages/people/index",
@@ -222,7 +233,7 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#1539AF",
+		"backgroundColor": "#1539AF"
 	}
 }
