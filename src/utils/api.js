@@ -128,3 +128,13 @@ export function getSegmentWeightStatistics(data){
   let url = "/statistics/getSegmentWeightStatistics"
   return request.get(url,data)
 }
+// 实时监控列表
+export function monitoringList(data){
+  let url = "/medical/mwMonitorDevice/list"
+  return request.get(url,data)
+}
+// 调取监控要用的token/medical/mwMonitorDevice/getJSession
+export function getJSession(){
+  let url = "/medical/mwMonitorDevice/getJSession"
+  return request.get(url)
+}

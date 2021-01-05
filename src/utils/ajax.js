@@ -32,7 +32,7 @@ class Ajax {
                 responseType: 'text',
                 success: res => {
                     if(res.data.code==202){
-                        wx.navigateTo({
+                        uni.navigateTo({
                             path:"../pages/login/index.vue"
                         })
                     }else{

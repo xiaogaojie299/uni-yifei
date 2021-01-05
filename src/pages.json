@@ -153,10 +153,17 @@
 				"navigationBarTitleText": "实时监控",
 				"navigationBarBackgroundColor":"#1539AF",
 				"navigationBarTextStyle":"white",
-				"enablePullDownRefresh":false,
 				"app-plus":{
 					"titleSize":"36rpx"
 				}
+			}
+		},
+		{
+			"path": "pages/admin/monitor/check-monitor",
+			"style": {
+				"navigationBarTitleText": "查看监控",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
 			}
 		},
 		
