@@ -138,3 +138,8 @@ export function getJSession(){
   let url = "/medical/mwMonitorDevice/getJSession"
   return request.get(url)
 }
+// 添加监控设备 /medical/mwMonitorDevice/add
+export function addMonitor(data){
+  let url = "/medical/mwMonitorDevice/add"
+  return request.post(url,data)
+}

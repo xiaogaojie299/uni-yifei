@@ -165,6 +165,21 @@
 				"navigationBarTextStyle":"white"
 			}
 		},
+		{
+			"path": "pages/admin/monitor/setting",
+			"style": {
+				"navigationBarTitleText": "监控配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/monitor/redact",
+			"style": {
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
 
 		{
 			"path": "pages/admin/mw/trace",

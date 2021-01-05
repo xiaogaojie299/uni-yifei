@@ -6,7 +6,7 @@
                 <!-- 选择医院 -->
                 <view class="lable">
                     <text>选择医院</text>
-                    <input @click="handleHospitalShow" placeholder="请选择医院" :value="selectHos.label" type="text" disabled>
+                    <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectHos.label" type="text" disabled>
                 </view>
                 <view class="">
                     <view @click="submit" class="btn flex-ver-center">
@@ -184,7 +184,7 @@ export default {
         }
         .main{
             .hpt{
-                height: 232rpx;
+                min-height: 232rpx;
                 background: #FFFFFF;
                 margin-top: 20rpx;
                 // .hpt-inline{
@@ -193,7 +193,7 @@ export default {
                 // }
                 .hpt-content-row{
                     position: relative;
-                    height: 134rpx;
+                    min-height: 134rpx;
                     padding-top:22rpx;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
                      & >view:nth-of-type(2){
