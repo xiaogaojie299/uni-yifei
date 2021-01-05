@@ -13,7 +13,6 @@
 					"titleSize":"36px"	
 				}
 			}
-
 		},
 		{
 			"path": "pages/login/forgetPwd",
@@ -166,7 +165,71 @@
 				"navigationBarTextStyle":"white"
 			}
 		},
-		
+
+		{
+			"path": "pages/admin/mw/trace",
+			"style": {
+				"navigationBarTitleText": "医废追溯",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/collect",
+			"style": {
+				"navigationBarTitleText": "收集记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/inventory",
+			"style": {
+				"navigationBarTitleText": "入库记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/outbound",
+			"style": {
+				"navigationBarTitleText": "出库记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/outbound-setting",
+			"style": {
+				"navigationBarTitleText": "出库配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/additional",
+			"style": {
+				"navigationBarTitleText": "医废补录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/wraning/info",
+			"style": {
+				"navigationBarTitleText": "预警信息",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/warning/setting",
+			"style": {
+				"navigationBarTitleText": "预警配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
 		{
 			"path": "pages/people/index",
 			"style": {

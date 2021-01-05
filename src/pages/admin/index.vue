@@ -80,7 +80,10 @@ export default {
 	},
 	goUrl(url){
 		console.log("点击跳转",url);
-		console.log("跳转","/pages/admin"+url);
+    console.log("跳转","/pages/admin"+url);
+    if(url=="/mw/outbound/setting"){
+      url="/mw/outbound-setting"
+    }
 		uni.navigateTo({
 			url:"/pages/admin"+url
 		})
