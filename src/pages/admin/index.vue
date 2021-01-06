@@ -16,7 +16,7 @@
       <view class="right">
         <scroll-view
           :scroll-y="true"
-          style="white-space: nowrap; height: 200px"
+          style="white-space: nowrap;"
           :scroll-into-view="clickId"
           :scroll-with-animation="true"
           @scroll="scroll"

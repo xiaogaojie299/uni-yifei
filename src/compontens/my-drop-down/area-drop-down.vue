@@ -1,6 +1,7 @@
 <template>
     <view class="">
-        <u-select v-model="show" mode="mutil-column-auto" :list="list" @confirm="confirm"></u-select>
+        <!-- :default-value="defaultValue" -->
+        <u-select v-model="show" default-value="[1,2,3]" mode="mutil-column-auto" :list="list" @confirm="confirm"></u-select>
     </view>
 </template>
 <script>
@@ -12,6 +13,12 @@ export default {
     },
     props:{
         list:{
+            type:Array,
+            default:()=>{
+                return []
+            }
+        },
+        defaultValue:{
             type:Array,
             default:()=>{
                 return []

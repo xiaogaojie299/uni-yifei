@@ -182,6 +182,32 @@
 		},
 
 		{
+			"path": "pages/admin/isystem/login/record",
+			"style": {
+				"navigationBarTitleText": "登录记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/deviceAgent",
+			"style": {
+				"navigationBarTitleText": "硬件管理",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/isystem/add-code",
+			"style": {
+				"navigationBarTitleText": "新增特征码",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
 			"path": "pages/admin/mw/trace",
 			"style": {
 				"navigationBarTitleText": "医废追溯",
