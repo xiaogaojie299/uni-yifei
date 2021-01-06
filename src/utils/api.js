@@ -138,3 +138,97 @@ export function getJSession(){
   let url = "/medical/mwMonitorDevice/getJSession"
   return request.get(url)
 }
+
+/**  公共接口  */
+
+// 获取医院的科室列表
+export function getMyOfficeCascadeList(data) {
+  let url = "/system/sysDepartment/getMyOfficeCascadeListV2";
+  return request.get(url, data)
+}
+// 获取医废类型
+export function getWasteTypeList(data) {
+  let url = "/system/sysDict/getWasteTypeList";
+  return request.get(url, data);
+}
+
+/** 医废相关接口 */
+
+// 医废溯源列表 
+export function listHistoryMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/listHistory', data);
+}
+// 获取医废流转过程
+export function getMedicalTraceRecord(data) {
+  return request.get('/medical/mwCollectRecord/getRecordDetail', data);
+}
+// 删除医废信息
+export function deleteMedicalTrace(data) {
+  return request.post('/medical/mwCollectRecord/delete', data);
+}
+
+// 收集记录页面
+
+// 获取收集列表
+export function listMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/list', data);
+}
+// 获取收集信息详情
+export function detailMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/queryById', data);
+}
+
+// 入出库记录页面
+// 获取入库记录
+export function listStoreMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/listStore', data);
+}
+// 获取出库记录
+export function listCheckoutMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/listCheckout', data);
+}
+
+// 出库配置页
+
+// 获取出库配置列表
+export function listTransitConfig(data) {
+  return request.get('/medical/mwTransitConfig/list', data);
+}
+// 添加出库配置
+export function addTransitConfig(data) {
+  return request.get('/medical/mwTransitConfig/list', data);
+}
+// 编辑出库配置
+export function editTransitConfig(data) {
+  return request.get('/medical/mwTransitConfig/list', data);
+}
+// 删除出库配置
+export function deleteTransitConfig(data) {
+  return request.get('/medical/mwTransitConfig/list', data);
+}
+
+// 医废补录页
+// 获取医废补录列表
+export function listSupplementMedicalTrace(data) {
+  return request.get('/medical/mwCollectRecord/listSupplement', data);
+}
+// 审核医废补录记录
+export function auditSupplementMedicalTrace(data) {
+  return request.post('/medical/mwCollectRecord/auditSupplement', data);
+}
+// 新增医废补录
+export function addSupplementMedicalTrace(data) {
+  return request.post('/medical/mwCollectRecord/supply', data);
+}
+
+
+// 数据恢复页面
+
+// 获取医废删除列表
+export function getMedicalTraceListDelete(data) {
+  return request.get('/medical/mwCollectRecord/listDelete', data);
+}
+// 恢复已删除的医废信息
+export function restoreMedicalTrace(data) {
+  return request.post('/medical/mwCollectRecord/restore', data);
+}

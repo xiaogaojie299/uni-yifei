@@ -11,7 +11,7 @@
       </view>
       <scroll-view scroll-y class="list-container" @scrolltolower="next()">
         <s-loading v-model="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="inventory"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @restore="restore(index)" :options="traceOptions" mode="restore"/>
       </scroll-view>
   </view>
 </template>
@@ -35,6 +35,7 @@ export default {
           timestamp: true
         },
         traceOptions: {
+          restore: true,
           detail: true
         },
         loading: false,
@@ -62,7 +63,7 @@ export default {
     this.reload();
   },
   methods: {
-      remove(index) {
+      restore(index) {
         this.list.splice(index, 1);
       },
       reload() {

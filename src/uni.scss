@@ -16,6 +16,7 @@
 /* 开发主题色 */
 @import 'uview-ui/theme.scss';
 $my-main-color:#1539AF;   //主题颜色
+$my-cancel-color: #D8D8D8;
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
 $uni-color-success: #4cd964;
@@ -326,3 +327,23 @@ view,input{
   .bor-bottom{
     border-bottom: 1px solid #F6F6F6;
   }
+// 定义混入指令，用于在非nvue环境下的flex定义，因为nvue没有display属性，会报错
+@mixin vue-flex($direction: row) {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	flex-direction: $direction;
+	/* #endif */
+}
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin text-overflow($overflow: ellipsis) {
+  text-overflow: $overflow;
+  overflow: hidden;
+  white-space: nowrap;
+}
+// .u-drawer-content-visible {
+//   border-radius: 40rpx 40rpx 0 0;
+// }

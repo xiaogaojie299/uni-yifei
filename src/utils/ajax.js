@@ -24,8 +24,8 @@ class Ajax {
                 url: this.baseURL + url,
                 data,
                 header: {
-                "X-Access-Token":uni.getStorageSync("token"),
-                  "content-type": type||"application/json"
+                    "X-Access-Token":uni.getStorageSync("token"),
+                    "content-type": type||"application/json"
                 },
                 method,
                 dataType: 'json',
