@@ -2,6 +2,17 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			Promise.prototype.finally = function(callback){
+				let P = this.constructor;
+				return this.then(
+					value => {
+						P.resolve(callback()).then(() => value)
+					},
+					reason => {
+						P.resolve(callback()).then(() => { throw reason })
+					}
+				)
+			}
 		},
 		onShow: function() {
 			console.log('App Show')

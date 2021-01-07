@@ -1,7 +1,9 @@
 <template>
   <view class="supply-create">
     <u-cell-group>
-      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')"></u-cell-item>
+      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')">
+        <u-loading v-show="hospitalLoading" slot="icon"/>
+      </u-cell-item>
       <u-cell-item :title="formLabel.engineDriver" :arrow="false" hover-class="none">
         <u-field
 			    placeholder="不超过20个字符"
@@ -41,14 +43,16 @@
         >
         </u-field>
       </u-cell-item>
-      <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')"></u-cell-item>
+      <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')">
+        <u-loading v-show="wasteLoading" slot="icon"/>
+      </u-cell-item>
     </u-cell-group>
     <view class="supply-create__button__container">
       <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()" :disabled="true">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <s-select mode="mutil-column-auto" title="选择医院" v-model="hospitalShow" :list="hospitalList" @confirm="hospitalCallback"></s-select>
+    <s-select mode="mutil-column-auto" title="选择医院" v-model="hospitalShow" :list="hospitalList" @confirm="hospitalCallback" :default-value="hospitalIndexList"></s-select>
     <s-select-multi multi title="选择医废类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteCheckedIndexList"/>
   </view>
 </template>
@@ -67,6 +71,9 @@ export default {
       hospitalShow: false, // 医院选择显示
       wasteShow: false, // 医废类型
 
+      hospitalLoading: false, // 医院加载
+      wasteLoading: false, // 医废类型加载
+
       hospitalList: [], // 医院级联列表
       wasteList: [], // 医废类型列表
 
@@ -74,6 +81,7 @@ export default {
       hospitalLabel: '',
       wasteLabel: '',
       wasteCheckedIndexList: [], // 选中的索引列表
+      hospitalIndexList: [], // 选中的医院列表
 
       // 表单提交字段
       id: '',
@@ -102,7 +110,6 @@ export default {
     // 检查是否修改还是添加
     loadDetail() {
       let detail = uni.getStorageSync('cache:outbound:detail');
-      console.log(detail);
       // 如果获取到详情了
       if (detail) {
         this.detail = detail;
@@ -121,6 +128,7 @@ export default {
     },
     // 获取医废类型列表
     loadWasteType() {
+      this.wasteLoading = true;
       getWasteTypeList().then(resp => {
         if (resp.code == 200) {
           this.wasteList = resp.result.map(item => {
@@ -141,14 +149,39 @@ export default {
             }
           }
         }
+      }).catch(err => {}).finally(e => {
+        this.wasteLoading = false;
       });
+    },
+    // 计算属性
+    cascadeIndexCalc(e, isIndex) {
+        let cascadeIndex = [];
+        let tmpData = this.hospitalList;
+        for (let i in e) {
+            let index = tmpData.findIndex(item => item.value == (!isIndex ? e[i].value : e[i]));
+            if (index > -1) {
+                cascadeIndex.push(index);
+                tmpData = tmpData[index].children;
+            }
+        }
+        this.hospitalIndexList = cascadeIndex;
     },
     // 获取医院列表
     loadHospitalHospital() {
+      this.hospitalLoading = true;
       getMyHospitalCascadeList().then(resp => {
         if (resp.code == 200) {
           this.hospitalList = resp.result[0].children || [];
+          
+          // 计算索引
+          let hospitalIdList = this.detail.hospitalIdList || [];
+          if (hospitalIdList.length == 5) {
+            hospitalIdList = hospitalIdList.slice(1);
+            this.cascadeIndexCalc(hospitalIdList, true);
+          }
         }
+      }).catch(err => {}).finally(e => {
+        this.hospitalLoading = false;
       });
     },
     // 医院选择回调事件
@@ -156,6 +189,9 @@ export default {
       let hospital = e[e.length - 1];
       this.hospitalLabel = hospital.label;
       this.hospitalId = hospital.value;
+
+      // 计算索引
+      this.cascadeIndexCalc(e, false);
     },
     wasteCallback(e) {
       let _this = this;
@@ -216,7 +252,7 @@ export default {
               });
             }, 800);
           }
-        }).catch(err => {}).then(e => {
+        }).catch(err => {}).finally(e => {
           this.submitLoading = false;
         }); 
       } else {
@@ -240,7 +276,7 @@ export default {
               });
             }, 800);
           }
-        }).catch(err => {}).then(e => {
+        }).catch(err => {}).finally(e => {
           this.submitLoading = false;
         }); 
       }

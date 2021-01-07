@@ -2,11 +2,21 @@
   <view class="supply-create">
     <u-cell-group>
       <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.cascadeId" :arrow="true"  arrow-direction="right" :value="cascadeLabel" @click="setShow('cascadeShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="setShow('departmentShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="setShow('officeUserShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.createUserId" :arrow="true"  arrow-direction="right" :value="createUserLabel" @click="setShow('createUserShow')"></u-cell-item>
+      <u-cell-item :title="formLabel.cascadeId" :arrow="true"  arrow-direction="right" :value="cascadeLabel" @click="setShow('cascadeShow')">
+        <u-loading v-show="hospitalLoading" slot="icon"/>
+      </u-cell-item>
+      <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="setShow('departmentShow')">
+        <u-loading v-show="officeCascadeLoading" slot="icon"/>
+      </u-cell-item>
+      <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="setShow('officeUserShow')">
+        <u-loading v-show="officeUserLoading" slot="icon"/>
+      </u-cell-item>
+      <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')">
+        <u-loading v-show="wasteLoading" slot="icon"/>
+      </u-cell-item>
+      <u-cell-item :title="formLabel.createUserId" :arrow="true"  arrow-direction="right" :value="createUserLabel" @click="setShow('createUserShow')">
+        <u-loading v-show="officeUserLoading" slot="icon"/>
+      </u-cell-item>
       <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
         <u-field
 			    placeholder="支持小数"
@@ -34,21 +44,23 @@
         </u-field>
       </u-cell-item>
       <u-cell-item :title="formLabel.status" :arrow="true"  arrow-direction="right" :value="statusLabel" @click="setShow('statusShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status == 2"></u-cell-item>
+      <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status == 2">
+        <u-loading v-show="warehouseLoading" slot="icon"/>
+      </u-cell-item>
     </u-cell-group>
     <view class="supply-create__button__container">
       <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()" :disabled="true">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams"></s-picker>
-    <s-select mode="mutil-column-auto" title="选择医院" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback"></s-select>
-    <s-select mode="mutil-column-auto" title="选择科室" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback"></s-select>
-    <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId')"></s-select>
-    <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId')"></s-select>
-    <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste')"></s-select>
-    <s-select title="选择暂存间" v-model="warehouseShow" :list="warehouseList" @confirm="selectCallback($event, 'warehouseLabel', 'warehouse')"></s-select>
-    <s-select title="选择状态" v-model="statusShow" :list="statusList" @confirm="selectCallback($event, 'statusLabel', 'status')"></s-select>
+    <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
+    <s-select mode="mutil-column-auto" title="选择医院" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
+    <s-select mode="mutil-column-auto" title="选择科室" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
+    <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
+    <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId', 'officeUserList', 'createUserIndex')" :default-value="createUserIndex"></s-select>
+    <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
+    <s-select title="选择暂存间" v-model="warehouseShow" :list="warehouseList" @confirm="selectCallback($event, 'warehouseLabel', 'warehouse', 'warehouseList', 'warehouseIndex')" :default-value="warehouseIndex"></s-select>
+    <s-select title="选择状态" v-model="statusShow" :list="statusList" @confirm="selectCallback($event, 'statusLabel', 'status', 'statusList', 'statusIndex')" :default-value="statusIndex"></s-select>
   </view>
 </template>
 <script>
@@ -70,6 +82,12 @@ export default {
       createUserShow: false, // 收集人员
       statusShow: false, // 状态
       warehouseShow: false, // 暂存间
+
+      hospitalLoading: false,
+      wasteLoading: false,
+      officeCascadeLoading: false,
+      warehouseLoading: false,
+      officeUserLoading: false,
 
       // 时间选择器控制
       dateParams: {
@@ -102,6 +120,7 @@ export default {
       ],
       warehouseList: [], // 暂存间列表
 
+
       // 表单显示列表
       cascadeLabel: '',
       departmentLabel: '',
@@ -110,6 +129,15 @@ export default {
       createUserLabel: '',
       statusLabel: '',
       warehouseLabel: '',
+
+      // 选择组件的回显索引
+      cascadeIndex: [],
+      officeUserIndex: [],
+      createUserIndex: [],
+      statusIndex: [],
+      wasteIndex: [],
+      warehouseIndex: [],
+      departmentIndex: [],
 
       // 表单提交字段
       cascadeId: '',
@@ -148,6 +176,7 @@ export default {
     },
     // 获取医废类型列表
     loadWasteType() {
+      this.wasteLoading = true;
       getWasteTypeList().then(resp => {
         if (resp.code == 200) {
           this.wasteList = resp.result.map(item => {
@@ -157,35 +186,76 @@ export default {
             }
           });
         }
-      });
+      }).catch(err => {}).finally(e => {
+        this.wasteLoading = false;
+      });;
+    },
+    // 计算属性
+    indexCalc(e, tmpData) {
+        let cascadeIndex = [];
+        for (let i in e) {
+            let index = tmpData.findIndex(item => item.value == e[i].value);
+            if (index > -1) {
+                cascadeIndex.push(index);
+                tmpData = tmpData[index].children;
+            }
+        }
+        return cascadeIndex;
     },
     // 获取医院列表
     loadHospitalCascade() {
+      this.hospitalLoading = true;
       getMyHospitalCascadeList().then(resp => {
         if (resp.code == 200) {
           this.cascadeList = resp.result[0].children || [];
         }
+      }).catch(err => {}).finally(e => {
+        this.hospitalLoading = false;
       });
     },
     // 医院选择回调事件
     cascadeCallback(e) {
       let hospital = e[e.length - 1];
+      if (hospital.value != this.cascadeId) {
+        // 如果不一致，需要清除
+        this.resetDepartment();
+        this.resetOfficeCascade();
+        this.resetWarehouse();
+      }
       this.cascadeLabel = hospital.label;
       this.cascadeId = hospital.value;
-      this.resetDepartment();
+      // 计算属性
+      this.cascadeIndex = this.indexCalc(e, this.cascadeList);
       // 加载科室
       this.loadOfficeCascadeList(hospital.value);
+
+      // 一旦变更
+
     },
     // 清空科室选择
     resetDepartment() {
       this.departmentId = '';
       this.departmentLabel = '';
     },
+    // 清空科室&收集人员
+    resetOfficeCascade() {
+      this.createUserLabel = '';
+      this.createUserId = '';
+      this.officeUserId = '';
+      this.officeUserLabel = '';
+    },
     // 科室选择的回调事件
     departmentCallback(e) {
       let department = e[e.length - 1];
+      if (department.value != this.departmentId) {
+        // 如果不一致，需要清除
+        this.resetOfficeCascade();
+        this.resetWarehouse();
+      }
       this.departmentLabel = department.label;
       this.departmentId = department.value;
+
+      this.departmentIndex = this.indexCalc(e, this.departmentList);
       // 加载科室人员
       this.loadOfficeUserList(department.value);
       // 加载暂存间，提前加载，防止网络卡顿
@@ -193,16 +263,20 @@ export default {
     },
     // 获取科室列表
     loadOfficeCascadeList(parentId) {
+      this.officeCascadeLoading = true;
       getMyOfficeCascadeList({
             parentId
       }).then(resp => {
         if (resp.code == 200) {
           this.departmentList = resp.result || [];
         }
+      }).catch(err => {}).finally(e => {
+        this.officeCascadeLoading = false;
       });
     },
     // 获取科室人员列表
     loadOfficeUserList(officeId) {
+      this.officeUserLoading = true;
       getMyOfficeUserList({
             officeId
       }).then(resp => {
@@ -214,6 +288,8 @@ export default {
             }
           });
         }
+      }).catch(err => {}).finally(e => {
+        this.officeUserLoading = false;
       });
     },
     // 清空科室选择
@@ -223,21 +299,29 @@ export default {
     },
     // 获取暂存间列表
     loadWarehouseOfficeList(officeId) {
+      this.warehouseLoading = true;
       getMyWarehouseOfficeList({
             officeId
       }).then(resp => {
         if (resp.code == 200) {
           this.warehouseList = resp.result || [];
         }
+      }).catch(err => {}).finally(e => {
+        this.warehouseLoading = false;
       });
     },
-    selectCallback(e, labelKey, valueKey) {
+    // 共用回调，labelKey 文本的键， valueKey 值的键， listKey 列表的键， indexKey 索引的键
+    selectCallback(e, labelKey, valueKey, listKey, indexKey) {
       let result = e[0];
       this.$set(this, labelKey, result.label);
       this.$set(this, valueKey, result.value);
       if (valueKey == 'status' && result.value != 2) {
         this.resetWarehouse();
       }
+
+      // 开始设置Index索引
+      let index = this.indexCalc(e, this.$data[listKey]);
+      this.$set(this, indexKey, index);
     },
     setShow(key) {
       // 如果是展示科室列表，应先选择医院
@@ -314,7 +398,7 @@ export default {
             uni.navigateBack();
           }, 800);
         }
-      }).catch(err => {}).then(e => {
+      }).catch(err => {}).finally(e => {
         this.submitLoading = false;
       }); 
     }

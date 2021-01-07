@@ -7,7 +7,7 @@
                 <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
             <view class="mw-select-item department" @click="visibleDepartment()" v-if="options.cascade && options.department">
-                <u-loading size="24" v-if="officalCascadeLoading"/>
+                <u-loading size="24" v-if="officeCascadeLoading"/>
                 <text class="name">{{departmentLabel}}</text>
                 <u-icon :name="!departmentShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
@@ -70,7 +70,7 @@
             </view>
 		</u-popup>
         <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
-        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateParams"></s-picker>
+        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateParams" :default-time="defaultTime"></s-picker>
         <s-select title="选择部门" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
         <s-select title="选择科室" v-model="subjectShow" :list="subjectList" @confirm="subjectCallback" :default-value="subjectIndex"></s-select>
     </view>
@@ -104,8 +104,8 @@ export default {
     data() {
         return {
             cascadeLoading: false, // 医院加载中
-            officalCascadeLoading: false, // 部门加载中
-
+            officeCascadeLoading: false, // 部门加载中
+            defaultTime: '',
             moreShow: false, // 更多筛选显示
             dateShow: false, // 日期选择显示
             departmentShow: false, // 部门选择显示
@@ -238,7 +238,7 @@ export default {
                 });
                 return ;
             }
-            if (this.officalCascadeLoading) {
+            if (this.officeCascadeLoading) {
                 return ;
             }
             this.departmentShow = !this.departmentShow;
@@ -262,34 +262,35 @@ export default {
             }
             this.subjectShow = !this.subjectShow;
         },
-        async loadWasteType() {
-            let { code, message, result } = await getWasteTypeList();
-            try {
-                if (code == 200) {
-                    this.wasteList = result;
+        loadWasteType() {
+            getWasteTypeList().then(resp => {
+                if (resp.code == 200) {
+                    this.wasteList = resp.result;
                 }
-            } catch (error) {}
+            }).catch(err => {}).finally(e => {
+
+            });
         },
-        async loadHospitalCascade() {
+        loadHospitalCascade() {
             this.cascadeLoading = true;
             getMyHospitalCascadeList().then(resp => {
                 if (resp.code == 200) {
                     this.cascadeList = resp.result[0].children || [];
                 }
-            }).catch(err => {}).then(e => {
+            }).catch(err => {}).finally(e => {
                 this.cascadeLoading = false;
             });
         },
         loadOfficeCascadeList(parentId) {
-            this.officalCascadeLoading = true;
+            this.officeCascadeLoading = true;
             getMyOfficeCascadeList({
                 parentId
             }).then(resp => {
                 if (resp.code == 200) {
                     this.departmentList = resp.result || [];
                 }
-            }).catch(err => {}).then(e => {
-                this.officalCascadeLoading = false;
+            }).catch(err => {}).finally(e => {
+                this.officeCascadeLoading = false;
             });
         },
         // 科室选择的回调事件
@@ -360,6 +361,7 @@ export default {
         dateClick(index) {
             this.dateIndex = index;
             this.dateShow = true;
+            this.dateIndex == 0 ? this.defaultTime = this.startTime : this.defaultTime = this.endTime;
         },
         // 日期变更时间，index是用来标识是前还是后
         dateChange(e) {

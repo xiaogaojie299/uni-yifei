@@ -1,18 +1,20 @@
 <template>
   <view class="container">
-      <view class="filter-box">
-          <!-- 关键词搜索框 -->
-          <view class="filter-search">
-            <u-search placeholder="输入医废编号、操作人员查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
-          </view>
-          <view class="filter-tools">
-              <mw-select :options="options" @confirm="searchConfirm"/>
-          </view>
-      </view>
-      <scroll-view scroll-y class="list-container" @scrolltolower="next()">
+      <u-sticky>
+        <view class="filter-box">
+            <!-- 关键词搜索框 -->
+            <view class="filter-search">
+              <u-search placeholder="输入医废编号、操作人员查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+            </view>
+            <view class="filter-tools">
+                <mw-select :options="options" @confirm="searchConfirm"/>
+            </view>
+        </view>
+      </u-sticky>
+      <view class="list-container">
         <s-loading v-show="loading" />
         <trace-card v-for="(item, index) in list" :key="index" :item="item" @audit="audit($event, index)" :options="traceOptions" mode="supply"/>
-      </scroll-view>
+      </view>
       <view class="button-container">
         <view class="button" @click="create()">新增补录</view>
       </view>
@@ -60,12 +62,15 @@ export default {
     };
   },
   onLoad(option) {
+    this.reload();
   },
   onShow() {
-    this.reload();
   },
   onPullDownRefresh() {
     this.reload();
+  },
+  onReachBottom() {
+    this.next();
   },
   methods: {
       audit(e, index) {
@@ -111,7 +116,7 @@ export default {
               this.total = resp.result.total;
               this.pages = resp.result.pages;
             }
-        }).catch(err => {}).then(e => {
+        }).catch(err => {}).finally(e => {
           this.loading = false;
           uni.stopPullDownRefresh();
         })
@@ -157,7 +162,7 @@ page {
         }
     }
     .list-container {
-      height: calc(100vh - 280rpx);
+      // height: calc(100vh - 280rpx);
       background: #F3F5F7;
     }
     .button-container {
