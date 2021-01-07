@@ -178,8 +178,29 @@ export function delBatch(data){
   let url = "/medical/mwDeviceAgentDevice/delete"
   return request.post(url,data)
 }
+// 禁用删除厂商 /medical/mwDeviceAgentDevice/updateStatus
+export function updateStatus(data){
+  let url = "/medical/mwDeviceAgentDevice/updateStatus"
+  return request.post(url,data)
+}
 // 移动厂商状态码 /backend/medical/mwDeviceAgentDevice/move
 export function moveBatch(data){
   let url = "/medical/mwDeviceAgentDevice/move"
+  return request.post(url,data)
+}
+
+// 添加厂商 backend/medical/mwDeviceAgent/add
+export function addVendor(data){
+  let url = "/medical/mwDeviceAgent/add"
+  return request.post(url,data)
+}
+// 编辑厂商 backend/medical/mwDeviceAgent/add
+export function editVendor(data){
+  let url = "/medical/mwDeviceAgent/edit"
+  return request.post(url,data)
+}
+// 删除厂商 backend/medical/mwDeviceAgent/add
+export function deleteVendor(data){
+  let url = "/medical/mwDeviceAgent/delete"
   return request.post(url,data)
 }

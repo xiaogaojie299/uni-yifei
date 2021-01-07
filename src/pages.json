@@ -208,6 +208,31 @@
 		},
 
 		{
+			"path": "pages/admin/isystem/device",
+			"style": {
+				"navigationBarTitleText": "厂商管理",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path":"pages/admin/isystem/add-vendor",
+			"style": {
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/depart",
+			"style": {
+				"navigationBarTitleText": "组织架构",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
 			"path": "pages/admin/mw/trace",
 			"style": {
 				"navigationBarTitleText": "医废追溯",
@@ -345,6 +370,9 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#1539AF",
-		"backgroundColor": "#1539AF"
+		"backgroundColor": "#1539AF",
+		"usingComponents": {
+			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node"
+		}
 	}
 }

@@ -26,22 +26,15 @@
         <view class="main">
             <view class="hspList" v-for="(item,index) in list" :key="index">
                 <view class="hspList-top my-box">
-                    <view class="">
-                        <text class="label font-w-400">厂商：</text>
-                        <text class="label font-w-500">{{item.name}}</text>
+                    <view class="flex">
+                        <view class="label flex-center font-w-400">厂商名称：</view>
+                        <view class="label font-w-500">{{item.name}}</view>
                     </view>
-                    <view class="">
-                        <text class="label font-w-400">特征码：</text>
-                        <text class="label font-w-500">{{item.sn}}</text>
+                    <view class="flex">
+                        <view class="label left-label font-w-400">支持信息：</view>
+                        <view class="label font-w-500 m-0"><text>{{item.description}} </text></view>
                     </view>
-                    <view class="">
-                        <text class="label font-w-400">添加时间：</text>
-                        <text class="label font-w-500">{{item.createTime}}</text>
-                    </view>
-                    <!-- 状态 -->
-                    <view class="status" :class="item.status==1?'open-color':'close-color'">
-                        {{item.status==1?"启用":"禁用"}}
-                    </view>
+                    
                     <!-- <view class="">
                         <text class="label font-w-400">自动关闭时间(分钟)：</text>
                         <text class="label font-w-500">{{item.autoCloseSecond}}</text>
@@ -49,13 +42,13 @@
                 </view>
                 <view class="hspList-bottom my-box">
                     <view class="flex">
-                        <view @tap="goDetail(item.id,item.status)" class="btn compile-btn flex-ver-center">
-                           {{item.status==1?"禁用":"启用"}} 
+                        <view @tap="goDetail(item)" class="btn compile-btn flex-ver-center">
+                           编辑
                         </view>
-                        <view @tap="handleHospitalShow(item.id)" class="btn ml-20 mr-20 other-btn flex-ver-center">
-                           移动 
+                        <view v-if="item.canDelete" @tap="del(item.id)" class="btn ml-20 del-btn flex-ver-center">
+                           删除 
                         </view>
-                        <view @tap="del(item.id)" class="btn other-btn flex-ver-center">
+                        <view v-else class="btn ml-20 other-btn flex-ver-center">
                            删除 
                         </view>
                     </view>
@@ -65,7 +58,7 @@
         </view>
         
         <view @tap="goAdd" class="footer flex-ver-center">
-            新增特征码
+            新增厂商
         </view>
 
         <!-- 选择医院名称 -->
@@ -74,7 +67,7 @@
     </view>    
 </template>
 <script>
-import {monitoringList,deleteMonitor,deviceAgent,hardwareList,moveBatch,delBatch,updateStatus} from "@/utils/api"
+import {deleteMonitor,deviceAgent,hardwareList,moveBatch,delBatch,deleteVendor} from "@/utils/api"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
 export default {
     data(){
@@ -103,7 +96,7 @@ export default {
         this.getList();
     },
     onShow(){
-        this.deviceAgent();
+        // this.deviceAgent();
         this.getList()
     },
     watch:{
@@ -115,7 +108,7 @@ export default {
             this.show = true;
         },
         async selectRow(row){ //选择医院点击确定
-            this.isRemake = true        //重新赋值，不加班
+            this.isRemake = true        //重新赋值，不追加
             this.selectHos=row[0];
             let params = {
                 deviceAgentId:this.selectHos.value,
@@ -128,6 +121,7 @@ export default {
                     icon:"none"
                 })
                 setTimeout(()=>{    //重新获取 list
+                    this.pageNo=1;
                     this.getList()
                 })
             }else{
@@ -147,13 +141,14 @@ export default {
             }
             uni.showModal({
                 title: '提示',
-                content: '是否要删除厂商',
+                content: '确认删除该厂商？',
                 success: function (res) {
                     if (res.confirm) {
-                        delBatch(params).then(res=>{
+                        deleteVendor(params).then(res=>{
                             let {code,result,message} = res;
                             if(code == 200){
-                            uni.showToast({title:"删除设备成功",icon:"success"})
+                            that.pageNo=1;
+                            uni.showToast({title:"删除厂商成功",icon:"success"})
                             setTimeout(()=>{
                                 console.log(that);
                                 that.getList();
@@ -173,45 +168,18 @@ export default {
 
             
         },
-        goAdd(){ //跳转 设备增加页面
+        goAdd(item){ //跳转 设备增加页面
+            // uni.navigateTo({
+            //     url:"/pages/admin/isystem/add-vendor"+"?type="+1    
+            // })
             uni.navigateTo({
-                url:"/pages/admin/isystem/add-code"    
+                url:"/pages/admin/isystem/add-vendor"+"?type="+1    
             })
         },
-        async goDetail(id,status){ //跳转 设备编辑页面
-            let that = this;
-            that.isRemake = true;
-            let params = {
-                id,
-                status:status==1?2:1
-            }
-            let text = status==1?"禁用":"启用"
-            uni.showModal({
-                title: '提示',
-                content: `确定${text}该厂商`,
-                success: function (res) {
-                    if (res.confirm) {
-                        updateStatus(params).then(res=>{
-                            let {code,result,message} = res;
-                            if(code == 200){
-                            uni.showToast({title:`${text}该厂商成功`,icon:"success"})
-                            setTimeout(()=>{
-                                that.getList();
-                            },1000)
-                        }else{
-                            uni.showModal
-                            uni.showToast({title:message,icon:"none"})
-                        }
-                        })
-                        // let {code,result,message} = await delBatch(params);
-                        
-                    } else if (res.cancel) {
-                        console.log('用户点击取消');
-                    }
-                }
+        goDetail(item){ //跳转 设备编辑页面
+            uni.navigateTo({
+                url:"/pages/admin/isystem/add-vendor"+"?params="+JSON.stringify(item)    
             })
-
-            
         },
         async deviceAgent(){
             // 获取厂商列表
@@ -237,7 +205,7 @@ export default {
                     pageSize:10
                 }
                 this.name || delete params.name
-                let {code,result,message} = await hardwareList(params);
+                let {code,result,message} = await deviceAgent(params);
                 if(code == 200){
                     if(this.isRemake){
                         this.list = result.records;
@@ -254,6 +222,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.m-0{
+    margin:0;
+}
 .open-color{
     color:rgba(255, 180, 43, 1)
 }
@@ -289,13 +260,16 @@ export default {
     font-size:28rpx;
     color: rgba(0, 0, 0, 1);
 }
+.left-label{
+}
 
     .container{
         min-height: 100vh;
         background: RGBA(243, 245, 247, 1);
         .header{
             width: 100%;
-            height: 180rpx;
+            // height: 180rpx;
+            height: 120rpx;
             background: $my-main-color;
             .header-cont{
                 .ipt-box{
@@ -351,15 +325,17 @@ export default {
                 // min-height: 384rpx;
                 background: #FFFFFF;
                 margin-bottom: 20rpx;
+                  .hspList-top .flex:nth-child(2n){
+                    margin:10rpx 0;
+                }
                 .hspList-top{
+
                     padding-top:26rpx;
-                    padding-bottom: 20rpx;
+                    // padding-bottom: 20rpx;
                     position: relative;
                     // min-height: 286rpx;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                    view:nth-of-type(2n){
-                        margin:10rpx 0;
-                    }
+                
                     .status{
                         position: absolute;
                         right: 0;
