@@ -162,6 +162,8 @@ page {
         }
     }
     .list-container {
+      min-height: 100vh;
+      margin-bottom: 100rpx;
       // height: calc(100vh - 280rpx);
       background: #F3F5F7;
     }
