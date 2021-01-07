@@ -216,7 +216,7 @@ export default {
               });
             }, 800);
           }
-        }).catch(err => {}).finally(e => {
+        }).catch(err => {}).then(e => {
           this.submitLoading = false;
         }); 
       } else {
@@ -240,7 +240,7 @@ export default {
               });
             }, 800);
           }
-        }).catch(err => {}).finally(e => {
+        }).catch(err => {}).then(e => {
           this.submitLoading = false;
         }); 
       }

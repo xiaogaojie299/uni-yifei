@@ -110,7 +110,7 @@ export default {
             let _this = this;
             uni.showModal({
                 title: '提示',
-                content: '您确认要删除吗？',
+                content: '您确定要删除吗？删除后数据将无法恢复。',
                 success: function (res) {
                     if (res.confirm) {
                         // 点击删除

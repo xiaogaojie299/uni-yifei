@@ -10,7 +10,7 @@
           </view>
       </view>
       <scroll-view scroll-y class="list-container" @scrolltolower="next()">
-        <s-loading v-model="loading" />
+        <s-loading v-show="loading" />
         <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions"/>
       </scroll-view>
   </view>
@@ -89,9 +89,9 @@ export default {
         this.paginate();
       },
       // 加载数据
-      async paginate() {
+      paginate() {
         this.loading = true;
-        let { code, message, result } = await listHistoryMedicalTrace({
+        listHistoryMedicalTrace({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -101,16 +101,17 @@ export default {
           startTime: this.startTime,
           endTime: this.endTime,
           code: this.code
-        });
-        this.loading = false;
-        uni.stopPullDownRefresh();
-        try {
-            if (code == 200) {
-              this.list = [...this.list, ...result.records];
-              this.total = result.total;
-              this.pages = result.pages;
+        }).then(resp => {
+            if (resp.code == 200) {
+              this.list = [...this.list, ...resp.result.records];
+              this.total = resp.result.total;
+              this.pages = resp.result.pages;
             }
-        } catch (error) {}
+        }).catch(err => {}).then(e => {
+          console.log('到我没有？');
+          this.loading = false;
+          uni.stopPullDownRefresh();
+        });
       },
       searchConfirm(e) {
         // 医院ID

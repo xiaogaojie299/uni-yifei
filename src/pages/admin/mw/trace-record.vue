@@ -11,15 +11,15 @@
           <view>
             <view class="u-order-title">收集</view>
             <view class="u-order-desc">
-                <view>收集时间：{{ detail.createTime }}</view>
-                <view>医废编号：{{ detail.code }}</view>
-                <view>医院名称：{{ detail.hospitalName }}</view>
-                <view>科室名称：{{ detail.departmentName }}</view>
-                <view>医废类型：{{ detail.wasteTypeStr }}</view>
-                <view>重量(kg)：{{ detail.weight }}</view>
-                <view>科室人员：{{ detail.departmentUserName }}</view>
-                <view>收集人员：{{ detail.creator }}</view>
-                <view>备注：{{ detail.description }}</view>
+                <view>收集时间：{{ detail.createTime || '' }}</view>
+                <view>医废编号：{{ detail.code || '' }}</view>
+                <view>医院名称：{{ detail.hospitalName || '' }}</view>
+                <view>科室名称：{{ detail.departmentName || '' }}</view>
+                <view>医废类型：{{ detail.wasteTypeStr || '' }}</view>
+                <view>重量(kg)：{{ detail.weight || '' }}</view>
+                <view>科室人员：{{ detail.departmentUserName || '' }}</view>
+                <view>收集人员：{{ detail.creator || '' }}</view>
+                <view>备注：{{ detail.description || '' }}</view>
             </view>
           </view>
         </template>
@@ -34,9 +34,9 @@
           <view>
             <view class="u-order-title">入库</view>
             <view class="u-order-desc">
-                <view>入库时间：{{ detail.storeTime }}</view>
-                <view>入库人：{{ detail.storeUser }}</view>
-                <view>装箱编号：{{ detail.boxCode }}</view>
+                <view>入库时间：{{ detail.storeTime || '' }}</view>
+                <view>入库人：{{ detail.storeUser || '' }}</view>
+                <view>装箱编号：{{ detail.boxCode || '' }}</view>
             </view>
           </view>
         </template>
@@ -51,11 +51,11 @@
           <view>
             <view class="u-order-title">出库</view>
             <view class="u-order-desc">
-                <view>出库时间：{{ detail.checkoutTime }}</view>
-                <view>出库人：{{ detail.checkoutUser }}</view>
-                <view>运输人员：{{ detail.engineDriver }}</view>
-                <view>车牌号：{{ detail.licensePlate }}</view>
-                <view>运输单位：{{ detail.transitCompany }}</view>
+                <view>出库时间：{{ detail.checkoutTime || '' }}</view>
+                <view>出库人：{{ detail.checkoutUser || '' }}</view>
+                <view>运输人员：{{ detail.engineDriver || '' }}</view>
+                <view>车牌号：{{ detail.licensePlate || '' }}</view>
+                <view>运输单位：{{ detail.transitCompany || '' }}</view>
             </view>
           </view>
         </template>

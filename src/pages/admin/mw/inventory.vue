@@ -10,7 +10,7 @@
           </view>
       </view>
       <scroll-view scroll-y class="list-container" @scrolltolower="next()">
-        <s-loading v-model="loading" />
+        <s-loading v-show="loading" />
         <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="inventory"/>
       </scroll-view>
   </view>
@@ -106,7 +106,7 @@ export default {
               this.total = resp.result.total;
               this.pages = resp.result.pages;
             }
-        }).catch(err => {}).finally(e => {
+        }).catch(err => {}).then(e => {
           this.loading = false;
           uni.stopPullDownRefresh();
         })

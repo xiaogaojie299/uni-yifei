@@ -1,11 +1,13 @@
 <template>
     <view class="mw-select flex-between" >
         <view class="mw-select-container flex">
-            <view class="mw-select-item group" @click="cascadeShow = !cascadeShow" v-if="options.cascade">
+            <view class="mw-select-item group" @click="showCascade()" v-if="options.cascade">
+                <u-loading size="24" v-if="cascadeLoading"/>
                 <text class="name">{{cascadeLabel}}</text>
                 <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
             <view class="mw-select-item department" @click="visibleDepartment()" v-if="options.cascade && options.department">
+                <u-loading size="24" v-if="officalCascadeLoading"/>
                 <text class="name">{{departmentLabel}}</text>
                 <u-icon :name="!departmentShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
@@ -67,19 +69,10 @@
                 </view>
             </view>
 		</u-popup>
-        <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback"></s-select>
+        <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
         <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateParams"></s-picker>
-        <!-- <u-popup v-model="departmentShow" mode="bottom" :mask="true">
-			<s-checkbox @confirm="departmentCallback" :d-list="departmentList" :multi="false"/>
-		</u-popup> -->
-        <view class="tools-checkbox-list" :style="{height: checkboxMaxHeight + 'rpx', maxHeight: checkboxMaxHeight + 'rpx'}" v-show="departmentShow">
-            <view class="tools-mask" @click="departmentShow = false"/>
-            <s-checkbox @confirm="departmentCallback" v-model="departmenIndex" :d-list="departmentList" :multi="false" class="tools-checkbox" :height="checkboxMaxHeight"/>
-        </view>
-        <view class="tools-checkbox-list" :style="{height: checkboxMaxHeight + 'rpx', maxHeight: checkboxMaxHeight + 'rpx'}" v-show="subjectShow">
-            <view class="tools-mask" @click="subjectShow = false"/>
-            <s-checkbox @confirm="subjectCallback" v-model="subjectIndex" :d-list="subjectList" :multi="false" class="tools-checkbox" :height="checkboxMaxHeight" />
-        </view>
+        <s-select title="选择部门" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
+        <s-select title="选择科室" v-model="subjectShow" :list="subjectList" @confirm="subjectCallback" :default-value="subjectIndex"></s-select>
     </view>
 </template>
 <script>
@@ -87,9 +80,11 @@ import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList } fr
 import sSelect from './s-select';
 import sPicker from './s-picker';
 import sCheckbox from './s-checkbox';
+import SSelectMulti from './s-select-multi.vue';
 export default {
     components: {
-        sSelect, sPicker, sCheckbox
+        sSelect, sPicker, sCheckbox,
+        SSelectMulti
     },
     props: {
         // 该属性是距离上部的像素值，主要用于Checkbox的展示
@@ -108,14 +103,18 @@ export default {
     },
     data() {
         return {
+            cascadeLoading: false, // 医院加载中
+            officalCascadeLoading: false, // 部门加载中
+
             moreShow: false, // 更多筛选显示
             dateShow: false, // 日期选择显示
             departmentShow: false, // 部门选择显示
             departmentList: [], // 部门&科室列表
             subjectShow: false, // 科室选择显示
             subjectList: [], // 科室列表
-            departmenIndex: -1, // 索引
-            subjectIndex: -1, // 索引
+            subjectIndex: [], // 索引
+            departmentIndex: [], // 索引
+            cascadeIndex: [], // 索引
             dateParams: {
                 year: true,
                 month: true,
@@ -165,22 +164,10 @@ export default {
         this.loadWasteType();
     },
     computed: {
-        checkboxPopupHeight() {
-            let res = wx.getSystemInfoSync();
-            let clientHeight = res.windowHeight;
-            let clientWidth = res.windowWidth;
-            let changeHeight = 750 / clientWidth;
-            let height = clientHeight * changeHeight;
-            return height;
-        },
-         checkboxMaxHeight() {
-             // 为什么减100 
-            return this.checkboxPopupHeight - 98 - this.marginTop;
-        },
     },
     watch: {
         cascadeId(n, o) {
-            this.loadOfficeCascadeList(n)
+            n && this.loadOfficeCascadeList(n)
         },
         departmentShow(n, o) {
             n && (this.dateShow = this.cascadeShow = this.moreShow = this.subjectShow = false);
@@ -199,14 +186,21 @@ export default {
         }
     },
     methods: {
+        showCascade() {
+            if (this.cascadeLoading) {
+                return ;
+            }
+            this.cascadeShow = !this.cascadeShow;
+        },
+
         resetDepartment() {
             this.departmentLabel = '部门';
-            this.departmenIndex = -1;
+            this.departmentIndex = [];
             this.departmentId = '';
         },
         resetSubject() {
             this.subjectLabel = '科室';
-            this.subjectIndex = -1;
+            this.subjectIndex = [];
             this.subjectId = '';
         },
         reset() {
@@ -244,6 +238,9 @@ export default {
                 });
                 return ;
             }
+            if (this.officalCascadeLoading) {
+                return ;
+            }
             this.departmentShow = !this.departmentShow;
         },
         visibleSubject() {
@@ -251,6 +248,14 @@ export default {
             if (!this.departmentId) {
                 uni.showToast({
                     title: '请先选择部门',
+                    icon: 'none'
+                });
+                return ;
+            }
+            console.log(this.subjectList);
+            if (this.subjectList.length == 0) {
+                uni.showToast({
+                    title: '当前部门没有科室',
                     icon: 'none'
                 });
                 return ;
@@ -266,39 +271,70 @@ export default {
             } catch (error) {}
         },
         async loadHospitalCascade() {
-            let { code, message, result } = await getMyHospitalCascadeList();
-            try {
-                if (code == 200) {
-                    this.cascadeList = result[0].children || [];
+            this.cascadeLoading = true;
+            getMyHospitalCascadeList().then(resp => {
+                if (resp.code == 200) {
+                    this.cascadeList = resp.result[0].children || [];
                 }
-            } catch (error) {}
-        },
-        async loadOfficeCascadeList(parentId) {
-            let { code, message, result } = await getMyOfficeCascadeList({
-                parentId
+            }).catch(err => {}).then(e => {
+                this.cascadeLoading = false;
             });
-            try {
-                if (code == 200) {
-                    this.departmentList = result || [];
+        },
+        loadOfficeCascadeList(parentId) {
+            this.officalCascadeLoading = true;
+            getMyOfficeCascadeList({
+                parentId
+            }).then(resp => {
+                if (resp.code == 200) {
+                    this.departmentList = resp.result || [];
                 }
-            } catch (error) {}
+            }).catch(err => {}).then(e => {
+                this.officalCascadeLoading = false;
+            });
         },
         // 科室选择的回调事件
         subjectCallback(e) {
-            this.subjectShow = false;
-            this.subjectId = e.item.value;
-            this.subjectLabel = e.item.label;
-            this.subjectIndex = e.index;
+            this.subjectId = e[0].value;
+            this.subjectLabel = e[0].label;
+            let index = this.subjectList.findIndex(item => item.value == e[0].value);
+            if (index > -1) {
+                this.subjectIndex = [index];
+            }
             // 回调父组件
             this.emitConfirm();
         },
         // 部门选择的回调事件
         departmentCallback(e) {
-            this.departmentShow = false;
-            this.departmentId = e.item.value;
-            this.subjectList = e.item.children;
-            this.departmentLabel = e.item.label;
-            this.departmentIndex = e.index;
+            this.departmentId = e[0].value;
+            this.departmentLabel = e[0].label;
+            let index = this.departmentList.findIndex(item => item.value == e[0].value);
+            if (index > -1) {
+                // 这里仍然有一个问题，即：可能某些部门下没有科室，应该如何处理？
+
+                // 1. 该条数据是处理有科室的，有科室继续选
+                this.subjectList = this.departmentList[index].children || [];
+
+                // 2. 该方法处理没有科室的，把当前部门的ID支持赋值给科室ID
+                if (this.subjectList.length == 0) {
+                    this.subjectId = e[0].value;
+                    // 执行查询
+                    this.emitConfirm();
+                }
+
+                this.departmentIndex = [index];
+            }
+        },
+        cascadeIndexCalc(e) {
+            let cascadeIndex = [];
+            let tmpData = this.cascadeList;
+            for (let i in e) {
+                let index = tmpData.findIndex(item => item.value == e[i].value);
+                if (index > -1) {
+                    cascadeIndex.push(index);
+                    tmpData = tmpData[index].children;
+                }
+            }
+            this.cascadeIndex = cascadeIndex;
         },
         // 选择医院的回调
         cascadeCallback(e) {
@@ -307,6 +343,8 @@ export default {
             this.cascadeId = hospital.value;
             this.resetDepartment();
             this.resetSubject();
+            // 计算一下他的4个索引，方便重新选择时继续渲染
+            this.cascadeIndexCalc(e);
             // 回调父组件
             this.emitConfirm();
         },
@@ -325,12 +363,33 @@ export default {
         },
         // 日期变更时间，index是用来标识是前还是后
         dateChange(e) {
-            let str = e.year + '/' + e.month + '/' + e.day + ' ' + e.hour + ':' + e.minute;
+            let str = e.year + '-' + e.month + '-' + e.day + ' ' + e.hour + ':' + e.minute + ':00';
+            let timestamp = new Date(str.replace(/-/g,"/")).getTime();
             switch(this.dateIndex) {
                 case 0: 
+                    // 需要校验：开始时间不允许大于结束时间
+                    if (this.endTime != '') {
+                        if (timestamp > new Date(this.endTime.replace(/-/g,"/")).getTime()) {
+                            uni.showToast({
+                                title: '开始时间必须小于结束时间',
+                                icon: 'none'
+                            });
+                            break ;
+                        }
+                    }
                     this.startTime = str;
                 break;
                 default:
+                    // 需要校验：开始时间不允许小于结束时间
+                    if (this.startTime != '') {
+                        if (timestamp < new Date(this.startTime.replace(/-/g,"/")).getTime()) {
+                            uni.showToast({
+                                title: '开始时间必须小于结束时间',
+                                icon: 'none'
+                            });
+                            break ;
+                        }
+                    }
                     this.endTime = str;
                 break;
             }
@@ -347,11 +406,11 @@ export default {
     position: relative;
     .mw-select-item {
         background: rgba(255, 255, 255, .3);
-        border-radius: 20rpx;
+        border-radius: 30rpx;
         margin: 0 10rpx;
         width: 160rpx;
-        height: 44rpx;
-        padding: 2rpx 20rpx;
+        height: 54rpx;
+        padding: 2rpx 30rpx;
         color: #fff;
         display: flex;
         font-size: 24rpx;
@@ -407,14 +466,15 @@ export default {
             .tag {
                 margin: 10rpx;
                 border-radius: 36rpx;
-                display: flex;
-                align-items: center;
-                justify-content: center;
                 background: rgba(0,0,0,.1);
                 color: #000000;
                 font-size: 28rpx;
                 width: 170rpx;
                 height: 60rpx;
+                line-height: 60rpx;
+                text-align: center;
+                box-sizing: border-box;
+                padding: 0 30rpx;
                 @include text-overflow;
                 &.tag-date {
                     width: 248rpx;
@@ -469,40 +529,6 @@ export default {
         }
     }
 }
-
-
-
-
-/deep/ .u-dropdown__menu{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding:0 20rpx;
-    background: red;
-}
- /deep/ .u-dropdown__menu__item{
-        display: flex;
-        color: #fff;
-       width: 220rpx !important;
-        height: 44rpx;
-        background: #5B74C7;
-        border-radius: 22rpx;
-  }
-  /deep/ .u-dropdown__menu__item:nth-child(2){
-     margin:0 20rpx;
-  }
-  /deep/ .u-dropdown__menu__item>view{
-      padding:0 16rpx;
-        width: 220rpx !important;
-        display: flex;
-        justify-content: space-between;
-  }
-  /deep/ .u-icon__icon{
-      color: #fff !important;
-  }
-  /deep/ .u-dropdown__menu__item__text,.u-icon__icon{
-      color: #fff !important;
-  }
 .header {
   height: 108rpx;
   background: $my-main-color;

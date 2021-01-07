@@ -2,8 +2,8 @@
     <view class="trace-card" @click="detail()">
         <view class="trace-card__header">
             <view class="trace-card__header__title">
-                <view>医废编号: {{ item.code }}</view>
-                <view v-if="mode != 'record'">装箱编号: {{ item.boxCode }}</view>
+                <view>医废编号: {{ item.code || '' }}</view>
+                <view v-if="mode != 'record'">装箱编号: {{ item.boxCode || '' }}</view>
             </view>
             <view class="trace-card__header__status">
                 <block v-if="options.status">{{ statusMap[item.status] }}</block>
@@ -14,35 +14,35 @@
             <block v-if="mode == 'record'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailRecord" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] }}</text>
+                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'inventory'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailInventory" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] }}</text>
+                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'checkout'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailCheckout" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] }}</text>
+                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'restore'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailRestore" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] }}</text>
+                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'supply'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailSupply" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] }}</text>
+                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
                     </view>
                 </view>
             </block>
@@ -75,7 +75,7 @@
 	 * @property {String} mode 模式选择，"record"-追溯/收集记录，inventory"-入库，"checkout"-出库， "restore"-数据恢复，"supply"-医废补录
 	 * @property {String} options 参数配置，'remove'-删除按钮，'restore'-恢复按钮，'record'-流转过程，'detail'-详情页跳转，'status'-状态，'audit'-审核状态
 	 */
-import { deleteMedicalTrace, auditSupplementMedicalTrace } from '@/utils/api';
+import { deleteMedicalTrace, auditSupplementMedicalTrace, restoreMedicalTrace } from '@/utils/api';
 export default {
     props: {
         item: {
@@ -359,7 +359,7 @@ export default {
                 content: '您确认要恢复该条数据吗？',
                 success: function (res) {
                     if (res.confirm) {
-                        deleteMedicalTrace({
+                        restoreMedicalTrace({
                             id: _this.item.id
                         }).then(resp => {
                             if (resp.code == 200) {

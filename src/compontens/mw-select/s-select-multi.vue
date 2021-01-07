@@ -14,7 +14,7 @@
                     </view>
                 </scroll-view>
 
-				<view class="s-select-multi__footer">
+				<view class="s-select-multi__footer" v-if="multi">
 					<view
 						class="s-select-multi__footer__cancel s-select-multi__footer__btn"
 						:style="{ color: cancelColor }"
@@ -113,7 +113,7 @@ export default {
         },
         checkedList: {
             handler: function(n, o) { 
-                this.init();
+                // this.init();
             },
             deep: true
         },
@@ -126,8 +126,8 @@ export default {
             this.list = JSON.parse(JSON.stringify(this.dList));
             this.checked = [];
             for (let i in this.checkedList) {
-                this.$set(this.list[i], 'checked', true);
-                this.checked.push(parseInt(i));
+                this.$set(this.list[this.checkedList[i]], 'checked', true);
+                this.checked.push(parseInt(this.checkedList[i]));
             }
         },
         tap(item, index) {

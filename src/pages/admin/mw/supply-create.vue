@@ -314,7 +314,7 @@ export default {
             uni.navigateBack();
           }, 800);
         }
-      }).catch(err => {}).finally(e => {
+      }).catch(err => {}).then(e => {
         this.submitLoading = false;
       }); 
     }

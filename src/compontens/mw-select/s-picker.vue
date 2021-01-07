@@ -4,7 +4,7 @@
 			<view class="s-picker-header" @touchmove.stop.prevent="">
 				<view class="s-picker__title">{{ title }}</view>
 			</view>
-			<view class="s-picker-time-preview" @touchmove.stop.prevent="">
+			<view class="s-picker-time-preview" @touchmove.stop.prevent="" v-if="mode == 'time'">
 				<view class="s-picker-time-preview__title">{{ timestamp }}</view>
 			</view>
 			<view class="s-picker-body">

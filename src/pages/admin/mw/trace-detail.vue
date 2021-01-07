@@ -3,13 +3,13 @@
     <view class="trace-detail" v-if="mode == 'inventory'">
       <view class="trace-detail__item" v-for="(item, index) in fieldList" :key="index">
         <view class="trace-detail__item__key">{{ item.label }}</view>
-        <view class="trace-detail__item__value">{{ detail[item.key] }}</view>
+        <view class="trace-detail__item__value">{{ detail[item.key] || '' }}</view>
       </view>
     </view>
     <view class="trace-detail" v-else-if="mode == 'checkout'">
       <view class="trace-detail__item" v-for="(item, index) in fieldListCheckout" :key="index">
         <view class="trace-detail__item__key">{{ item.label }}</view>
-        <view class="trace-detail__item__value">{{ detail[item.key] }}</view>
+        <view class="trace-detail__item__value">{{ detail[item.key] || '' }}</view>
       </view>
     </view>
     <view class="trace-detail" v-else-if="mode == 'restore'">
@@ -23,7 +23,7 @@
             {{ auditStatusMap[detail[item.key]] }}
           </block>
           <block v-else>
-            {{ detail[item.key] }}
+            {{ detail[item.key] || '' }}
           </block>
         </view>
       </view>
@@ -39,7 +39,7 @@
             {{ auditStatusMap[detail[item.key]] }}
           </block>
           <block v-else>
-            {{ detail[item.key] }}
+            {{ detail[item.key] || '' }}
           </block>
         </view>
       </view>
@@ -54,7 +54,7 @@
         </view>
       </block>
       <block v-if="mode == 'restore'">
-        <view class="trace-detail__footer__btn trace-detail__footer__restore">
+        <view class="trace-detail__footer__btn trace-detail__footer__restore" @click="restore()">
           恢复
         </view>
       </block>
@@ -68,13 +68,14 @@
 	 * @property {String} mode 模式选择，"inventory"-入库，"checkout"-出库，"restore"-数据恢复，"supply"-医废补录
 	 */
   
-import { detailMedicalTrace, getMedicalTraceRecord } from "@/utils/api.js";
+import { detailMedicalTrace, getMedicalTraceRecord, restoreMedicalTrace} from "@/utils/api.js";
 export default {
   components:{
   },
   data() {
     return {
       detail: {},
+      mode: '',
       statusMap: [
           '', '未入库', '已入库', '已出库'
       ],
@@ -268,6 +269,7 @@ export default {
   },
   onLoad(option) {
     this.mode = option.mode || 'inventory';
+    console.log(this.mode);
     this.loadDetail(option.id);
   },
   methods: {
@@ -330,7 +332,7 @@ export default {
           content: '您确认要恢复该条数据吗？',
           success: function (res) {
               if (res.confirm) {
-                  deleteMedicalTrace({
+                  restoreMedicalTrace({
                       id: _this.detail.id
                   }).then(resp => {
                       if (resp.code == 200) {
@@ -338,6 +340,9 @@ export default {
                               title: '恢复成功',
                               icon: 'none'
                           });
+                          setTimeout(function() {
+                            uni.navigateBack();
+                          }, 800);
                       }
                   });
               }
