@@ -151,6 +151,16 @@ export function getWasteTypeList(data) {
   let url = "/system/sysDict/getWasteTypeList";
   return request.get(url, data);
 }
+// 获取科室人员列表
+export function getMyOfficeUserList(data) {
+  let url = "/system/user/getOfficeUserList";
+  return request.get(url, data)
+}
+// 获取暂存间列表
+export function getMyWarehouseOfficeList(data) {
+  let url = "/system/sysDepartment/getMyWarehouseOfficeList";
+  return request.get(url, data)
+}
 
 /** 医废相关接口 */
 
@@ -192,19 +202,19 @@ export function listCheckoutMedicalTrace(data) {
 
 // 获取出库配置列表
 export function listTransitConfig(data) {
-  return request.get('/medical/mwTransitConfig/list', data);
+  return request.post('/medical/mwTransitConfig/list', data);
 }
 // 添加出库配置
 export function addTransitConfig(data) {
-  return request.get('/medical/mwTransitConfig/list', data);
+  return request.post('/medical/mwTransitConfig/add', data);
 }
 // 编辑出库配置
 export function editTransitConfig(data) {
-  return request.get('/medical/mwTransitConfig/list', data);
+  return request.post('/medical/mwTransitConfig/edit', data);
 }
 // 删除出库配置
 export function deleteTransitConfig(data) {
-  return request.get('/medical/mwTransitConfig/list', data);
+  return request.post('/medical/mwTransitConfig/delete', data);
 }
 
 // 医废补录页

@@ -13,6 +13,9 @@
         <s-loading v-model="loading" />
         <trace-card v-for="(item, index) in list" :key="index" :item="item" @audit="audit($event, index)" :options="traceOptions" mode="supply"/>
       </scroll-view>
+      <view class="button-container">
+        <view class="button" @click="create()">新增补录</view>
+      </view>
   </view>
 </template>
 <script>
@@ -57,7 +60,9 @@ export default {
     };
   },
   onLoad(option) {
-      this.reload();
+  },
+  onShow() {
+    this.reload();
   },
   onPullDownRefresh() {
     this.reload();
@@ -88,9 +93,9 @@ export default {
         this.paginate();
       },
       // 加载数据
-      async paginate() {
+      paginate() {
         this.loading = true;
-        let { code, message, result } = await listSupplementMedicalTrace({
+        listSupplementMedicalTrace({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -100,16 +105,16 @@ export default {
           startTime: this.startTime,
           endTime: this.endTime,
           code: this.code
-        });
-        this.loading = false;
-        uni.stopPullDownRefresh();
-        try {
-            if (code == 200) {
-              this.list = [...this.list, ...result.records];
-              this.total = result.total;
-              this.pages = result.pages;
+        }).then(resp => {
+            if (resp.code == 200) {
+              this.list = [...this.list, ...resp.result.records];
+              this.total = resp.result.total;
+              this.pages = resp.result.pages;
             }
-        } catch (error) {}
+        }).catch(err => {}).finally(e => {
+          this.loading = false;
+          uni.stopPullDownRefresh();
+        })
       },
       searchConfirm(e) {
         // 医院ID
@@ -124,6 +129,12 @@ export default {
         this.startTime = e.startTime;
         this.endTime = e.endTime;
         this.reload();
+      },
+      // 新增补录
+      create() {
+        uni.navigateTo({
+          url: '/pages/admin/mw/supply-create'
+        });
       }
   }
 };
@@ -146,8 +157,21 @@ page {
         }
     }
     .list-container {
-      height: calc(100vh - 180rpx);
+      height: calc(100vh - 280rpx);
       background: #F3F5F7;
+    }
+    .button-container {
+      position: fixed;
+      height: 100rpx;
+      width: 100%;
+      bottom: 0;
+      .button {
+        width: 100%;
+        height: 100%;
+        background: $my-main-color;
+        color: #fff;
+        @include flex-center;
+      }
     }
 }
 </style>

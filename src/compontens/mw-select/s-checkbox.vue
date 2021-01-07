@@ -1,6 +1,6 @@
 <template>
     <view>
-        <scroll-view scroll-y class="checkbox-list" :style="{ height: height + 'rpx' }">
+        <scroll-view scroll-y class="checkbox-list" :style="{ height: height == 0 ? 'auto': height + 'rpx' }">
             <view :class="{'checkbox-item': true, active: item.checked || false}" :key="index" v-for="(item, index) in list" @click="tap(item, index)">
                 {{item.label}}
                 <u-icon name="checkbox-mark" size="34" class="icon" v-show="item.checked || false"/>

@@ -1,5 +1,130 @@
-<template lang="">
-    <div>
-        出库配置
-    </div>
+<template>
+  <view class="container">
+      <view class="filter-box">
+          <!-- 关键词搜索框 -->
+          <view class="filter-search">
+            <u-search placeholder="输入运输人员、车牌号、运输单位查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+          </view>
+          <view class="filter-tools">
+              <mw-select :options="options" @confirm="searchConfirm"/>
+          </view>
+      </view>
+      <scroll-view scroll-y class="list-container" @scrolltolower="next()">
+        <s-loading v-model="loading" />
+        <outbound-setting-card v-for="(item, index) in list" :key="index" :item="item" @restore="restore(index)" />
+      </scroll-view>
+  </view>
 </template>
+<script>
+import mwSelect from '@/compontens/mw-select/mw-select';
+import outboundSettingCard from '@/compontens/mw-select/outbound-setting-card';
+import sLoading from '@/compontens/s-loading';
+import { listTransitConfig } from "@/utils/api.js";
+export default {
+  components:{
+    mwSelect, outboundSettingCard, sLoading
+  },
+  data() {
+    return {
+        options: {
+          cascade: true,
+          department: false,
+          subject: false,
+          status: false,
+          waste: false,
+          timestamp: false
+        },
+        loading: false,
+        pages: 0,
+        total: 0,
+        pageNo: 1,
+        pageSize: 10,
+        hospitalId: '', // 医院ID
+        code: '',
+        list: [],
+    };
+  },
+  onLoad(option) {
+      this.reload();
+  },
+  onPullDownRefresh() {
+    this.reload();
+  },
+  methods: {
+      restore(index) {
+        this.list.splice(index, 1);
+      },
+      reload() {
+        this.pageNo = 1;
+        this.pageSize = 10;
+        this.list = [];
+        this.total = 0;
+        this.pages = 0;
+        this.paginate();
+      },
+      // 加载下一页
+      next() {
+        if (this.pageNo >= this.pages) {
+          uni.showToast({
+            title: '没有更多了',
+            icon: 'none'
+          });
+          return ;
+        }
+
+        this.pageNo++;
+        this.paginate();
+      },
+      // 加载数据
+      async paginate() {
+        this.loading = true;
+
+        listTransitConfig({
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          hospitalId: this.hospitalId,
+          licensePlate: '', // 车牌号
+          transitCompany: '', // 运输单位
+          engineDriver: '' // 运输人员
+        }).then(resp => {
+            if (resp.code == 200) {
+              this.list = [...this.list, ...resp.result.records];
+              this.total = resp.result.total;
+              this.pages = resp.result.pages;
+            }
+        }).catch(err => {}).finally(e => {
+          this.loading = false;
+          uni.stopPullDownRefresh();
+        })
+      },
+      searchConfirm(e) {
+        // 医院ID
+        this.hospitalId = e.cascade;
+        this.reload();
+      }
+  }
+};
+</script>
+<style lang="scss" scoped>
+page {
+  overflow: hidden;
+}
+.container {
+    .filter-box {
+        background: #1539AF;
+        height: 180rpx;
+        width: 100%;
+        .filter-search {
+            margin: 0rpx 28rpx;
+            height: 80rpx;
+        }
+        .filter-tools {
+
+        }
+    }
+    .list-container {
+      height: calc(100vh - 180rpx);
+      background: #F3F5F7;
+    }
+}
+</style>

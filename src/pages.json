@@ -236,12 +236,36 @@
 			}
 		},
 		{
+			"path": "pages/admin/mw/outbound-setting-detail",
+			"style": {
+				"navigationBarTitleText": "配置详情",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/mw/outbound-setting-edit",
+			"style": {
+				"navigationBarTitleText": "编辑配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
 			"path": "pages/admin/mw/additional",
 			"style": {
 				"navigationBarTitleText": "医废补录",
 				"navigationBarBackgroundColor":"#1539AF",
 				"navigationBarTextStyle":"white",
 				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/admin/mw/supply-create",
+			"style": {
+				"navigationBarTitleText": "新增补录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
 			}
 		},
 		{

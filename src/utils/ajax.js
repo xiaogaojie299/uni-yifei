@@ -35,7 +35,13 @@ class Ajax {
                         uni.navigateTo({
                             path:"../pages/login/index.vue"
                         })
-                    }else{
+                    } else {
+                        if (res.data.code != 200) {
+                            uni.showToast({
+                                title: res.data.message,
+                                icon: 'none'
+                            })
+                        }
                         resolve(res.data)
                     }
 

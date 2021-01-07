@@ -15,7 +15,17 @@
     <view class="trace-detail" v-else-if="mode == 'restore'">
       <view class="trace-detail__item" v-for="(item, index) in fieldListRestore" :key="index">
         <view class="trace-detail__item__key">{{ item.label }}</view>
-        <view class="trace-detail__item__value" v-if="item.key == 'status' || item.key == 'auditStatus'">{{ detail[item.key] }}</view>
+        <view :class="{'trace-detail__item__value': true, 'status': item.key == 'auditStatus' && detail.auditStatus == 1}">
+          <block v-if="item.key == 'status'">
+            {{ statusMap[detail[item.key]] }}
+          </block>
+          <block v-else-if="item.key == 'auditStatus'">
+            {{ auditStatusMap[detail[item.key]] }}
+          </block>
+          <block v-else>
+            {{ detail[item.key] }}
+          </block>
+        </view>
       </view>
     </view>
     <view class="trace-detail" v-else-if="mode == 'supply'">
@@ -31,10 +41,24 @@
           <block v-else>
             {{ detail[item.key] }}
           </block>
-          </view>
+        </view>
       </view>
     </view>
-    
+    <view class="trace-detail__footer">
+      <block v-if="mode == 'supply'">
+        <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="audit(false)">
+          拒绝
+        </view>
+        <view class="trace-detail__footer__btn trace-detail__footer__confirm" @click="audit(true)">
+          同意
+        </view>
+      </block>
+      <block v-if="mode == 'restore'">
+        <view class="trace-detail__footer__btn trace-detail__footer__restore">
+          恢复
+        </view>
+      </block>
+    </view>
   </view>
 </template>
 <script>
@@ -45,10 +69,8 @@
 	 */
   
 import { detailMedicalTrace, getMedicalTraceRecord } from "@/utils/api.js";
-import Index from '../index.vue';
 export default {
   components:{
-    Index
   },
   data() {
     return {
@@ -274,6 +296,53 @@ export default {
           }
         })
       }
+    },
+    // 审核数据
+    audit(flag) {
+      let auditStatus = flag ? 2 : 3;
+      let _this = this;
+      uni.showModal({
+          title: '提示',
+          content: '是否要' + (flag ? '通过' : '拒绝') + '审核？',
+          success: function (res) {
+              if (res.confirm) {
+                  auditSupplementMedicalTrace({
+                      auditStatus,
+                      id: _this.detail.id
+                  }).then(resp => {
+                      if (resp.code == 200) {
+                          uni.showToast({
+                              title: '操作成功',
+                              icon: 'none'
+                          });
+                          _this.$set(_this.detail, 'auditStatus', auditStatus);
+                      }
+                  });
+              }
+          }
+      });
+    },
+    // 恢复数据
+    restore() {
+      let _this = this;
+      uni.showModal({
+          title: '提示',
+          content: '您确认要恢复该条数据吗？',
+          success: function (res) {
+              if (res.confirm) {
+                  deleteMedicalTrace({
+                      id: _this.detail.id
+                  }).then(resp => {
+                      if (resp.code == 200) {
+                          uni.showToast({
+                              title: '恢复成功',
+                              icon: 'none'
+                          });
+                      }
+                  });
+              }
+          }
+      });
     }
   }
 };
@@ -298,6 +367,38 @@ export default {
           color: #FFB42B;
       }
     }
+  }
+  &__footer {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+		height: 180rpx;
+		box-sizing: border-box;
+		padding: 30rpx 0 60rpx 0;
+		display: flex;
+		justify-content: center;
+		&__confirm {
+			border-radius: 0 40rpx 40rpx 0;
+			background: $my-main-color;
+		}
+		&__restore {
+			border-radius: 40rpx;
+      min-width: 400rpx;
+			background: $my-main-color;
+		}
+		&__cancel {
+			border-radius: 40rpx 0px 0px 40rpx;
+			background: $my-cancel-color;
+			color: #000 !important;
+		}
+		&__btn {
+			width: 200rpx;
+			height: 80rpx;
+			display: flex;
+			color: #fff;
+			justify-content: center;
+			align-items: center;
+		}
   }
 }
 </style>
