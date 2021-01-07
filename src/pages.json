@@ -165,6 +165,72 @@
 				"navigationBarTextStyle":"white"
 			}
 		},
+		{
+			"path": "pages/admin/monitor/setting",
+			"style": {
+				"navigationBarTitleText": "监控配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/monitor/redact",
+			"style": {
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/login/record",
+			"style": {
+				"navigationBarTitleText": "登录记录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/deviceAgent",
+			"style": {
+				"navigationBarTitleText": "硬件管理",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/isystem/add-code",
+			"style": {
+				"navigationBarTitleText": "新增特征码",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/device",
+			"style": {
+				"navigationBarTitleText": "厂商管理",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path":"pages/admin/isystem/add-vendor",
+			"style": {
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
+			"path": "pages/admin/isystem/depart",
+			"style": {
+				"navigationBarTitleText": "组织架构",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
 
 		{
 			"path": "pages/admin/mw/trace",
@@ -358,6 +424,9 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#1539AF",
-		"backgroundColor": "#1539AF"
+		"backgroundColor": "#1539AF",
+		"usingComponents": {
+			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node"
+		}
 	}
 }

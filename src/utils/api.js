@@ -242,3 +242,69 @@ export function getMedicalTraceListDelete(data) {
 export function restoreMedicalTrace(data) {
   return request.post('/medical/mwCollectRecord/restore', data);
 }
+// 添加监控设备 
+export function addMonitor(data){
+  let url = "/medical/mwMonitorDevice/add"
+  return request.post(url,data)
+}
+// 编辑监控设备
+export function editMonitor(data){
+  let url = "/medical/mwMonitorDevice/edit"
+  return request.post(url,data)
+}
+// 删除监控设备
+export function deleteMonitor(data){
+  let url = "/medical/mwMonitorDevice/delete"
+  return request.post(url,data)
+}
+// 系统管理登录查询  /backend/medical/mwDeviceValidateRecord/list
+export function systemLoginList(data){
+  let url = "/medical/mwDeviceValidateRecord/list"
+  return request.get(url,data)
+}
+// 获取厂商
+export function deviceAgent(data){
+  let url = "/medical/mwDeviceAgent/list"
+  return request.get(url,data)
+} 
+// 获取所有硬件列表
+export function hardwareList(data){
+  let url = "/medical/mwDeviceAgentDevice/list"
+  return request.get(url,data)
+}
+// 新增厂商状态码 medical/mwDeviceAgentDevice/addBatch
+export function addBatch(data){
+  let url = "/medical/mwDeviceAgentDevice/addBatch"
+  return request.post(url,data)
+}
+// 删除厂商状态码 /medical/mwDeviceAgentDevice/delete
+export function delBatch(data){
+  let url = "/medical/mwDeviceAgentDevice/delete"
+  return request.post(url,data)
+}
+// 禁用删除厂商 /medical/mwDeviceAgentDevice/updateStatus
+export function updateStatus(data){
+  let url = "/medical/mwDeviceAgentDevice/updateStatus"
+  return request.post(url,data)
+}
+// 移动厂商状态码 /backend/medical/mwDeviceAgentDevice/move
+export function moveBatch(data){
+  let url = "/medical/mwDeviceAgentDevice/move"
+  return request.post(url,data)
+}
+
+// 添加厂商 backend/medical/mwDeviceAgent/add
+export function addVendor(data){
+  let url = "/medical/mwDeviceAgent/add"
+  return request.post(url,data)
+}
+// 编辑厂商 backend/medical/mwDeviceAgent/add
+export function editVendor(data){
+  let url = "/medical/mwDeviceAgent/edit"
+  return request.post(url,data)
+}
+// 删除厂商 backend/medical/mwDeviceAgent/add
+export function deleteVendor(data){
+  let url = "/medical/mwDeviceAgent/delete"
+  return request.post(url,data)
+}
