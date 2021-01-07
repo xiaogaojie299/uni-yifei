@@ -49,7 +49,7 @@
       </u-cell-item>
     </u-cell-group>
     <view class="supply-create__button__container">
-      <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()" :disabled="true">
+      <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>

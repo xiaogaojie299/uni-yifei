@@ -100,6 +100,8 @@ export default {
           console.log("result=====>",result);
           uni.setStorageSync("token",result.token)
           uni.setStorageSync("userInfo", JSON.stringify(result));
+          // 在这里捞一次用户权限数据，存入Storage和Vuex
+          this.$store.dispatch('setPermissionList');
           this.$refs.uToast.show({
             title:"登陆成功",
             type: 'success',

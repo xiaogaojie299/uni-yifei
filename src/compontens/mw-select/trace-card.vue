@@ -2,53 +2,62 @@
     <view class="trace-card" @click="detail()">
         <view class="trace-card__header">
             <view class="trace-card__header__title">
-                <view>医废编号: {{ item.code || '' }}</view>
-                <view v-if="mode != 'record'">装箱编号: {{ item.boxCode || '' }}</view>
+                <view v-if="mode == 'warning'">预警时间: {{ item.warningTime || '' }}</view>
+                <view v-else>医废编号: {{ item.code || '' }}</view>
+                <view v-if="mode != 'record' && mode != 'warning'">装箱编号: {{ item.boxCode || '' }}</view>
             </view>
-            <view class="trace-card__header__status">
+            <view class="trace-card__header__status" :style="{color: options.warning ? warningStatusColorMap[item.status] : '#FFB42B'}">
                 <block v-if="options.status">{{ statusMap[item.status] }}</block>
                 <block v-if="options.audit">{{ auditStatusMap[item.auditStatus] }}</block>
+                <block v-if="options.warning">{{ warningStatusMap[item.status] }}</block>
             </view>
         </view>
         <view class="trace-card__content">
             <block v-if="mode == 'record'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailRecord" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'inventory'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailInventory" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'checkout'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailCheckout" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'restore'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailRestore" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
             <block v-else-if="mode == 'supply'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailSupply" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value">{{ item[field.key] || '' }}</text>
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
+                    </view>
+                </view>
+            </block>
+            <block v-else-if="mode == 'warning'">
+                <view class="trace-card__content__item" v-for="(fields, sindex) in detailWarning" :key="sindex">
+                    <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
+                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
         </view>
         <!-- 当审核按钮开启时，需要查看该条数据是否处于待审核的状态才允许展示按钮 -->
-        <view class="trace-card__footer" v-if="options.record || options.remove || options.restore || (options.audit && item.auditStatus == 1)">
+        <view class="trace-card__footer" v-if="options.record || options.remove || options.restore || (options.audit && item.auditStatus == 1) || (options.warningCheck && item.status != 3)">
             <view class="trace-card__footer__button" @click.stop="record()" v-if="options.record">
                 流转过程
             </view>
@@ -63,6 +72,9 @@
             </view>
             <view class="trace-card__footer__button primary" @click.stop="audit(false)" v-if="options.audit && item.auditStatus == 1">
                 拒绝
+            </view>
+            <view class="trace-card__footer__button primary" @click.stop="warningCheck(false)" v-if="options.warningCheck && item.status != 3">
+                立即处理
             </view>
         </view>
     </view>
@@ -99,6 +111,12 @@ export default {
             auditStatusMap: [
                 '', '待审核', '已通过', '已拒绝'
             ],
+            warningStatusMap: [
+                '', '未处理', '处理中', '已通过', '驳回'
+            ],
+            warningStatusColorMap: [
+                '', '#FFB42B', '#FFB42B', '#000000', '#FFB42B'
+            ],
 
             // 溯源的数据列表
             detailRecord: [
@@ -125,7 +143,8 @@ export default {
                     },
                     {
                         key: 'weight',
-                        label: '重量(kg)'
+                        label: '重量',
+                        suffix: 'kg'
                     }
                 ],
                 [
@@ -170,7 +189,8 @@ export default {
                     },
                     {
                         key: 'weight',
-                        label: '重量(kg)'
+                        label: '重量',
+                        suffix: 'kg'
                     }
                 ],
                 [
@@ -215,7 +235,8 @@ export default {
                     },
                     {
                         key: 'weight',
-                        label: '重量(kg)'
+                        label: '重量',
+                        suffix: 'kg'
                     }
                 ],
                 [
@@ -248,7 +269,8 @@ export default {
                     },
                     {
                         key: 'weight',
-                        label: '重量(kg)'
+                        label: '重量',
+                        suffix: 'kg'
                     },
                 ],
                 [
@@ -281,7 +303,8 @@ export default {
                     },
                     {
                         key: 'weight',
-                        label: '重量(kg)'
+                        label: '重量',
+                        suffix: 'kg'
                     },
                 ],
                 [
@@ -309,6 +332,51 @@ export default {
                         key: 'checkoutTime',
                         label: '出库时间'
                     },
+                ]
+            ],
+            // 预警的数据列表
+            detailWarning: [
+                [
+                    {
+                        key: 'typeName',
+                        label: '预警类型'
+                    },
+                ],
+                [
+                    {
+                        key: 'hospitalName',
+                        label: '医院'
+                    }
+                ],
+                [
+                    {
+                        key: 'officeName',
+                        label: '科室'
+                    },
+                ],
+                [
+                    {
+                        key: 'wasteTypeName',
+                        label: '医废类型'
+                    },
+                    {
+                        key: 'weight',
+                        label: '重量',
+                        suffix: 'kg'
+                    },
+                ],
+                [
+                    {
+                        key: 'warningTargetName',
+                        label: '预警对象',
+                        color: '#1539AF'
+                    }
+                ],
+                [
+                    {
+                        key: 'message',
+                        label: '预警信息'
+                    }
                 ]
             ],
         }
@@ -343,6 +411,9 @@ export default {
             });
         },
         detail() {
+            (this.options.warningDetail || false) && uni.navigateTo({
+                url: '/pages/admin/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
+            })
             (this.options.detail || false) && uni.navigateTo({
                 url: '/pages/admin/mw/trace-detail?id=' + this.item.id + (this.mode != 'record' ? ('&mode=' + this.mode) : '')
             })
@@ -350,6 +421,11 @@ export default {
         record() {
             uni.navigateTo({
                 url: '/pages/admin/mw/trace-record?id=' + this.item.id
+            })
+        },
+        warningCheck() {
+            uni.navigateTo({
+                url: '/pages/admin/warning/check?id=' + this.item.id
             })
         },
         restore() {

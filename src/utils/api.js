@@ -231,6 +231,21 @@ export function addSupplementMedicalTrace(data) {
   return request.post('/medical/mwCollectRecord/supply', data);
 }
 
+// 预警信息
+// 获取预警信息列表
+export function listWarningRecord(data) {
+  return request.get('/medical/mwWarningRecord/list', data);
+}
+// 获取预警处理列表
+export function listWarningRecordHandle(data) {
+  return request.get('/medical/mwWarningRecordHandle/list', data);
+}
+// 提交预警处理
+export function handleWarningRecordHandle(data) {
+  return request.post('/medical/mwWarningRecordHandle/handle', data);
+}
+
+
 
 // 数据恢复页面
 

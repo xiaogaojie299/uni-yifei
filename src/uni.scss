@@ -352,6 +352,9 @@ view,input{
   overflow: hidden;
   white-space: nowrap;
 }
+.button__disabled {
+  background: rgba(21, 57, 175, 0.8);
+}
 // .u-drawer-content-visible {
 //   border-radius: 40rpx 40rpx 0 0;
 // }
