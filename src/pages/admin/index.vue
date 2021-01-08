@@ -134,9 +134,15 @@ export default {
       '破损预警'
     ];
     for (let i in menus) {
+      let typeId = parseInt(i) + 1;
+      let route = '/warning/setting';
+      if (typeId == 1 || typeId == 4) {
+        route = '/warning/config';
+      }
+
       this.subMenuList.push({
         name: menus[i],
-        route: '/warning/setting?type=' + (++i)
+        route: route + '?type=' + typeId
       });
     }
   },
