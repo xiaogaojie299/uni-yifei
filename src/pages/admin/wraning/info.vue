@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入医废编号、操作人员查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入预警对象查询" v-model="keyword" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -52,7 +52,7 @@ export default {
         hospitalId: '', // 医院ID
         status: '', // 状态
         type: '', // 预警类型
-        code: '',
+        keyword: '', // 预警对象
         list: [],
     };
   },
@@ -97,11 +97,12 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          departmentId: this.departmentId,
+          officeId: this.departmentId,
           status: this.status,
           type: this.type,
           startTime: this.startTime,
-          endTime: this.endTime
+          endTime: this.endTime,
+          keyword: this.keyword
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];

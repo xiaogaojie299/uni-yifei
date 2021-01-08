@@ -44,8 +44,11 @@
         </u-field>
       </u-cell-item>
       <u-cell-item :title="formLabel.status" :arrow="true"  arrow-direction="right" :value="statusLabel" @click="setShow('statusShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status == 2">
+      <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status >= 2">
         <u-loading v-show="warehouseLoading" slot="icon"/>
+      </u-cell-item>
+      <u-cell-item :title="formLabel.transport" :arrow="true"  arrow-direction="right" :value="transportLabel" @click="setShow('transportShow')" v-show="status == 3">
+        <u-loading v-show="transportLoading" slot="icon"/>
       </u-cell-item>
     </u-cell-group>
     <view class="supply-create__button__container">
@@ -62,6 +65,7 @@
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
     <s-select title="选择暂存间" v-model="warehouseShow" :list="warehouseList" @confirm="selectCallback($event, 'warehouseLabel', 'warehouse', 'warehouseList', 'warehouseIndex')" :default-value="warehouseIndex"></s-select>
     <s-select title="选择状态" v-model="statusShow" :list="statusList" @confirm="selectCallback($event, 'statusLabel', 'status', 'statusList', 'statusIndex')" :default-value="statusIndex"></s-select>
+    <s-select title="选择运输人员" v-model="transportShow" :list="transportList" @confirm="selectCallback($event, 'transportLabel', 'transport', 'transportList', 'transportIndex')" :default-value="transportIndex"></s-select>
   </view>
 </template>
 <script>
@@ -69,10 +73,18 @@ import sSelect from '@/compontens/mw-select/s-select';
 import sPicker from '@/compontens/mw-select/s-picker';
 import sCheckbox from '@/compontens/mw-select/s-checkbox';
 import hospitalSelect from '@/compontens/hospital-select';
-import { getMyHospitalCascadeList, getMyOfficeCascadeList, getMyOfficeUserList, getWasteTypeList, addSupplementMedicalTrace, getMyWarehouseOfficeList } from "@/utils/api.js";
+import { listSelect, getMyHospitalCascadeList, getMyOfficeCascadeList, getMyOfficeUserList, getWasteTypeList, addSupplementMedicalTrace, getMyWarehouseOfficeList } from "@/utils/api.js";
 export default {
   components:{
     sSelect, sPicker, sCheckbox, hospitalSelect
+  },
+  watch: {
+    waste(n, o) {
+      this.departmentId && this.loadTransportList();
+    },
+    departmentId(n, o) {
+      this.waste && this.loadTransportList();
+    }
   },
   data() {
     return {
@@ -84,12 +96,14 @@ export default {
       createUserShow: false, // 收集人员
       statusShow: false, // 状态
       warehouseShow: false, // 暂存间
+      transportShow: false, // 运输人员
 
       hospitalLoading: false,
       wasteLoading: false,
       officeCascadeLoading: false,
       warehouseLoading: false,
       officeUserLoading: false,
+      transportLoading: false, 
 
       // 时间选择器控制
       dateParams: {
@@ -106,6 +120,7 @@ export default {
       departmentList: [], // 科室列表
       officeUserList: [], // 人员列表
       wasteList: [], // 医废类型列表
+      transportList: [], // 运输人员列表
       statusList: [
         {
           label: '未入库',
@@ -131,6 +146,7 @@ export default {
       createUserLabel: '',
       statusLabel: '',
       warehouseLabel: '',
+      transportLabel: '',
 
       // 选择组件的回显索引
       hospitalIndex: [],
@@ -140,6 +156,7 @@ export default {
       wasteIndex: [],
       warehouseIndex: [],
       departmentIndex: [],
+      transportIndex: [],
 
       // 表单提交字段
       hospitalId: '',
@@ -152,6 +169,7 @@ export default {
       weight: '',
       desc: '',
       warehouse: '',
+      transport: '',
       formLabel: {
         dateTime: '收集时间',
         hospitalId: '医院名称',
@@ -162,7 +180,8 @@ export default {
         weight: '医废重量(kg)',
         desc: '备注',
         status: '状态',
-        warehouse: '暂存间'
+        warehouse: '暂存间',
+        transport: '运输人员'
       },
       submitLoading: false,
     };
@@ -203,9 +222,6 @@ export default {
       }
       this.hospitalLabel = hospital.label;
       this.hospitalId = hospital.value;
-      // 加载科室
-      this.loadOfficeCascadeList(hospital.value);
-
     },
     // 清空科室选择
     resetDepartment() {
@@ -284,6 +300,22 @@ export default {
         this.warehouseLoading = false;
       });
     },
+    // 获取运输人员列表，必须是已出库&科室ID&医废类型才可查询
+    loadTransportList() {
+      listSelect({
+        parentId: this.departmentId, // 科室ID
+        wasteType: this.waste, // 医废类型
+      }).then(resp => {
+        if (resp.code == 200) {
+          this.transportList = resp.result.map(item => {
+            return {
+              label: [item.engineDriver, item.licensePlate, item.transitCompany].join('/'),
+              value: item.id
+            }
+          });
+        }
+      });
+    },
     // 共用回调，labelKey 文本的键， valueKey 值的键， listKey 列表的键， indexKey 索引的键
     selectCallback(e, labelKey, valueKey, listKey, indexKey) {
       let result = e[0];
@@ -295,6 +327,7 @@ export default {
 
       // 开始设置Index索引
       let index = this.indexCalc(e, this.$data[listKey]);
+      console.log(result, index);
       this.$set(this, indexKey, index);
     },
     setShow(key) {
@@ -305,9 +338,15 @@ export default {
           icon: 'none'
         });
         return ;
-      } else if ((key == 'warehouseShow' || key == 'officeUserShow' || key == 'createUserShow') && !this.departmentId) {
+      } else if ((key == 'warehouseShow' || key == 'officeUserShow' || key == 'createUserShow' || key == 'transportShow') && !this.departmentId) {
         uni.showToast({
           title: '请先选择科室',
+          icon: 'none'
+        });
+        return ;
+      } else if (key == 'transportShow' && !this.waste) {
+        uni.showToast({
+          title: '请先选择医废类型',
           icon: 'none'
         });
         return ;
@@ -332,10 +371,13 @@ export default {
       }
       for (let item in this.formLabel) {
         if (item != 'desc' && !this.$data[item]) {
-          console.log(this.status, item);
-          // 只有状态大于1的时候，才检查暂存间是否选中
-          if (item == 'warehouse' && this.status != 2) {
+          // 只有状态小于2的时候，才检查暂存间是否选中
+          if (item == 'warehouse' && this.status < 2) {
             // 过滤
+          } else 
+          // 只有状态==3的时候，才检查运输人员是否选中
+          if (item == 'transport' && this.status != 3) {
+
           } else {
             uni.showToast({
               title: this.formLabel[item] + '不合法',
@@ -361,7 +403,8 @@ export default {
         status: this.status,
         wasteType: this.waste,
         weight: parseFloat(this.weight),
-        warehouseId: this.warehouse
+        warehouseId: this.warehouse,
+        transitConfigId: this.transport
       }).then(resp => {
         if (resp.code == 200) {
           uni.showToast({

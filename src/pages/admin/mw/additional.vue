@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入医废编号、操作人员查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入医废编号查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -35,7 +35,7 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: true,
+          auditStatus: true,
           waste: true,
           timestamp: true
         },
@@ -106,6 +106,7 @@ export default {
           hospitalId: this.hospitalId,
           departmentId: this.departmentId,
           status: this.status,
+          auditStatus: this.auditStatus,
           wasteType: this.wasteType,
           startTime: this.startTime,
           endTime: this.endTime,
@@ -127,7 +128,7 @@ export default {
         // 科室ID
         this.departmentId = e.subject;
         // 审核状态
-        this.status = e.status;
+        this.auditStatus = e.auditStatus;
         // 医废类型
         this.wasteType = e.waste;
         // 时间

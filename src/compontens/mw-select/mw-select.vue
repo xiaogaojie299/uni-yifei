@@ -1,5 +1,5 @@
 <template>
-    <view class="mw-select flex-between" >
+    <view class="mw-select flex-between">
         <view class="mw-select-container flex">
             <view class="mw-select-item group" @click="showCascade()" v-if="options.cascade || false">
                 <u-loading size="24" v-if="cascadeLoading"/>
@@ -19,7 +19,7 @@
         <view class="mw-more" v-if="(options.waste || false) || (options.status || false) || (options.timestamp || false) || (options.warningType || false)|| (options.warningStatus || false)">
             <u-icon name="list-dot" size="48" color="#fff" @click="moreShow = !moreShow"></u-icon>
         </view>
-        <u-popup v-model="moreShow" mode="right">
+        <u-popup v-model="moreShow" mode="right" @touchmove.stop.prevent="">
             <view class="tools-popup">
                 <view class="tools-field" v-if="options.waste">
                     <view class="tools-field-name">
@@ -35,6 +35,14 @@
                     </view>
                     <view class="tools-field-container">
                         <view :class="{tag: true, active: status == item.k}" :key="index" v-for="(item, index) in statusList" @click="selectStatus(index)">{{item.v}}</view>
+                    </view>
+                </view>
+                <view class="tools-field" v-if="options.auditStatus">
+                    <view class="tools-field-name">
+                        审核状态
+                    </view>
+                    <view class="tools-field-container">
+                        <view :class="{tag: true, active: auditStatus == item.k}" :key="index" v-for="(item, index) in auditStatusList" @click="selectAuditStatus(index)">{{item.v}}</view>
                     </view>
                 </view>
                 <view class="tools-field" v-if="options.warningType">
@@ -160,6 +168,24 @@ export default {
                     v: '全部'
                 },
             ], // 状态列表
+            auditStatusList: [
+                {
+                    k: 1,
+                    v: '待审核'
+                },
+                {
+                    k: 2,
+                    v: '已通过'
+                },
+                {
+                    k: 3,
+                    v: '已拒绝'
+                },
+                {
+                    k: 0,
+                    v: '全部'
+                },
+            ], // 状态列表
             // 预警类型列表
             warningTypeList: [
                 {
@@ -242,6 +268,7 @@ export default {
             endTime: '', // 结束时间
             warningType: '', // 预警类型
             warningStatus: '', // 预警状态
+            auditStatus: '', // 审核状态
 
         }
     },
@@ -310,6 +337,7 @@ export default {
                 department: this.departmentId,
                 subject: this.subjectId,
                 status: !this.status ? '' : this.status,
+                auditStatus: !this.auditStatus ? '' : this.auditStatus,
                 waste: this.wasteId,
                 startTime: this.startTime,
                 endTime: this.endTime,
@@ -450,6 +478,10 @@ export default {
         // 选择状态
         selectStatus(index) {
             this.status = this.statusList[index].k;
+        },
+        // 选择审核状态
+        selectAuditStatus(index) {
+            this.auditStatus = this.auditStatusList[index].k;
         },
         // 日期点击事件
         dateClick(index) {

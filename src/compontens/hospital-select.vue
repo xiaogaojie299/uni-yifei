@@ -68,7 +68,6 @@ export default {
             this.cascadeIndex = tmpIndex;
         },
         loadHospitalCascade() {
-            console.log(this.hospitalId);
             if (this.hospitalId) {
                 getMyOfficeCascadeList({
                     parentId: this.hospitalId
@@ -80,6 +79,7 @@ export default {
                     }
                 });
             } else {
+                // 加个缓存
                 getMyHospitalCascadeList().then(resp => {
                     if (resp.code == 200) {
                         this.cascadeList = resp.result[0].children || [];

@@ -43,8 +43,13 @@ export function getIndex(){
 
 // 获取医院级联
 export function getMyHospitalCascadeList(){
+  let data = {
+    slkey_cache_key: 'hospital:cascade:list',
+    slkey_cache_timeout: 3600
+  };
   let url = "/system/sysDepartment/getMyHospitalCascadeList";
-  return request.get(url)
+  
+  return request.get(url, data)
 }
 // 获取取区域级联
 export function getThreeAreaCascadeList(){

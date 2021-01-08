@@ -10,30 +10,26 @@
           :class="index === change ? 'active' : ''"
           class="flex-ver-center menu-item"
         >
-          {{ item.meta.title }}
+          {{ item.meta ? (item.meta.title || '') : '' }}
         </view>
       </view>
       <view class="right">
         <scroll-view
           :scroll-y="true"
-          style="white-space: nowrap; min-height: 400rpx"
+          style="white-space: nowrap; height: 100vh;"
           :scroll-into-view="clickId"
           :scroll-with-animation="true"
           @scroll="scroll"
-          @scrolltolower="scrolltolower"
           class="sub-menu"
         >
           <view :class="{active: index2 === subMenuActive, 'menu-item': true}" v-for="(item2, index2) in kindlist[change].children" :key="index2" @tap="goUrl(item2.path, index2)">
-            {{ item2.meta.title }}
+            {{ item2.meta ? (item2.meta.title || '') : '' }}
           </view>
         </scroll-view>
         <scroll-view
           :scroll-y="true"
-          style="white-space: nowrap; min-height: 400rpx"
-          :scroll-into-view="clickId"
+          style="white-space: nowrap; height: 100vh;"
           :scroll-with-animation="true"
-          @scroll="scroll"
-          @scrolltolower="scrolltolower"
           class="sub-menu"
           v-show="subMenuList.length > 0"
         >
@@ -133,13 +129,18 @@ export default {
       '泄露预警',
       '破损预警'
     ];
+    this.subMenuList = [];
     for (let i in menus) {
+      // 先校验有无权限
       let typeId = parseInt(i) + 1;
+      if (!this.$util.checkPermission('warning:setting:type' + typeId)) {
+        continue;
+      }
+
       let route = '/warning/setting';
       if (typeId == 1 || typeId == 4) {
         route = '/warning/config';
       }
-
       this.subMenuList.push({
         name: menus[i],
         route: route + '?type=' + typeId
@@ -150,6 +151,8 @@ export default {
       this.clickId = "po" + i;
       this.change = i;
       this.isLeftClick = true;
+      this.subMenuActive = '';
+      this.subMenuList = [];
     },
     scroll(e) {
       if (this.isLeftClick) {

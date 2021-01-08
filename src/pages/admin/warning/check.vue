@@ -1,6 +1,6 @@
 <template>
   <view class="warning-check">
-      <scroll-view  scroll-y class="warning-check__container">
+      <scroll-view scroll-y class="warning-check__container" :style="{height: 'calc(100vh - ' + bottomButtonsHeight + 'rpx)'}">
         <view class="warning-check__container__box" v-for="(item, index) in list" :key="index">
             <view class="warning-check__container__box__item">
                 <view class="warning-check__container__box__item__field warning-check__container__box__item__field__creator">
@@ -24,17 +24,17 @@
         </view>
       </scroll-view>
     <view class="warning-check__footer">
+        <view class="warning-check__footer__line" v-if="canAccept || canRefuse">
+            <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
+                <u-loading v-show="refuseLoading" /> 驳回
+            </view>
+            <view v-if="canAccept" :class="{'warning-check__footer__btn': true, 'warning-check__footer__confirm': true, 'warning-check__footer__disabled': acceptLoading}" @click="handle(3, 'acceptLoading')">
+                <u-loading v-show="acceptLoading" /> 通过
+            </view>
+        </view>
         <view class="warning-check__footer__line" v-if="canSubmit">
             <view :class="{'warning-check__footer__btn': true, 'warning-check__footer__submit': true, 'warning-check__footer__disabled': submitLoading}" @click="handle(2, 'submitLoading')">
                 <u-loading v-show="submitLoading" /> 提交
-            </view>
-        </view>
-        <view class="warning-check__footer__line" v-if="canAccept || canRefuse">
-            <view :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
-                <u-loading v-show="refuseLoading" /> 驳回
-            </view>
-            <view :class="{'warning-check__footer__btn': true, 'warning-check__footer__confirm': true, 'warning-check__footer__disabled': acceptLoading}" @click="handle(3, 'acceptLoading')">
-                <u-loading v-show="acceptLoading" /> 通过
             </view>
         </view>
     </view>
@@ -42,7 +42,6 @@
 </template>
 <script>
 import { listWarningRecordHandle, handleWarningRecordHandle } from "@/utils/api.js";
-import * as util from '@/utils/util';
 export default {
   components:{
   },
@@ -73,19 +72,23 @@ export default {
   computed: {
       // 是否允许提交
       canSubmit() {
-          return this.canHandle && util.checkPermission('warnInfo:status:submit');
+          return this.canHandle && this.$util.checkPermission('warnInfo:status:submit');
       },
       // 是否允许通过
       canAccept() {
-          return this.canHandle && util.checkPermission('warnInfo:status:pass');
+          return this.canHandle && this.$util.checkPermission('warnInfo:status:pass');
       },
       // 是否允许驳回
       canRefuse() {
-          return this.canHandle && util.checkPermission('warnInfo:status:reject');
+          return this.canHandle && this.$util.checkPermission('warnInfo:status:reject');
       },
+      // 底部的固定到底是两排按钮还是一排按钮?
+      bottomButtonsHeight() {
+          return this.canSubmit && (this.canAccept || this.canRefuse) ? 200 : 100;
+      }
   },
   onPullDownRefresh() {
-    this.loadRecordList();
+    this.loadRecordList(this.id);
   },
   methods: {
       // 加载处理列表
@@ -154,7 +157,7 @@ page {
 }
 .warning-check {
     &__container {
-        height: calc(100vh - 300rpx);
+        // height: calc(100vh - 200rpx);
         &__box {
             padding: 16rpx 28rpx;
             box-sizing: border-box;
@@ -192,7 +195,7 @@ page {
     }
     &__footer {
         width: 100%;
-        height: 200rpx;
+        // height: 200rpx;
         position: fixed;
         bottom: 0;
         &__line {
@@ -207,8 +210,9 @@ page {
             background: $my-main-color;
         }
         &__submit {
-            border-radius: 40rpx;
-            min-width: 400rpx;
+            border-radius: 0;
+            width: 100% !important;
+            // min-width: 400rpx;
             background: $my-main-color;
         }
         &__cancel {

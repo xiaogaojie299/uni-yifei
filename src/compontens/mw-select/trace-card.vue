@@ -52,7 +52,7 @@
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailWarning" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
                         {{field.label}}：
-                        <text class="value" :style="{color: field.color || '#000'}" v-if="field.callback" @click.stop="field.callback">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
+                        <text class="value" :style="{color: field.color || '#000'}" v-if="field.callback" @tap.stop="field.callback">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                         <text class="value" :style="{color: field.color || '#000'}" v-else>{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
@@ -379,6 +379,7 @@ export default {
                         key: 'message',
                         label: '预警信息',
                         callback: () => {
+                            console.log('hello');
                             uni.navigateTo({
                                 url: '/pages/admin/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
                             })
@@ -391,6 +392,20 @@ export default {
     mounted() {
     },
     watch: {
+    },
+    computed: {
+        // 是否可以删除
+        canDelete() {
+            return this.$util.checkPermission('trace:delete');
+        },
+        // 是否可以修改出库配置
+        canEditOutbound() {
+            return this.$util.checkPermission('outbound:setting:edit');
+        },
+        // 是否可以删除出库配置
+        canDeleteOutbound() {
+            return this.$util.checkPermission('outbound:setting:delete');
+        }
     },
     methods: {
         audit(flag) {

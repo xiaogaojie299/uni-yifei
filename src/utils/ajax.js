@@ -1,3 +1,4 @@
+import { setCache, getCache } from '@/utils/util';
 class Ajax {
     //定义baseURL
     constructor(parms) {
@@ -10,16 +11,38 @@ class Ajax {
     }
   
     // post 请求
-    post(url, data,type) {
-        return this.ajax('POST', url, data,type)
+    post(url, data, type) {
+        return this.ajax('POST', url, data, type)
     }
-    // 公共请求方法
-    ajax(method, url, data,type) {
+    /**
+     * 
+     * 公共请求方法
+     * 
+     * 
+     * data中追加缓存配置，为防止与接口冲突，该类型的字段前缀为：SLKEY_ 
+     * SLKEY == SmallApp Local Key
+     * 
+     * 缓存标识符为 slkey_cache_key
+     * 缓存有效期为 slkey_cache_timeout, 单位：秒
+     * 定义某个接口的缓存KEY和缓存时间
+     * 
+     */
+    ajax(method, url, data, type) {
+        // 修饰一下，data必须是一个对象
+        data = data == null ? {} : data;
         wx.showLoading({
             title: '加载中',
             mask: false
         })
+        // 检查该接口是否指定了缓存
         return new Promise((resolve, reject) => {
+            if (data.slkey_cache_key) {
+                let responseData = getCache(data.slkey_cache_key);
+                if (responseData) {
+                    resolve(responseData);
+                    return ;
+                }
+            }
             uni.request({
                 url: this.baseURL + url,
                 data,
@@ -36,6 +59,10 @@ class Ajax {
                             path:"../pages/login/index.vue"
                         })
                     } else {
+                        // 这里要处理一下，如果有缓存标记，处理一下缓存
+                        if (res.data.code == 200 && data.slkey_cache_key) {
+                            setCache(data.slkey_cache_key, res.data, data.slkey_cache_timeout || 3600)
+                        }
                         if (res.data.code != 200) {
                             uni.showToast({
                                 title: res.data.message,

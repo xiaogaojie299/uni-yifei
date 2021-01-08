@@ -1,20 +1,24 @@
 <template>
     <view class="warning-setting">
-        <s-field :label="labelList[type].label" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()"/>
-        <block v-if="type == 8 || type == 9">
-            <u-cell-group>
-                <u-cell-item title="设置类型值" @click="wasteShow = true" :arrow="true"  arrow-direction="right" :value="wasteLabel">
-                    <u-loading v-show="wasteLoading" slot="icon"/>
-                </u-cell-item>
-            </u-cell-group>
-            <s-select-multi title="选择类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteIndex" multi></s-select-multi>
+        <view class="warning-setting__empty-container flex-ver-center" v-if="type == 2">
+            暂无配置
+        </view>
+        <block v-else>
+            <s-field :label="labelList[type].label" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()"/>
+            <block v-if="type == 8 || type == 9">
+                <u-cell-group>
+                    <u-cell-item title="设置类型值" @click="wasteShow = true" :arrow="true"  arrow-direction="right" :value="wasteLabel">
+                        <u-loading v-show="wasteLoading" slot="icon"/>
+                    </u-cell-item>
+                </u-cell-group>
+                <s-select-multi title="选择类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteIndex" multi></s-select-multi>
+            </block>
+            <view class="warning-setting__button__container">
+                <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
+                    <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '保存中' : '保存'}}
+                </view>
+            </view>
         </block>
-
-        <view class="warning-setting__button__container">
-        <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
-            <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '保存中' : '保存'}}
-        </view>
-        </view>
     </view>
 </template>
 <script>
@@ -214,6 +218,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .warning-setting {
+  &__empty-container {
+      height: 100vh;
+      font-size: 32rpx;
+      color: #000;
+  }
   &__button__container {
       position: fixed;
       height: 100rpx;

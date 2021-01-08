@@ -50,7 +50,7 @@
           拒绝
         </view>
         <view class="trace-detail__footer__btn trace-detail__footer__confirm" @click="audit(true)">
-          同意
+          通过
         </view>
       </block>
       <block v-if="mode == 'restore'">

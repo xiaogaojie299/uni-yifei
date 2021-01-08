@@ -1,8 +1,8 @@
 <template>
     <view class="warning-config">
         <u-cell-group>
-            <u-cell-item :title="label" :arrow="true"  arrow-direction="right" @click="jump()" />
-            <u-cell-item title="自定义时长设置" :arrow="true"  arrow-direction="right" @click="jumpCustom()" />
+            <u-cell-item :title-style="{color: '#000'}" :title="label" :arrow="true"  arrow-direction="right" @click="jump()" />
+            <u-cell-item :title-style="{color: '#000'}" title="自定义时长设置" :arrow="true"  arrow-direction="right" @click="jumpCustom()" />
         </u-cell-group>
     </view>
 </template>

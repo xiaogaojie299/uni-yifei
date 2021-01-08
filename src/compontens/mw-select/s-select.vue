@@ -202,6 +202,12 @@ export default {
 				if(val) setTimeout(() => this.init(), 10);
 			}
 		},
+		list: {
+			deep: true,
+			handler() {
+				this.value && this.init();
+			}
+		},
 	},
 	computed: {
 		uZIndex() {
