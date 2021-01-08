@@ -15,9 +15,13 @@
 				'is-current': node.isCurrent && highlightCurrent
 			}" 
 			:style="{ 
+				'padding-left': (node.level - 1) * indent -10 + 'px' 
+			}"
+			>
+			<!-- :style="{ 
 				'padding-left': (node.level - 1) * indent + 'px' 
-			}">
-			<text 
+			}" -->
+			<!-- <text 
 				@tap.stop="handleExpandIconClick" 
 				:class="[
 					{ 
@@ -27,7 +31,24 @@
 					'ly-tree-node__expand-icon', 
 					iconClass ? iconClass : 'ly-iconfont ly-icon-caret-right'
 				]">
-			</text>
+			</text> -->
+			<img 
+				:src="!node.isLeaf && node.expanded?require('@/static/images/minus.png'):require('@/static/images/add.png')"
+				style="height:40rpx;width:40rpx"
+				@tap.stop="handleExpandIconClick"
+				v-if="!node.isLeaf" 
+				:class="[
+					{ 
+						'is-leaf': node.isLeaf, 
+					}, 
+					'ly-tree-node__expand-icon',
+					'pr-10' 
+				]" />
+			<!-- <view class="operation">
+				<text>编辑</text>
+				<text v-if="node.isLeaf" class="allow-del">删除</text>
+				<text v-else @click.stop="delNode" class="no-del">删除</text>
+			</view> -->
 			
 			<ly-checkbox v-if="checkboxVisible || radioVisible"
 				:type="checkboxVisible ? 'checkbox' : 'radio'" 
@@ -38,6 +59,7 @@
 			
 			<text v-if="node.loading" 
 				class="ly-tree-node__loading-icon ly-iconfont ly-icon-loading">
+				测试
 			</text>
 			
 			<template v-if="node.icon && node.icon.length > 0">
@@ -77,12 +99,18 @@
 </template>
 
 <script>
+	// 自己的业务逻辑
+	import {listRegionChildren} from '@/utils/api' 
 	import {getNodeKey} from './tool/util.js';
 	import lyCheckbox from './components/ly-checkbox.vue';
 
+	import mixins from "@/mixins/mx-tree"
+
 	export default {
 		name: 'LyTreeNode',
-		
+	
+		mixins:[mixins],
+	
 		componentName: 'LyTreeNode',
 		
 		components: {
@@ -161,6 +189,9 @@
 		},
 		
 		methods: {
+			delNode(){
+				console.log("删除");
+			},
 			getNodeKey(nodeId) {
 				let node = this.tree.store.root.getChildNodes([nodeId])[0];
 				return getNodeKey(this.tree.nodeKey, node.data);
@@ -214,6 +245,18 @@
 				if (this.tree.checkOnClickNode && !this.node.disabled) {
 					(this.checkboxVisible || this.radioVisible) && this.handleCheckChange(!this.node.checked);
 				}
+				/*  
+				if(this.node.childNodesId.length==0){
+					let that = this;
+					let params = {
+						parentId:that.node.key
+					}
+					listRegionChildren(params).then(res=>{
+						//this.$set(that.node.data,"children",res.result) //同步刷新
+					})
+					// console.log(that.node);
+				}
+				*/
 				
 				this.tree.$emit('node-click', this.node);
 			},
@@ -227,7 +270,6 @@
 				} else {
 					this.node.expand();
 					this.tree.$emit('node-expand', this.node);
-					
 					if (this.tree.accordion) {
 						uni.$emit(`${this.tree.elId}-tree-node-expand`, this.node);
 					}
@@ -287,14 +329,13 @@
 				});
 			}
 		},
-		
 		beforeDestroy() {
 			this.$parent = null;
 		}
 	};
 </script>
 
-<style>
+<style lang="scss">
 	.ly-tree-node {
 		white-space: nowrap;
 		outline: 0
@@ -304,14 +345,49 @@
 		display: flex;
 		align-items: center;
 		height: 70rpx;
+		position: relative;
+		border:1px solid#EAEAEA;
+	}
+	.ly-tree-node__content>.operation{
+		position: absolute;
+		right: 0;
+		text{
+			display: inline-block;
+			text-align: center;
+			width: 120rpx;
+			height: 56rpx;
+			line-height: 56rpx;
+			background: #FFFFFF;
+			border-radius: 30rpx;
+			font-size: 24rpx;
+			font-family: PingFang-SC-Medium, PingFang-SC;
+			font-weight: 500;
+		}
+		text:nth-of-type(1){
+			border: 2rpx solid #1539AF;
+			color:#1539AF;
+		}
+		text:nth-of-type(2){
+			margin-left:10rpx;
+		}
 	}
 	
+	/* 允许删除的样式 */
+	.allow-del{		
+		border:1px solid red;
+		color:red
+	}
+	/* 不允许删除的样式 */
+	.no-del{		
+		border:1px solid RGBA(105, 105, 105, 1);
+		color:RGBA(105, 105, 105, 1)
+	}
 	.ly-tree-node__content.is-current {
 		background-color: #F5F7FA;
 	}
 	
 	.ly-tree-node__content>.ly-tree-node__expand-icon {
-		padding: 12rpx;
+		// padding: 12rpx;
 	}
 	
 	.ly-tree-node__checkbox {
@@ -400,7 +476,7 @@
 	}
 	
 	.ly-icon-caret-right:before {
-		content: "\e8ee";
+		// content: "\e8ee";
 	}
 	
 	.ly-icon-loading:before {

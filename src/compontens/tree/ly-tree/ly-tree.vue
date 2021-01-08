@@ -26,7 +26,7 @@
 					:indent="indent" 
 					:icon-class="iconClass">
 				</ly-tree-node>
-			</view>
+			</view> 
 		</template>
 	</view>
 </template>
@@ -37,9 +37,13 @@
 	import {getNodeKey} from './tool/util.js';
 	import LyTreeNode from './ly-tree-node.vue';
 
+	import mixins from "@/mixins/mx-tree"
+
 	export default {
 		name: 'LyTree',
 		
+		mixins:[mixins],
+
 		componentName: 'LyTree',
 		
 		components: {
@@ -66,15 +70,11 @@
 		},
 		
 		props: {
-			// 展示数据
-			treeData: Array,
-			
 			// 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
 			ready: {
 				type: Boolean,
 				default: true
 			},
-			
 			// 内容为空的时候展示的文本
 			emptyText: {
 				type: String,
@@ -532,7 +532,6 @@
 		cursor: default;
 		background: #FFF;
 		color: #606266;
-		padding: 30rpx;
 	}
 	
 	.ly-tree.is-empty {

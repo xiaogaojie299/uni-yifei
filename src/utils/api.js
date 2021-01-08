@@ -348,3 +348,7 @@ export function deleteVendor(data){
   let url = "/medical/mwDeviceAgent/delete"
   return request.post(url,data)
 }
+// 获取组织架构后的科室 sysDepartment/listRegionChildren?
+export function listRegionChildren(data){
+  return request.get('/system/sysDepartment/listRegionChildren',data)
+}
