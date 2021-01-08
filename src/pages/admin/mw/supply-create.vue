@@ -2,11 +2,11 @@
   <view class="supply-create">
     <u-cell-group>
       <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.cascadeId" :arrow="true"  arrow-direction="right" :value="cascadeLabel" @click="setShow('cascadeShow')">
-        <u-loading v-show="hospitalLoading" slot="icon"/>
+      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')">
+        <!-- <u-loading v-show="hospitalLoading" slot="icon"/> -->
       </u-cell-item>
       <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="setShow('departmentShow')">
-        <u-loading v-show="officeCascadeLoading" slot="icon"/>
+        <!-- <u-loading v-show="officeCascadeLoading" slot="icon"/> -->
       </u-cell-item>
       <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="setShow('officeUserShow')">
         <u-loading v-show="officeUserLoading" slot="icon"/>
@@ -55,8 +55,8 @@
     </view>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
-    <s-select mode="mutil-column-auto" title="选择医院" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
-    <s-select mode="mutil-column-auto" title="选择科室" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
+    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"  />
+    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :hospital-id="hospitalId"/>
     <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
     <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId', 'officeUserList', 'createUserIndex')" :default-value="createUserIndex"></s-select>
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
@@ -68,14 +68,15 @@
 import sSelect from '@/compontens/mw-select/s-select';
 import sPicker from '@/compontens/mw-select/s-picker';
 import sCheckbox from '@/compontens/mw-select/s-checkbox';
+import hospitalSelect from '@/compontens/hospital-select';
 import { getMyHospitalCascadeList, getMyOfficeCascadeList, getMyOfficeUserList, getWasteTypeList, addSupplementMedicalTrace, getMyWarehouseOfficeList } from "@/utils/api.js";
 export default {
   components:{
-    sSelect, sPicker, sCheckbox
+    sSelect, sPicker, sCheckbox, hospitalSelect
   },
   data() {
     return {
-      cascadeShow: false, // 医院选择显示
+      hospitalShow: false, // 医院选择显示
       departmentShow: false, // 科室选择显示
       dateShow: false, // 时间选择
       officeUserShow: false, // 人员显示
@@ -101,7 +102,7 @@ export default {
       },
 
 
-      cascadeList: [], // 医院级联列表
+      hospitalList: [], // 医院级联列表
       departmentList: [], // 科室列表
       officeUserList: [], // 人员列表
       wasteList: [], // 医废类型列表
@@ -123,7 +124,7 @@ export default {
 
 
       // 表单显示列表
-      cascadeLabel: '',
+      hospitalLabel: '',
       departmentLabel: '',
       officeUserLabel: '',
       wasteLabel: '',
@@ -132,7 +133,7 @@ export default {
       warehouseLabel: '',
 
       // 选择组件的回显索引
-      cascadeIndex: [],
+      hospitalIndex: [],
       officeUserIndex: [],
       createUserIndex: [],
       statusIndex: [],
@@ -141,7 +142,7 @@ export default {
       departmentIndex: [],
 
       // 表单提交字段
-      cascadeId: '',
+      hospitalId: '',
       departmentId: '',
       dateTime: '',
       officeUserId: '',
@@ -153,7 +154,7 @@ export default {
       warehouse: '',
       formLabel: {
         dateTime: '收集时间',
-        cascadeId: '医院名称',
+        hospitalId: '医院名称',
         departmentId: '科室名称',
         officeUserId: '科室人员',
         waste: '医废类型',
@@ -167,7 +168,6 @@ export default {
     };
   },
   onLoad(option) {
-    this.loadHospitalCascade();
     this.loadWasteType();
   },
   methods: {
@@ -191,46 +191,20 @@ export default {
         this.wasteLoading = false;
       });;
     },
-    // 计算属性
-    indexCalc(e, tmpData) {
-        let cascadeIndex = [];
-        for (let i in e) {
-            let index = tmpData.findIndex(item => item.value == e[i].value);
-            if (index > -1) {
-                cascadeIndex.push(index);
-                tmpData = tmpData[index].children;
-            }
-        }
-        return cascadeIndex;
-    },
-    // 获取医院列表
-    loadHospitalCascade() {
-      this.hospitalLoading = true;
-      getMyHospitalCascadeList().then(resp => {
-        if (resp.code == 200) {
-          this.cascadeList = resp.result[0].children || [];
-        }
-      }).catch(err => {}).finally(e => {
-        this.hospitalLoading = false;
-      });
-    },
     // 医院选择回调事件
-    cascadeCallback(e) {
+    hospitalCallback(e) {
+      e = e.e;
       let hospital = e[e.length - 1];
-      if (hospital.value != this.cascadeId) {
+      if (hospital.value != this.hospitalId) {
         // 如果不一致，需要清除
         this.resetDepartment();
         this.resetOfficeCascade();
         this.resetWarehouse();
       }
-      this.cascadeLabel = hospital.label;
-      this.cascadeId = hospital.value;
-      // 计算属性
-      this.cascadeIndex = this.indexCalc(e, this.cascadeList);
+      this.hospitalLabel = hospital.label;
+      this.hospitalId = hospital.value;
       // 加载科室
       this.loadOfficeCascadeList(hospital.value);
-
-      // 一旦变更
 
     },
     // 清空科室选择
@@ -245,8 +219,21 @@ export default {
       this.officeUserId = '';
       this.officeUserLabel = '';
     },
+    // 计算属性
+    indexCalc(e, tmpData) {
+        let cascadeIndex = [];
+        for (let i in e) {
+            let index = tmpData.findIndex(item => item.value == e[i].value);
+            if (index > -1) {
+                cascadeIndex.push(index);
+                tmpData = tmpData[index].children;
+            }
+        }
+        return cascadeIndex;
+    },
     // 科室选择的回调事件
     departmentCallback(e) {
+      e = e.e;
       let department = e[e.length - 1];
       if (department.value != this.departmentId) {
         // 如果不一致，需要清除
@@ -256,24 +243,10 @@ export default {
       this.departmentLabel = department.label;
       this.departmentId = department.value;
 
-      this.departmentIndex = this.indexCalc(e, this.departmentList);
       // 加载科室人员
       this.loadOfficeUserList(department.value);
       // 加载暂存间，提前加载，防止网络卡顿
       this.loadWarehouseOfficeList(department.value);
-    },
-    // 获取科室列表
-    loadOfficeCascadeList(parentId) {
-      this.officeCascadeLoading = true;
-      getMyOfficeCascadeList({
-            parentId
-      }).then(resp => {
-        if (resp.code == 200) {
-          this.departmentList = resp.result || [];
-        }
-      }).catch(err => {}).finally(e => {
-        this.officeCascadeLoading = false;
-      });
     },
     // 获取科室人员列表
     loadOfficeUserList(officeId) {
@@ -326,7 +299,7 @@ export default {
     },
     setShow(key) {
       // 如果是展示科室列表，应先选择医院
-      if (key == 'departmentShow' && !this.cascadeId) {
+      if (key == 'departmentShow' && !this.hospitalId) {
         uni.showToast({
           title: '请先选择医院',
           icon: 'none'
@@ -359,8 +332,9 @@ export default {
       }
       for (let item in this.formLabel) {
         if (item != 'desc' && !this.$data[item]) {
+          console.log(this.status, item);
           // 只有状态大于1的时候，才检查暂存间是否选中
-          if (item == 'warehouse' && this.status == 2) {
+          if (item == 'warehouse' && this.status != 2) {
             // 过滤
           } else {
             uni.showToast({
@@ -383,7 +357,7 @@ export default {
         departmentId: this.departmentId,
         departmentUserId: this.officeUserId,
         description: this.desc,
-        hospitalId: this.cascadeId,
+        hospitalId: this.hospitalId,
         status: this.status,
         wasteType: this.waste,
         weight: parseFloat(this.weight),
