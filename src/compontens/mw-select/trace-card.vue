@@ -51,7 +51,9 @@
             <block v-else-if="mode == 'warning'">
                 <view class="trace-card__content__item" v-for="(fields, sindex) in detailWarning" :key="sindex">
                     <view class="trace-card__content__item__field" v-for="(field, index) in fields" :key="index">
-                        {{field.label}}：<text class="value" :style="{color: field.color || '#000'}">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
+                        {{field.label}}：
+                        <text class="value" :style="{color: field.color || '#000'}" v-if="field.callback" @click.stop="field.callback">{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
+                        <text class="value" :style="{color: field.color || '#000'}" v-else>{{ item[field.key] || '' }} {{field.suffix || ''}}</text>
                     </view>
                 </view>
             </block>
@@ -81,12 +83,12 @@
 </template>
 <script>
 
-	/**
-	 * select 医废卡片页
-	 * @description 现用于多个，包含但不限于：追溯，入库，出库，收集记录，补录，数据恢复
-	 * @property {String} mode 模式选择，"record"-追溯/收集记录，inventory"-入库，"checkout"-出库， "restore"-数据恢复，"supply"-医废补录
-	 * @property {String} options 参数配置，'remove'-删除按钮，'restore'-恢复按钮，'record'-流转过程，'detail'-详情页跳转，'status'-状态，'audit'-审核状态
-	 */
+/**
+ * select 医废卡片页
+ * @description 现用于多个，包含但不限于：追溯，入库，出库，收集记录，补录，数据恢复
+ * @property {String} mode 模式选择，"record"-追溯/收集记录，inventory"-入库，"checkout"-出库， "restore"-数据恢复，"supply"-医废补录，"warning"-预警信息
+ * @property {String} options 参数配置，'remove'-删除按钮，'restore'-恢复按钮，'record'-流转过程，'detail'-详情页跳转，'status'-状态，'audit'-审核状态, 'warningCheck'-处理预警
+ */
 import { deleteMedicalTrace, auditSupplementMedicalTrace, restoreMedicalTrace } from '@/utils/api';
 export default {
     props: {
@@ -112,7 +114,7 @@ export default {
                 '', '待审核', '已通过', '已拒绝'
             ],
             warningStatusMap: [
-                '', '未处理', '处理中', '已通过', '驳回'
+                '', '未处理', '处理中', '通过', '驳回'
             ],
             warningStatusColorMap: [
                 '', '#FFB42B', '#FFB42B', '#000000', '#FFB42B'
@@ -375,7 +377,12 @@ export default {
                 [
                     {
                         key: 'message',
-                        label: '预警信息'
+                        label: '预警信息',
+                        callback: () => {
+                            uni.navigateTo({
+                                url: '/pages/admin/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
+                            })
+                        }
                     }
                 ]
             ],
@@ -411,12 +418,16 @@ export default {
             });
         },
         detail() {
-            (this.options.warningDetail || false) && uni.navigateTo({
-                url: '/pages/admin/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
-            })
-            (this.options.detail || false) && uni.navigateTo({
-                url: '/pages/admin/mw/trace-detail?id=' + this.item.id + (this.mode != 'record' ? ('&mode=' + this.mode) : '')
-            })
+            if (this.options.warningDetail || false) {
+                uni.navigateTo({
+                    url: '/pages/admin/warning/check?id=' + this.item.id
+                });
+            }
+            if (this.options.detail || false) {
+                uni.navigateTo({
+                    url: '/pages/admin/mw/trace-detail?id=' + this.item.id + (this.mode != 'record' ? ('&mode=' + this.mode) : '')
+                })
+            }
         },
         record() {
             uni.navigateTo({
@@ -427,6 +438,14 @@ export default {
             uni.navigateTo({
                 url: '/pages/admin/warning/check?id=' + this.item.id
             })
+        },
+        itemClick(e, item, field) {
+            // 如果需要处理，要阻止事件冒泡
+            if (field.key == 'warningTargetName') {
+                e.stopPropagation();
+                // 开始计算
+                console.log(e, item, field);
+            }
         },
         restore() {
             let _this = this;

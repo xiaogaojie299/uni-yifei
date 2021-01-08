@@ -20,7 +20,7 @@
             </view>
         </view>
         <view class="warning-check__container__textarea" v-if="canSubmit || canAccept || canRefuse">
-            <u-input v-model="replyText" type="textarea" class="warning-check__container__textarea__input" :custom-style="{padding: '28rpx 22rpx'}" :clearable="false" :height="220"/>
+            <u-input v-model="replyText" type="textarea" placeholder="填写处理意见..." class="warning-check__container__textarea__input" :custom-style="{padding: '28rpx 22rpx'}" :clearable="false" :height="220"/>
         </view>
       </scroll-view>
     <view class="warning-check__footer">

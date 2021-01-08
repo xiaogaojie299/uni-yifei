@@ -32,8 +32,8 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: true,
-          waste: true,
+          warningStatus: true,
+          warningType: true,
           timestamp: true
         },
         traceOptions: {
@@ -46,15 +46,12 @@ export default {
         total: 0,
         pageNo: 1,
         pageSize: 10,
-        auditStatus: '', // 审核状态
         departmentId: '', // 科室ID
         startTime: '',
         endTime: '',
         hospitalId: '', // 医院ID
         status: '', // 状态
-        transitCompany: '', // 搜索关键词
-        transitConfigId: 0, // 出库配置ID
-        wasteType: '', // 医废类型
+        type: '', // 预警类型
         code: '',
         list: [],
     };
@@ -102,10 +99,9 @@ export default {
           hospitalId: this.hospitalId,
           departmentId: this.departmentId,
           status: this.status,
-          wasteType: this.wasteType,
+          type: this.type,
           startTime: this.startTime,
-          endTime: this.endTime,
-          code: this.code
+          endTime: this.endTime
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
@@ -123,9 +119,9 @@ export default {
         // 科室ID
         this.departmentId = e.subject;
         // 审核状态
-        this.status = e.status;
+        this.status = e.warningStatus;
         // 医废类型
-        this.wasteType = e.waste;
+        this.type = e.warningType;
         // 时间
         this.startTime = e.startTime;
         this.endTime = e.endTime;

@@ -1,5 +1,4 @@
 <template>
-    <div>
-        预警配置
-    </div>
+    <view class="warning-setting">
+    </view>
 </template>

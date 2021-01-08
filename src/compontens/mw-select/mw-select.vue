@@ -1,22 +1,22 @@
 <template>
     <view class="mw-select flex-between" >
         <view class="mw-select-container flex">
-            <view class="mw-select-item group" @click="showCascade()" v-if="options.cascade">
+            <view class="mw-select-item group" @click="showCascade()" v-if="options.cascade || false">
                 <u-loading size="24" v-if="cascadeLoading"/>
                 <text class="name">{{cascadeLabel}}</text>
                 <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
-            <view class="mw-select-item department" @click="visibleDepartment()" v-if="options.cascade && options.department">
+            <view class="mw-select-item department" @click="visibleDepartment()" v-if="(options.cascade || false) && (options.department || false)">
                 <u-loading size="24" v-if="officeCascadeLoading"/>
                 <text class="name">{{departmentLabel}}</text>
                 <u-icon :name="!departmentShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
-            <view class="mw-select-item" @click="visibleSubject()" v-if="options.cascade && options.department && options.subject">
+            <view class="mw-select-item" @click="visibleSubject()" v-if="(options.cascade || false) && (options.department || false) && (options.subject || false)">
                 <text class="name">{{subjectLabel}}</text>
                 <u-icon :name="!subjectShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
         </view>
-        <view class="mw-more" v-if="options.waste || options.status || options.timestamp">
+        <view class="mw-more" v-if="(options.waste || false) || (options.status || false) || (options.timestamp || false) || (options.warningType || false)|| (options.warningStatus || false)">
             <u-icon name="list-dot" size="48" color="#fff" @click="moreShow = !moreShow"></u-icon>
         </view>
         <u-popup v-model="moreShow" mode="right">
@@ -35,6 +35,22 @@
                     </view>
                     <view class="tools-field-container">
                         <view :class="{tag: true, active: status == item.k}" :key="index" v-for="(item, index) in statusList" @click="selectStatus(index)">{{item.v}}</view>
+                    </view>
+                </view>
+                <view class="tools-field" v-if="options.warningType">
+                    <view class="tools-field-name">
+                        预警类型
+                    </view>
+                    <view class="tools-field-container">
+                        <view :class="{tag: true, active: warningType == item.k}" :key="index" v-for="(item, index) in warningTypeList" @click="selectWarningType(index)">{{item.v}}</view>
+                    </view>
+                </view>
+                <view class="tools-field" v-if="options.warningStatus">
+                    <view class="tools-field-name">
+                        预警状态
+                    </view>
+                    <view class="tools-field-container">
+                        <view :class="{tag: true, active: warningStatus == item.k}" :key="index" v-for="(item, index) in warningStatusList" @click="selectWarningStatus(index)">{{item.v}}</view>
                     </view>
                 </view>
                 <view class="tools-field" v-if="options.timestamp">
@@ -144,6 +160,73 @@ export default {
                     v: '全部'
                 },
             ], // 状态列表
+            // 预警类型列表
+            warningTypeList: [
+                {
+                    k: 1,
+                    v: '未出医废',
+                },
+                {
+                    k: 2,
+                    v: '违规交接',
+                },
+                {
+                    k: 3,
+                    v: '入库超时',
+                },
+                {
+                    k: 4,
+                    v: '出库超时',
+                },
+                {
+                    k: 5,
+                    v: '遗失',
+                },
+                {
+                    k: 6,
+                    v: '入库重量',
+                },
+                {
+                    k: 7,
+                    v: '出库重量',
+                },
+                {
+                    k: 8,
+                    v: '泄露',
+                },
+                {
+                    k: 9,
+                    v: '破损',
+                },
+                {
+                    k: 0,
+                    v: '全部',
+                }
+            ],
+            // 预警状态
+            warningStatusList: [
+                {
+                    k: 1,
+                    v: '未处理'
+                },
+                {
+                    k: 2,
+                    v: '处理中'
+                },
+                {
+                    k: 3,
+                    v: '通过'
+                },
+                {
+                    k: 4,
+                    v: '驳回'
+                },
+                {
+                    k: 0,
+                    v: '全部'
+                },
+            ],
+
             cascadeList: [], 
             cascadeLabel: '选择组织',
             departmentLabel: '部门',
@@ -157,6 +240,9 @@ export default {
             departmentId: '',
             startTime: '', // 开始时间
             endTime: '', // 结束时间
+            warningType: '', // 预警类型
+            warningStatus: '', // 预警状态
+
         }
     },
     mounted() {
@@ -223,10 +309,12 @@ export default {
                 cascade: this.cascadeId,
                 department: this.departmentId,
                 subject: this.subjectId,
-                status: this.status == 0 ? '' : this.status,
+                status: !this.status ? '' : this.status,
                 waste: this.wasteId,
                 startTime: this.startTime,
-                endTime: this.endTime
+                endTime: this.endTime,
+                warningType: this.warningType,
+                warningStatus: !this.warningStatus ? '' : this.warningStatus
             });
         },
         visibleDepartment() {
@@ -353,6 +441,12 @@ export default {
         selectWaste(index) {
             this.wasteId = this.wasteList[index].id;
         },
+        selectWarningType(index) {
+            this.warningType = this.warningTypeList[index].k;
+        },
+        selectWarningStatus(index) {
+            this.warningStatus = this.warningStatusList[index].k;
+        },
         // 选择状态
         selectStatus(index) {
             this.status = this.statusList[index].k;
@@ -471,7 +565,8 @@ export default {
                 background: rgba(0,0,0,.1);
                 color: #000000;
                 font-size: 28rpx;
-                width: 170rpx;
+                // width: 170rpx;
+                min-width: 170rpx;
                 height: 60rpx;
                 line-height: 60rpx;
                 text-align: center;
