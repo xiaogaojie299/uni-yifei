@@ -309,6 +309,10 @@ export function deleteVendor(data){
   return request.post(url,data)
 }
 // 获取组织架构后的科室 sysDepartment/listRegionChildren?
+export function listRegion(data){
+  return request.get('/system/sysDepartment/listRegion',data)
+}
+// 获取组织架构后的科室 sysDepartment/listRegionChildren?
 export function listRegionChildren(data){
   return request.get('/system/sysDepartment/listRegionChildren',data)
 }

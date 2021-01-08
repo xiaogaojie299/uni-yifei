@@ -104,12 +104,12 @@
 	import {getNodeKey} from './tool/util.js';
 	import lyCheckbox from './components/ly-checkbox.vue';
 
-	import mixins from "@/mixins/mx-tree"
+	// import mixins from "@/mixins/mx-tree"
 
 	export default {
 		name: 'LyTreeNode',
 	
-		mixins:[mixins],
+		// mixins:[mixins],
 	
 		componentName: 'LyTreeNode',
 		

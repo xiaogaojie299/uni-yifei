@@ -16,7 +16,8 @@
 				:class="{'is-empty': isEmpty || !visible}" 
 				role="tree" 
 				name="LyTreeExpand">
-				<ly-tree-node v-for="nodeId in childNodesId" 
+				<ly-tree-node v-for="nodeId in childNodesId"
+					:treeData="treeData" 
 					:nodeId="nodeId" 
 					:render-after-expand="renderAfterExpand"
 					:show-checkbox="showCheckbox" 
@@ -37,13 +38,10 @@
 	import {getNodeKey} from './tool/util.js';
 	import LyTreeNode from './ly-tree-node.vue';
 
-	import mixins from "@/mixins/mx-tree"
 
 	export default {
 		name: 'LyTree',
 		
-		mixins:[mixins],
-
 		componentName: 'LyTree',
 		
 		components: {
@@ -70,6 +68,12 @@
 		},
 		
 		props: {
+			treeData:{
+				type:Array,
+				default:()=>{
+					return []
+				}
+			},
 			// 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
 			ready: {
 				type: Boolean,

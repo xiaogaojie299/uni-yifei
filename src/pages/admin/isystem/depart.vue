@@ -12,7 +12,8 @@
             </view>
         </view>
         <view>
-                <ly-tree ref="tree" 
+                <ly-tree ref="tree"
+                    :treeData="data" 
                     node-key="value"
                     label="departName"
                     children="childrenList" 
@@ -23,11 +24,11 @@
                     :filter-node-method="filterNode"
                     :expandCurrentNodeParent="true"
                 >
-                    <span class="custom-tree-node" slot-scope="{ node, data }">
+                    <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
                         
                         <span>{{node}} ,{{data}}</span>
                         
-                    </span>
+                    </span> -->
                 </ly-tree>
         </view>
 	
@@ -36,17 +37,16 @@
 </template>
 
 <script>
-    import {listRegionChildren} from '@/utils/api' 
+    import {listRegionChildren ,listRegion} from '@/utils/api' 
     import LyTree from '@/compontens/tree/ly-tree/ly-tree.vue'
-    import mixins from '@/mixins/mx-tree'
 	export default {
-        mixins:[mixins],
 		components: {
 			LyTree
         },
 		data() {
 			return {
-                name:"" //输入框搜索的医院
+                name:"", //输入框搜索的医院
+                data:[]
 			};
 		},
 		

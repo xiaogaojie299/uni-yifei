@@ -1,3 +1,4 @@
+import {listRegion} from "@/utils/api"
 let mixins={
     data(){
         return {
@@ -50,8 +51,10 @@ let mixins={
         
     },
     created() {
-        this.data = JSON.parse(uni.getStorageSync("hospital"));
-        this.treeData = JSON.parse(uni.getStorageSync("hospital"));
+        listRegion().then(({result})=>{
+            // this.treeData = result;
+            this.treeData = JSON.parse(uni.get)
+        })
     },
 }
 export default mixins
