@@ -291,8 +291,10 @@ export default class TreeStore {
 			const child = childNodes[i];
 			this.remove(child.data);
 		}
+		console.log(data.length);
 		for (let i = 0, j = data.length; i < j; i++) {
 			const child = data[i];
+			console.log("child==",child);
 			this.append(child, node.data);
 		}
 	}
