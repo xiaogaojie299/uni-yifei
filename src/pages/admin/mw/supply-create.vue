@@ -49,11 +49,12 @@
       </u-cell-item>
     </u-cell-group>
     <view class="supply-create__button__container">
-      <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()" :disabled="true">
+      <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
+
     <s-select mode="mutil-column-auto" title="选择医院" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
     <s-select mode="mutil-column-auto" title="选择科室" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
     <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
@@ -343,7 +344,6 @@ export default {
     // 这里不能用计步器，只能用个正则解决下了
     weightCheck() {
       let result = this.$u.test.number(this.weight)
-      console.log(result);
       if (!result) {
         uni.showToast({
           title: '在' + this.formLabel.weight + '处应输入数字(支持小数)',

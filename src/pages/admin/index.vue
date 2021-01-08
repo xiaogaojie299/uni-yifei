@@ -8,7 +8,7 @@
           :key="index"
           @click="setid(index)"
           :class="index === change ? 'active' : ''"
-          class="flex-ver-center"
+          class="flex-ver-center menu-item"
         >
           {{ item.meta.title }}
         </view>
@@ -21,9 +21,24 @@
           :scroll-with-animation="true"
           @scroll="scroll"
           @scrolltolower="scrolltolower"
+          class="sub-menu"
         >
-          <view v-for="(item2, index2) in kindlist[change].children" :key="index2" @tap="goUrl(item2.path)">
+          <view :class="{active: index2 === subMenuActive, 'menu-item': true}" v-for="(item2, index2) in kindlist[change].children" :key="index2" @tap="goUrl(item2.path, index2)">
             {{ item2.meta.title }}
+          </view>
+        </scroll-view>
+        <scroll-view
+          :scroll-y="true"
+          style="white-space: nowrap; min-height: 400rpx"
+          :scroll-into-view="clickId"
+          :scroll-with-animation="true"
+          @scroll="scroll"
+          @scrolltolower="scrolltolower"
+          class="sub-menu"
+          v-show="subMenuList.length > 0"
+        >
+          <view class="menu-item" v-for="(subMenu, subMenuIndex) in subMenuList" :key="subMenuIndex" @tap="jumpCustom(subMenu.route)">
+            {{ subMenu.name }}
           </view>
         </scroll-view>
       </view>
@@ -56,6 +71,8 @@ export default {
       change: 0,
       topList: [],
       isLeftClick: false,
+      subMenuActive: '', // 被选中的二级菜单索引
+      subMenuList: [], // 自定义的菜单列表, 展示在第三列 {name: '菜单名称', route: '跳转路由,不需要带mw/admin,直接走goUrl方法'}
     };
   },
   onReady() {
@@ -77,18 +94,58 @@ export default {
       } catch (e) {
         console.log(e);
       }
-	},
-	goUrl(url){
+  },
+  // 自定义路由跳转
+  jumpCustom(url) {
+		uni.navigateTo({
+			url: '/pages/admin' + url
+		});
+  },
+	goUrl(url, index) {
 		console.log("点击跳转",url);
     console.log("跳转","/pages/admin"+url);
-    if(url=="/mw/outbound/setting"){
-      url="/mw/outbound-setting"
+
+    switch (url) {
+      case '/mw/outbound/setting':
+        url = '/mw/outbound-setting';
+        break;
+      // 预警配置要单独做处理
+      case '/warning/setting':
+        // 设置为选中
+        this.subMenuActive = index;
+        this.warningSetting();
+        return ;
+        break;
     }
 		uni.navigateTo({
-			url:"/pages/admin"+url
+			url:"/pages/admin" + url
 		})
+  },
+  warningSetting() {
+    let menus = [
+      '未出医废配置',
+      '违规交接预警',
+      '入库超时预警',
+      '出库超时预警',
+      '遗失预警',
+      '入库重量预警',
+      '出库重量预警',
+      '泄露预警',
+      '破损预警'
+    ];
+    for (let i in menus) {
+      let typeId = parseInt(i) + 1;
+      let route = '/warning/setting';
+      if (typeId == 1 || typeId == 4) {
+        route = '/warning/config';
+      }
 
-	},
+      this.subMenuList.push({
+        name: menus[i],
+        route: route + '?type=' + typeId
+      });
+    }
+  },
     setid(i) {
       this.clickId = "po" + i;
       this.change = i;
@@ -146,19 +203,28 @@ export default {
     min-height: 100vh;
     text-align: center;
     background: #f9f9f9;
-    view {
+    .menu-item {
       width: 240rpx;
       height: 100rpx;
     }
   }
   .right {
     flex: 1;
-    padding-left: 72rpx;
-    view {
+    display: flex;
+    width: 510rpx;
+    .sub-menu {
       width: 240rpx;
+      box-sizing: border-box;
+      padding: 0 30rpx;
+    }
+    .sub-menu:last-child {
+      width: 270rpx;
+    }
+    .menu-item {
+      text-align: center;
+      width: inherit;
       height: 80rpx;
-      display: flex;
-      align-items: center;
+      line-height: 80rpx;
     }
   }
 }

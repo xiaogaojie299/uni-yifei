@@ -339,7 +339,17 @@
 			"style": {
 				"navigationBarTitleText": "预警信息",
 				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
+				"navigationBarTextStyle":"white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/admin/warning/check",
+			"style": {
+				"navigationBarTitleText": "预警处理",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -348,6 +358,32 @@
 				"navigationBarTitleText": "预警配置",
 				"navigationBarBackgroundColor":"#1539AF",
 				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/warning/config",
+			"style": {
+				"navigationBarTitleText": "预警配置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/warning/custom",
+			"style": {
+				"navigationBarTitleText": "自定义时长设置",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/admin/warning/custom-edit",
+			"style": {
+				"navigationBarTitleText": "编辑自定义时长",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"enablePullDownRefresh": true
 			}
 		},
 		{

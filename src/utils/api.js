@@ -231,6 +231,46 @@ export function addSupplementMedicalTrace(data) {
   return request.post('/medical/mwCollectRecord/supply', data);
 }
 
+// 预警信息
+// 获取预警信息列表
+export function listWarningRecord(data) {
+  return request.get('/medical/mwWarningRecord/list', data);
+}
+// 获取预警处理列表
+export function listWarningRecordHandle(data) {
+  return request.get('/medical/mwWarningRecordHandle/list', data);
+}
+// 提交预警处理
+export function handleWarningRecordHandle(data) {
+  return request.post('/medical/mwWarningRecordHandle/handle', data);
+}
+
+// 预警配置
+// 获取预警配置信息
+export function detailWarningConfigType(data) {
+  return request.get('/medical/mwWarningConfig/getByType', data);
+}
+
+// 编辑预警配置
+export function editWarningConfigType(data) {
+  return request.post('/medical/mwWarningConfig/editByType', data);
+}
+
+// 获取预警数据项列表
+export function listWarningConfigItem(data) {
+  return request.get('/medical/mwWarningConfigItem/listByType', data);
+}
+// 添加预警数据项列表
+export function addWarningConfigItem(data) {
+  return request.post('/medical/mwWarningConfigItem/add', data);
+}
+// 编辑预警数据项
+export function editWarningConfigItem(data) {
+  return request.post('/medical/mwWarningConfigItem/edit', data);
+}
+
+
+
 
 // 数据恢复页面
 
