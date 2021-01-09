@@ -44,11 +44,11 @@
 					'ly-tree-node__expand-icon',
 					'pr-10' 
 				]" />
-			<!-- <view class="operation">
+			<view class="operation">
 				<text>编辑</text>
 				<text v-if="node.isLeaf" class="allow-del">删除</text>
 				<text v-else @click.stop="delNode" class="no-del">删除</text>
-			</view> -->
+			</view>
 			
 			<ly-checkbox v-if="checkboxVisible || radioVisible"
 				:type="checkboxVisible ? 'checkbox' : 'radio'" 

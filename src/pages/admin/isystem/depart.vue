@@ -14,15 +14,14 @@
         <view>
                 <ly-tree ref="tree"
                     :treeData="data" 
-                    node-key="value"
-                    label="departName"
-                    children="childrenList" 
+                    node-key="id"
+                    :props="props"
+                    children="childrenList1" 
                     highlight-current
                     expand-current-node-parent
                     @node-expand="handleNodeExpand" 
                     @node-click="handleNodeClick"
                     :filter-node-method="filterNode"
-                    :expandCurrentNodeParent="true"
                 >
                     <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
                         
@@ -46,25 +45,40 @@
 		data() {
 			return {
                 name:"", //输入框搜索的医院
-                data:[]
-			};
+                data:[],
+                props: function() {
+                    return {
+                        // 这里的label就可以使用函数进行自定义的渲染了
+                        label(data, node) {
+                            return node.data.departName;
+                        },
+                        // label: 'personName', // 指把数据中的‘personName’当做label也就是节点名称
+                        children: 'childrenList' // 指把数据中的‘childs’当做children当做子节点数据
+                    }
+                },                
+            };
 		},
 		
 		// 如果不需要不用到这些方法，需要删除相应代码，打印大量日志会造成性能损耗
 		onLoad() {
 			this.$nextTick(() => {
 				// expand-current-node-parent配置表示展开当前节点的父节点
-				this.$refs.tree.setCurrentKey(9);
+				//this.$refs.tree.setCurrentKey(9);
 			});
         },
         created(){
-            this.data = JSON.parse(uni.getStorageSync("hospital"));
-            console.log(this.data);
+            // this.data = JSON.parse(uni.getStorageSync("hospital"));
+            listRegion().then(res=>{
+                this.data = res.result;
+                console.log(this.data);
+            })
+            console.log("hhh=",JSON.parse(uni.getStorageSync("hospital")));
         },
         methods:{
             filterNode(value, data) {
                 if (!value) return true;
-                return data.label.indexOf(value) !== -1;
+                console.log("label=>",data);
+                return data.departName.indexOf(value) !== -1;
             },
             search(){
                 console.log(this.$refs.tree.filter);
@@ -73,6 +87,7 @@
             // uni-app中emit触发的方法只能接受一个参数，所以会回传一个对象，打印对象即可见到其中的内容
             async handleNodeClick(obj) {
                 console.log(obj);
+                /*  
                 if(obj.childNodesId.length==0){
 					let params = {
 						parentId:obj.key
@@ -84,7 +99,8 @@
                         this.$refs.tree.updateKeyChildren(obj.key,result);
                     })
                     console.log("加载成功",result);
-				}
+                }
+                */
             },
             handleNodeExpand(obj) {
                 // console.log('handleNodeExpand', JSON.stringify(obj));
