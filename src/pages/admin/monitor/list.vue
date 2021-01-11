@@ -41,12 +41,17 @@
             </view>
         </view>
         <!-- 选择医院名称 -->
-        <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down>
+        <!-- <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down> -->
+        <!-- <mw-select></mw-select> -->
+        <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="areaList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
     </view>
 </template>
 <script>
+import mwSelect from '@/compontens/mw-select/mw-select';
 import {monitoringList} from "@/utils/api"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
+
+import sSelect from '@/compontens/mw-select/s-select';
 export default {
     data(){
         return {
@@ -54,6 +59,8 @@ export default {
             areaList:{},    //医院列表
             selectHos:{},        //选择的医院
             pageNo:1,
+            cascadeShow:false,
+            cascadeIndex:[]
         }
     },
     created(){
@@ -74,9 +81,23 @@ export default {
             this.selectHos = this.areaList[0];
             this.search()
         },
+        cascadeIndexCalc(e) {
+            let cascadeIndex = [];
+            let tmpData = this.areaList;
+            for (let i in e) {
+                let index = tmpData.findIndex(item => item.value == e[i].value);
+                if (index > -1) {
+                    cascadeIndex.push(index);
+                    tmpData = tmpData[index].children;
+                }
+            }
+            this.cascadeIndex = cascadeIndex;
+        },
+        cascadeCallback(obj){
+            this.cascadeIndexCalc(obj) 
+        },
         handleHospitalShow(){
-            this.childMethod=true;
-            this.$refs.childMethod.openShow()
+            this.cascadeShow =true;
         },
         selectRow(row){ //选择医院点击确定
             this.selectHos=row;
@@ -123,7 +144,7 @@ export default {
         }
     },
     components:{
-        areaDropDown
+        areaDropDown,sSelect
     }
     
 }

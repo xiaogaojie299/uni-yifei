@@ -16,14 +16,16 @@
 				:class="{'is-empty': isEmpty || !visible}" 
 				role="tree" 
 				name="LyTreeExpand">
-				<ly-tree-node v-for="nodeId in childNodesId" 
+				<ly-tree-node v-for="nodeId in childNodesId"
+					:treeData="treeData"
+					:isEdit="isEdit" 
 					:nodeId="nodeId" 
 					:render-after-expand="renderAfterExpand"
 					:show-checkbox="showCheckbox" 
 					:show-radio="showRadio" 
 					:check-only-leaf="checkOnlyLeaf"
 					:key="getNodeKey(nodeId)" 
-					:indent="indent" 
+					:indent="indent"
 					:icon-class="iconClass">
 				</ly-tree-node>
 			</view> 
@@ -37,13 +39,10 @@
 	import {getNodeKey} from './tool/util.js';
 	import LyTreeNode from './ly-tree-node.vue';
 
-	import mixins from "@/mixins/mx-tree"
 
 	export default {
 		name: 'LyTree',
 		
-		mixins:[mixins],
-
 		componentName: 'LyTree',
 		
 		components: {
@@ -70,6 +69,16 @@
 		},
 		
 		props: {
+			isEdit:{
+				type:Boolean,
+				default: true
+			},
+			treeData:{
+				type:Array,
+				default:()=>{
+					return []
+				}
+			},
 			// 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
 			ready: {
 				type: Boolean,
@@ -268,6 +277,10 @@
 		},
 		
 		methods: {
+			handleRadioChange(node){
+				console.log("node ===",node);
+			},
+
 			/*
 			 * @description 对树节点进行筛选操作
 			 * @method filter

@@ -354,6 +354,18 @@ export function deleteVendor(data){
   return request.post(url,data)
 }
 // 获取组织架构后的科室 sysDepartment/listRegionChildren?
+export function listRegion(data){
+  return request.get('/system/sysDepartment/listRegion',data)
+}
+// 获取组织架构后的科室 sysDepartment/listRegionChildren?
 export function listRegionChildren(data){
   return request.get('/system/sysDepartment/listRegionChildren',data)
+}
+// 获取组织树
+export function sysDepartmentTreeList(){
+  return request.get('/system/sysDepartment/sysDepartmentTreeList')
+}
+// 获取父组织
+export function getParent(data){
+  return request.get("/system/sysUserDepartment/queryById",data)
 }

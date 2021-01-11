@@ -260,8 +260,7 @@ export default {
     font-size:28rpx;
     color: rgba(0, 0, 0, 1);
 }
-.left-label{
-}
+
 
     .container{
         min-height: 100vh;

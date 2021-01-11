@@ -43,15 +43,15 @@ let mixins={
                     label: '二级 3-2'
                 }]
             }],
-            treeData:[]
+            treeData:[],
+            checkValue:{label:"测试数据"}
         }
     },
+    inject: ["_this"],
     methods: {
         
     },
     created() {
-        this.data = JSON.parse(uni.getStorageSync("hospital"));
-        this.treeData = JSON.parse(uni.getStorageSync("hospital"));
     },
 }
 export default mixins
