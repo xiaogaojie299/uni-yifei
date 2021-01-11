@@ -47,11 +47,11 @@
     </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
+// import mwSelect from '@/compontens/mw-select/mw-select';
 import {monitoringList} from "@/utils/api"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
 
-import sSelect from '@/compontens/mw-select/s-select';
+import sSelect from '@/compontens/hospital-select';
 export default {
     data(){
         return {
