@@ -1,4 +1,3 @@
-import {listRegion} from "@/utils/api"
 let mixins={
     data(){
         return {
@@ -44,17 +43,15 @@ let mixins={
                     label: '二级 3-2'
                 }]
             }],
-            treeData:[]
+            treeData:[],
+            checkValue:{label:"测试数据"}
         }
     },
+    inject: ["_this"],
     methods: {
         
     },
     created() {
-        listRegion().then(({result})=>{
-            // this.treeData = result;
-            this.treeData = JSON.parse(uni.get)
-        })
     },
 }
 export default mixins

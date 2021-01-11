@@ -17,14 +17,15 @@
 				role="tree" 
 				name="LyTreeExpand">
 				<ly-tree-node v-for="nodeId in childNodesId"
-					:treeData="treeData" 
+					:treeData="treeData"
+					:isEdit="isEdit" 
 					:nodeId="nodeId" 
 					:render-after-expand="renderAfterExpand"
 					:show-checkbox="showCheckbox" 
 					:show-radio="showRadio" 
 					:check-only-leaf="checkOnlyLeaf"
 					:key="getNodeKey(nodeId)" 
-					:indent="indent" 
+					:indent="indent"
 					:icon-class="iconClass">
 				</ly-tree-node>
 			</view> 
@@ -68,6 +69,10 @@
 		},
 		
 		props: {
+			isEdit:{
+				type:Boolean,
+				default: true
+			},
 			treeData:{
 				type:Array,
 				default:()=>{
@@ -272,6 +277,10 @@
 		},
 		
 		methods: {
+			handleRadioChange(node){
+				console.log("node ===",node);
+			},
+
 			/*
 			 * @description 对树节点进行筛选操作
 			 * @method filter

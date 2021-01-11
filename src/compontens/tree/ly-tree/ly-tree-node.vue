@@ -1,4 +1,5 @@
 <template>
+<view class="container">
 	<view ref="node"
 		name="LyTreeNode" 
 		v-show="node.visible" 
@@ -10,19 +11,18 @@
 		}"
 		role="treeitem" 
 		@tap.stop="handleClick" >
-		<view class="ly-tree-node__content" 
+		<view class="ly-tree-node__content border-bottom" 
 			:class="{
-				'is-current': node.isCurrent && highlightCurrent
+				'is-current': node.isCurrent && highlightCurrent,
+				'no-border':!isEdit
 			}" 
 			:style="{ 
-				'padding-left': (node.level - 1) * indent -10 + 'px' 
+				'padding-left': (node.level - 1) * indent +18+ 'px' 
 			}"
 			>
-			<!-- :style="{ 
-				'padding-left': (node.level - 1) * indent + 'px' 
-			}" -->
-			<!-- <text 
-				@tap.stop="handleExpandIconClick" 
+			<text 
+				@tap.stop="handleExpandIconClick"
+				v-if="!isEdit" 
 				:class="[
 					{ 
 						'is-leaf': node.isLeaf, 
@@ -31,12 +31,13 @@
 					'ly-tree-node__expand-icon', 
 					iconClass ? iconClass : 'ly-iconfont ly-icon-caret-right'
 				]">
-			</text> -->
-			<img 
+			</text>
+			<view v-else>
+				<img 
 				:src="!node.isLeaf && node.expanded?require('@/static/images/minus.png'):require('@/static/images/add.png')"
 				style="height:40rpx;width:40rpx"
 				@tap.stop="handleExpandIconClick"
-				v-if="!node.isLeaf" 
+				v-if="node.childNodesId.length>0" 
 				:class="[
 					{ 
 						'is-leaf': node.isLeaf, 
@@ -44,10 +45,26 @@
 					'ly-tree-node__expand-icon',
 					'pr-10' 
 				]" />
-			<view class="operation">
-				<text>编辑</text>
-				<text v-if="node.isLeaf" class="allow-del">删除</text>
-				<text v-else @click.stop="delNode" class="no-del">删除</text>
+			</view>
+			
+				
+				<!-- <img 
+					:src="node.expanded?require('@/static/images/minus.png'):require('@/static/images/add.png')"
+					style="height:40rpx;width:40rpx;"
+					@tap.stop="handleExpandIconClick"
+					v-show="node.childNodesId.length>0" 
+					:class="[
+						{ 
+							'is-leaf': node.isLeaf, 
+						}, 
+						'ly-tree-node__expand-icon',
+						'pr-10' 
+					]" /> -->
+
+			<view v-if="isEdit" class="operation">
+				<text @click.stop="editNode(node)">编辑</text>
+				<text @click.stop="delNode(node)" v-if="!node.data.canDelete" class="allow-del">删除</text>
+				<text v-else @click.stop="placeholder(node)" class="no-del">删除</text>
 			</view>
 			
 			<ly-checkbox v-if="checkboxVisible || radioVisible"
@@ -85,7 +102,8 @@
 			class="ly-tree-node__children" 
 			role="group">
 			<ly-tree-node v-for="cNodeId in node.childNodesId" 
-				:nodeId="cNodeId" 
+				:nodeId="cNodeId"
+				:isEdit="isEdit" 
 				:render-after-expand="renderAfterExpand" 
 				:show-checkbox="showCheckbox"
 				:show-radio="showRadio" 
@@ -96,6 +114,7 @@
 			</ly-tree-node>
 		</view>
 	</view>
+</view>
 </template>
 
 <script>
@@ -118,6 +137,10 @@
 		},
 		
 		props: {
+			isEdit:{
+				type:Boolean,
+				default:true
+			},
 			nodeId: [Number, String],
 			renderAfterExpand: {
 				type: Boolean,
@@ -154,7 +177,7 @@
 			};
 		},
 		
-		inject: ['tree'],
+		inject: ['tree','_this'],
 		
 		computed: {
 			checkboxVisible() {
@@ -189,8 +212,16 @@
 		},
 		
 		methods: {
-			delNode(){
-				console.log("删除");
+			editNode(node){
+				uni.navigateTo({
+					url:"/pages/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
+				})
+			},
+			delNode(node){
+				console.log("删除",node);
+			},
+			placeholder(){
+				// 占位
 			},
 			getNodeKey(nodeId) {
 				let node = this.tree.store.root.getChildNodes([nodeId])[0];
@@ -212,6 +243,8 @@
 							checkedall: allNodes.every(item => item.checked)
 						});
 					} else {
+						// console.log("_this",_this);
+						this.checkValue = this.node;
 						this.tree.$emit('radio-change', {
 							checked,
 							node: this.node,
@@ -336,21 +369,23 @@
 </script>
 
 <style lang="scss">
+.container{
+	// padding:0 26rpx;
+}
 	.ly-tree-node {
 		white-space: nowrap;
-		outline: 0
+		outline: 0;
 	}
 	
 	.ly-tree-node__content {
 		display: flex;
 		align-items: center;
-		height: 70rpx;
+		height: 100rpx;
 		position: relative;
-		border:1px solid#EAEAEA;
 	}
 	.ly-tree-node__content>.operation{
 		position: absolute;
-		right: 0;
+		right: 24rpx;
 		text{
 			display: inline-block;
 			text-align: center;
@@ -371,7 +406,9 @@
 			margin-left:10rpx;
 		}
 	}
-	
+	.no-border{
+		border:none
+	}
 	/* 允许删除的样式 */
 	.allow-del{		
 		border:1px solid red;
@@ -387,7 +424,7 @@
 	}
 	
 	.ly-tree-node__content>.ly-tree-node__expand-icon {
-		// padding: 12rpx;
+		padding: 12rpx;
 	}
 	
 	.ly-tree-node__checkbox {
@@ -476,7 +513,7 @@
 	}
 	
 	.ly-icon-caret-right:before {
-		// content: "\e8ee";
+		content: "\e8ee";
 	}
 	
 	.ly-icon-loading:before {

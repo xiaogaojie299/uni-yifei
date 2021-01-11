@@ -233,6 +233,15 @@
 		},
 
 		{
+			"path": "pages/admin/isystem/edit-depart",
+			"style": {
+				"navigationBarTitleText": "编辑",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+
+		{
 			"path": "pages/admin/mw/trace",
 			"style": {
 				"navigationBarTitleText": "医废追溯",
@@ -396,7 +405,6 @@
 					"titleSize":"36rpx"	
 				}
 			}
-
 		},
 		{
 			"path": "pages/people/change-pwd",
