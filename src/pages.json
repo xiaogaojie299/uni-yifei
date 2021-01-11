@@ -350,7 +350,7 @@
 				}
 			},
 			{
-				"path": "mw/outbound-setting",
+				"path": "mw/outbound/setting",
 				"style": {
 					"navigationBarTitleText": "出库配置",
 					"navigationBarBackgroundColor":"#1539AF",
@@ -358,7 +358,7 @@
 				}
 			},
 			{
-				"path": "mw/outbound-setting-detail",
+				"path": "mw/outbound/setting-detail",
 				"style": {
 					"navigationBarTitleText": "配置详情",
 					"navigationBarBackgroundColor":"#1539AF",
@@ -366,7 +366,7 @@
 				}
 			},
 			{
-				"path": "mw/outbound-setting-edit",
+				"path": "mw/outbound/setting-edit",
 				"style": {
 					"navigationBarTitleText": "编辑配置",
 					"navigationBarBackgroundColor":"#1539AF",

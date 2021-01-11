@@ -69,7 +69,7 @@ export default {
   methods: {
     edit() {
       uni.navigateTo({
-          url: '/pages-mw/mw/outbound-setting-edit'
+          url: '/pages-mw/mw/outbound/setting-edit'
       })
     },
     loadDetail(id) {

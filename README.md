@@ -100,7 +100,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 			}
 		},
 		{
-			"path": "pages/admin/mw/outbound-setting-detail",
+			"path": "pages/admin/mw/outbound/setting-detail",
 			"style": {
 				"navigationBarTitleText": "配置详情",
 				"navigationBarBackgroundColor":"#1539AF",
@@ -108,7 +108,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 			}
 		},
 		{
-			"path": "pages/admin/mw/outbound-setting-edit",
+			"path": "pages/admin/mw/outbound/setting-edit",
 			"style": {
 				"navigationBarTitleText": "编辑配置",
 				"navigationBarBackgroundColor":"#1539AF",
