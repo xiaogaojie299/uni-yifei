@@ -87,7 +87,7 @@ export default {
       },
       // 底部的固定到底是两排按钮还是一排按钮?
       bottomButtonsHeight() {
-          return this.canSubmit && (this.canAccept || this.canRefuse) ? 200 : 100;
+          return (this.canSubmit && (this.canAccept || this.canRefuse)) ? 200 : 100;
       }
   },
   onPullDownRefresh() {
@@ -154,11 +154,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-page {
-    background: #F3F5F7;
-    min-height: 100vh;
-}
 .warning-check {
+    height: 100vh;
+    background:#f3f5f7;
+    overflow: hidden;
     &__container {
         // height: calc(100vh - 200rpx);
         &__box {
@@ -190,21 +189,21 @@ page {
             }
         }
         &__textarea {
+            background: #fff;
             &__input {
                 background: #fff;
-                padding: 20rpx ;
             }
         }
     }
     &__footer {
         width: 100%;
-        // height: 200rpx;
         position: fixed;
+        background: #f3f5f7;
         bottom: 0;
         &__line {
             // height: 100rpx;
             box-sizing: border-box;
-            padding: 10rpx 0;
+            padding-top: 10rpx;
             display: flex;
             justify-content: center;
         }
