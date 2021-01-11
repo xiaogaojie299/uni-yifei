@@ -47,7 +47,6 @@ let mixins={
             checkValue:{label:"测试数据"}
         }
     },
-    inject: ["_this"],
     methods: {
         
     },

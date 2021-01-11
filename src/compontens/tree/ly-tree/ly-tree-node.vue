@@ -177,7 +177,7 @@
 			};
 		},
 		
-		inject: ['tree','_this'],
+		inject: ['tree'],
 		
 		computed: {
 			checkboxVisible() {
@@ -216,6 +216,7 @@
 				uni.navigateTo({
 					url:"/pages/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
 				})
+				console.log("跳转编辑页面");
 			},
 			delNode(node){
 				console.log("删除",node);

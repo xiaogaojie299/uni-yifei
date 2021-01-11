@@ -17,7 +17,7 @@
                     :props = props
                     node-key="id"
                     :isInjectParentInNode="true"
-                    expand-on-click-node="false"
+                    :expand-on-click-node="false"
                     highlight-current
                     expand-current-node-parent
                     @node-expand="handleNodeExpand" 
@@ -28,7 +28,7 @@
                 <ly-tree v-else ref="tree"
                     :treeData="data"
                     node-key="id"
-                    expand-on-click-node="false"
+                    :expand-on-click-node="false"
                     children="children" 
                     highlight-current
                     expand-current-node-parent

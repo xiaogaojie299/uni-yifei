@@ -5,6 +5,7 @@
             @key="index"
             v-for="(item, index) in kindlist"
             @click="setid(index)"
+            :key="index"
           >
           {{item.meta ? (item.meta.title || '') : ''}}
         </view>

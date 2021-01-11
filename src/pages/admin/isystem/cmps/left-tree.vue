@@ -9,7 +9,7 @@
             :treeData="treeData"
             node-key="id"
             show-radio
-            expand-on-click-node="false"
+            :expand-on-click-node="false"
             :filter-node-method="filterNode"
             checkOnClickNode
             @check="handleCheck"
@@ -28,10 +28,13 @@
         </scroll-view>
           <!-- <u-button @click="show = false;">{{checkValue.label}}</u-button> -->
           <view class="btn-group">
-            <view class="">
+            <view @tap="quite" class="">
                 取消
             </view>
-            <view class="">
+            <view v-if="checkoutValue.checkedKeys.length==0"  class="opcity">
+                确定
+            </view>
+            <view v-else @tap="submit">
                 确定
             </view>
         </view>
@@ -47,7 +50,7 @@ export default {
     return {
       show: false,  //遮罩层开关
       treeData: [], //树结构数据
-      checkoutValue:null,   //选择的节点数据
+      checkoutValue:{checkedKeys:[]},   //选择的节点数据
       props: function () {
         return {
           // 这里的label就可以使用函数进行自定义的渲染了
@@ -64,7 +67,17 @@ export default {
   components: {
     lyTree,
   },
+  watch:{
+    
+  },
   methods: {
+      quite(){
+          this.show = false;
+      },
+      submit(){
+          this.$emit("checkoutValue",this.checkoutValue);
+          this.show = false;
+      },
       openModel() {
       this.show = true;
     },
@@ -79,7 +92,6 @@ export default {
       this.checkoutValue = node
     },
     handleRadioChange(obj) {
-    //   console.log("handleRadioChange", obj);
     },
   },
   created() {
@@ -92,6 +104,9 @@ export default {
 <style lang="scss" scoped>
 .content {
   text-align: center;
+}
+.opcity{
+    opacity: 0.3;
 }
 .btn-group{
             position: fixed;

@@ -369,3 +369,7 @@ export function sysDepartmentTreeList(){
 export function getParent(data){
   return request.get("/system/sysUserDepartment/queryById",data)
 }
+// 编辑组织
+export function sysDepartmentEdit(data){
+  return request.post("/system/sysDepartment/edit",data)
+}
