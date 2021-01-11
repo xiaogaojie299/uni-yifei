@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入医废编号查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入医废编号、操作人员查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -13,58 +13,41 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @audit="audit($event, index)" :options="traceOptions" mode="supply"/>
-      </view>
-      <view class="button-container">
-        <view class="button" @click="create()">新增补录</view>
+        <outbound-setting-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" />
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
-import sLoading from '@/compontens//s-loading';
-import { listSupplementMedicalTrace } from "@/utils/api.js";
+import mwSelect from '@/compontens/mw-select';
+import outboundSettingCard from '@/compontens/outbound-setting-card';
+import sLoading from '@/compontens/s-loading';
+import { listTransitConfig } from "@/utils/api.js";
 export default {
   components:{
-    mwSelect, traceCard, sLoading
+    mwSelect, outboundSettingCard, sLoading
   },
   data() {
     return {
         options: {
           cascade: true,
-          department: true,
-          subject: true,
-          auditStatus: true,
-          waste: true,
-          timestamp: true
-        },
-        traceOptions: {
-          audit: true,
-          detail: true
+          department: false,
+          subject: false,
+          status: false,
+          waste: false,
+          timestamp: false
         },
         loading: false,
         pages: 0,
         total: 0,
         pageNo: 1,
         pageSize: 10,
-        auditStatus: '', // 审核状态
-        departmentId: '', // 科室ID
-        startTime: '',
-        endTime: '',
         hospitalId: '', // 医院ID
-        status: '', // 状态
-        transitCompany: '', // 搜索关键词
-        transitConfigId: 0, // 出库配置ID
-        wasteType: '', // 医废类型
         code: '',
         list: [],
     };
   },
   onLoad(option) {
-    this.reload();
-  },
-  onShow() {
+      this.reload();
   },
   onPullDownRefresh() {
     this.reload();
@@ -73,8 +56,8 @@ export default {
     this.next();
   },
   methods: {
-      audit(e, index) {
-        this.$set(this.list[index], 'auditStatus', e.flag ? 2 : 3);
+      remove(index) {
+        this.list.splice(index, 1);
       },
       reload() {
         this.pageNo = 1;
@@ -98,19 +81,16 @@ export default {
         this.paginate();
       },
       // 加载数据
-      paginate() {
+      async paginate() {
         this.loading = true;
-        listSupplementMedicalTrace({
+
+        listTransitConfig({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          departmentId: this.departmentId,
-          status: this.status,
-          auditStatus: this.auditStatus,
-          wasteType: this.wasteType,
-          startTime: this.startTime,
-          endTime: this.endTime,
-          code: this.code
+          licensePlate: '', // 车牌号
+          transitCompany: '', // 运输单位
+          engineDriver: '' // 运输人员
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
@@ -125,22 +105,7 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
-        // 科室ID
-        this.departmentId = e.subject;
-        // 审核状态
-        this.auditStatus = e.auditStatus;
-        // 医废类型
-        this.wasteType = e.waste;
-        // 时间
-        this.startTime = e.startTime;
-        this.endTime = e.endTime;
         this.reload();
-      },
-      // 新增补录
-      create() {
-        uni.navigateTo({
-          url: '/pages/admin/mw/supply-create'
-        });
       }
   }
 };
@@ -164,22 +129,8 @@ page {
     }
     .list-container {
       min-height: 100vh;
-      margin-bottom: 100rpx;
-      // height: calc(100vh - 280rpx);
+      // height: calc(100vh - 180rpx);
       background: #F3F5F7;
-    }
-    .button-container {
-      position: fixed;
-      height: 100rpx;
-      width: 100%;
-      bottom: 0;
-      .button {
-        width: 100%;
-        height: 100%;
-        background: $my-main-color;
-        color: #fff;
-        @include flex-center;
-      }
     }
 }
 </style>

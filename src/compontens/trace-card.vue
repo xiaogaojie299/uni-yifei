@@ -59,23 +59,25 @@
             </block>
         </view>
         <!-- 当审核按钮开启时，需要查看该条数据是否处于待审核的状态才允许展示按钮 -->
-        <view class="trace-card__footer" v-if="options.record || options.remove || options.restore || (options.audit && item.auditStatus == 1) || (options.warningCheck && item.status != 3)">
-            <view class="trace-card__footer__button" @click.stop="record()" v-if="options.record">
+        <view class="trace-card__footer" v-if="showFooter">
+            <view class="trace-card__footer__button" @click.stop="record()" v-if="canRecord">
                 流转过程
             </view>
-            <view class="trace-card__footer__button" @click.stop="remove()" v-if="options.remove">
+            <view class="trace-card__footer__button" @click.stop="remove()" v-if="canDelete">
                 删除
             </view>
-            <view class="trace-card__footer__button primary" @click.stop="restore()" v-if="options.restore">
+            <view class="trace-card__footer__button primary" @click.stop="restore()" v-if="canRestore">
                 恢复
             </view>
-            <view class="trace-card__footer__button primary" @click.stop="audit(true)" v-if="options.audit && item.auditStatus == 1">
-                通过
-            </view>
-            <view class="trace-card__footer__button primary" @click.stop="audit(false)" v-if="options.audit && item.auditStatus == 1">
-                拒绝
-            </view>
-            <view class="trace-card__footer__button primary" @click.stop="warningCheck(false)" v-if="options.warningCheck && item.status != 3">
+            <block v-if="canAudit">
+                <view class="trace-card__footer__button primary" @click.stop="audit(true)">
+                    通过
+                </view>
+                <view class="trace-card__footer__button primary" @click.stop="audit(false)">
+                    拒绝
+                </view>
+            </block>
+            <view class="trace-card__footer__button primary" @click.stop="warningCheck(false)" v-if="canCheckWarning">
                 立即处理
             </view>
         </view>
@@ -381,7 +383,7 @@ export default {
                         callback: () => {
                             console.log('hello');
                             uni.navigateTo({
-                                url: '/pages/admin/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
+                                url: '/pages-mw/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
                             })
                         }
                     }
@@ -394,17 +396,36 @@ export default {
     watch: {
     },
     computed: {
-        // 是否可以删除
+        // 是否可以删除, 检查是否拥有权限并且开启了这个开关，下同
         canDelete() {
-            return this.$util.checkPermission('trace:delete');
+            return this.$util.checkPermission('trace:delete') && this.options.remove;
         },
-        // 是否可以修改出库配置
-        canEditOutbound() {
-            return this.$util.checkPermission('outbound:setting:edit');
+        // 是否可以审核
+        canAudit() {
+            return this.$util.checkPermission('additional:audit') && this.options.audit && this.item.auditStatus == 1;
         },
-        // 是否可以删除出库配置
-        canDeleteOutbound() {
-            return this.$util.checkPermission('outbound:setting:delete');
+        // 是否可以恢复
+        canRestore() {
+            return this.options.restore;
+        },
+        // 是否可以处理异常
+        canCheckWarning() {
+            return (this.$util.checkPermissionAny([
+                'warnInfo:status:submit', 'warnInfo:status:pass', 'warnInfo:status:reject'
+            ])) && this.options.warningCheck && this.item.status != 3;
+        },
+        // 是否可以查看流转过程
+        canRecord() {
+            return this.options.record;
+        },
+        showFooter() {
+            let flag = this.canRecord // 查看流转过程
+                    || this.canDelete // 删除
+                    || this.canRestore // 恢复
+                    || this.canAudit // 审核
+                    || this.canCheckWarning // 处理异常
+                    ;
+            return true;
         }
     },
     methods: {
@@ -433,25 +454,24 @@ export default {
             });
         },
         detail() {
-            if (this.options.warningDetail || false) {
-                uni.navigateTo({
-                    url: '/pages/admin/warning/check?id=' + this.item.id
-                });
+            console.log(this.canCheckWarning);
+            if ((this.options.warningDetail || false) &&  this.canCheckWarning) {
+                this.warningCheck();
             }
             if (this.options.detail || false) {
                 uni.navigateTo({
-                    url: '/pages/admin/mw/trace-detail?id=' + this.item.id + (this.mode != 'record' ? ('&mode=' + this.mode) : '')
+                    url: '/pages-mw/mw/trace-detail?id=' + this.item.id + (this.mode != 'record' ? ('&mode=' + this.mode) : '')
                 })
             }
         },
         record() {
             uni.navigateTo({
-                url: '/pages/admin/mw/trace-record?id=' + this.item.id
+                url: '/pages-mw/mw/trace-record?id=' + this.item.id
             })
         },
         warningCheck() {
             uni.navigateTo({
-                url: '/pages/admin/warning/check?id=' + this.item.id
+                url: '/pages-mw/warning/check?id=' + this.item.id
             })
         },
         itemClick(e, item, field) {

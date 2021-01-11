@@ -6,6 +6,10 @@
                 <text class="name">{{cascadeLabel}}</text>
                 <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
+            <view class="mw-select-item group" @click="dateClick(2)" v-if="options.timestampSelect || false">
+                <text class="name">{{timestampSelectValue || '查询时间'}}</text>
+                <u-icon :name="!timestampSelectShow ? 'arrow-down': 'arrow-up'"></u-icon>
+            </view>
             <view class="mw-select-item department" @click="visibleDepartment()" v-if="(options.cascade || false) && (options.department || false)">
                 <u-loading size="24" v-if="officeCascadeLoading"/>
                 <text class="name">{{departmentLabel}}</text>
@@ -127,6 +131,7 @@ export default {
     },
     data() {
         return {
+            timestampSelectValue: '', // 默认选中的时间
             cascadeLoading: false, // 医院加载中
             officeCascadeLoading: false, // 部门加载中
             defaultTime: '',
@@ -148,6 +153,7 @@ export default {
                 second: false
             },
             cascadeShow: false, // 医院选择显示
+            timestampSelectShow: false, // 时间选择器
             dateIndex: 0, // 判断日期选择是第一个还是第二个
             wasteList: [],
             statusList: [
@@ -305,7 +311,6 @@ export default {
             }
             this.cascadeShow = !this.cascadeShow;
         },
-
         resetDepartment() {
             this.departmentLabel = '部门';
             this.departmentIndex = [];
@@ -341,6 +346,7 @@ export default {
                 waste: this.wasteId,
                 startTime: this.startTime,
                 endTime: this.endTime,
+                timestampSelectValue: this.timestampSelectValue,
                 warningType: this.warningType,
                 warningStatus: !this.warningStatus ? '' : this.warningStatus
             });
@@ -487,7 +493,17 @@ export default {
         dateClick(index) {
             this.dateIndex = index;
             this.dateShow = true;
-            this.dateIndex == 0 ? this.defaultTime = this.startTime : this.defaultTime = this.endTime;
+            switch(this.dateIndex) {
+                case 0:
+                    this.defaultTime = this.startTime;
+                    break;
+                case 1:
+                    this.defaultTime = this.endTime;
+                    break;
+                default:
+                    this.defaultTime = this.timestampSelectValue;
+                    break;
+            }
         },
         // 日期变更时间，index是用来标识是前还是后
         dateChange(e) {
@@ -507,7 +523,7 @@ export default {
                     }
                     this.startTime = str;
                 break;
-                default:
+                case 1:
                     // 需要校验：开始时间不允许小于结束时间
                     if (this.startTime != '') {
                         if (timestamp < new Date(this.startTime.replace(/-/g,"/")).getTime()) {
@@ -520,6 +536,9 @@ export default {
                     }
                     this.endTime = str;
                 break;
+                default: 
+                    this.timestampSelectValue = str;
+                break;
             }
         }
     }
@@ -531,24 +550,30 @@ export default {
     padding: 32rpx 20rpx;
     height: 100rpx;
     box-sizing: border-box;
+    // width: 100%;
     position: relative;
+    &-container {
+        width: 100%;
+        justify-content: space-around;
+    }
     .mw-select-item {
         background: rgba(255, 255, 255, .3);
         border-radius: 30rpx;
         margin: 0 10rpx;
-        width: 160rpx;
+        min-width: 160rpx;
         height: 54rpx;
         padding: 2rpx 30rpx;
         color: #fff;
         display: flex;
         font-size: 24rpx;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
         .name {
             @include text-overflow;
         }
         &.group {
-            width: 240rpx;
+            min-width: 240rpx;
+            max-width: 48%;
         }
     }
 }

@@ -18,8 +18,8 @@
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
 import { listMedicalTrace } from "@/utils/api.js";
 export default {

@@ -14,8 +14,8 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" :default-ids="hospitalIds" />
-    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :default-ids="departmentIds" :hospital-id="hospitalId"/>
+    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" :default-ids="hospitalIds" @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
+    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :default-ids="departmentIds" :hospital-id="hospitalId" @loading="departmentLoading = true" @loaded="departmentLoading = false"/>
   </view>
 </template>
 <script>

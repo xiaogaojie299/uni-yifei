@@ -13,15 +13,15 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @restore="restore(index)" :options="traceOptions" mode="restore"/>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
-import { listHistoryMedicalTrace } from "@/utils/api.js";
+import { getMedicalTraceListDelete } from "@/utils/api.js";
 export default {
   components:{
     mwSelect, traceCard, sLoading
@@ -32,14 +32,13 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: true,
+          status: false,
           waste: true,
           timestamp: true
         },
         traceOptions: {
-          record: true,
-          remove: true,
-          status: true,
+          restore: true,
+          detail: true
         },
         loading: false,
         pages: 0,
@@ -69,7 +68,7 @@ export default {
     this.next();
   },
   methods: {
-      remove(index) {
+      restore(index) {
         this.list.splice(index, 1);
       },
       reload() {
@@ -94,9 +93,10 @@ export default {
         this.paginate();
       },
       // 加载数据
-      paginate() {
+      async paginate() {
         this.loading = true;
-        listHistoryMedicalTrace({
+
+        getMedicalTraceListDelete({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -115,7 +115,7 @@ export default {
         }).catch(err => {}).finally(e => {
           this.loading = false;
           uni.stopPullDownRefresh();
-        });
+        })
       },
       searchConfirm(e) {
         // 医院ID

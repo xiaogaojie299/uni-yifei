@@ -7,12 +7,12 @@
         <view class="trace-detail__item__value">{{ detail[item.key] }}</view>
       </view>
     </view>
-    <view class="trace-detail__footer">
+    <view class="trace-detail__footer" v-if="canRemove || canEdit">
       <block>
-        <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="remove()">
+        <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="remove()" v-if="canRemove">
           删除
         </view>
-        <view class="trace-detail__footer__btn trace-detail__footer__confirm" @click="edit()">
+        <view class="trace-detail__footer__btn trace-detail__footer__confirm" @click="edit()" v-if="canEdit">
           编辑
         </view>
       </block>
@@ -58,10 +58,18 @@ export default {
   onLoad(option) {
     this.loadDetail(option.id);
   },
+  computed: {
+    canRemove() {
+      return this.$util.checkPermission('outbound:setting:delete');
+    },
+    canEdit() {
+      return this.$util.checkPermission('outbound:setting:edit')
+    },
+  },
   methods: {
     edit() {
       uni.navigateTo({
-          url: '/pages/admin/mw/outbound-setting-edit'
+          url: '/pages-mw/mw/outbound-setting-edit'
       })
     },
     loadDetail(id) {

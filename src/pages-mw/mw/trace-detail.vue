@@ -44,8 +44,8 @@
         </view>
       </view>
     </view>
-    <view class="trace-detail__footer">
-      <block v-if="mode == 'supply'">
+    <view class="trace-detail__footer" v-if="showFooter">
+      <block v-if="canAudit">
         <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="audit(false)">
           拒绝
         </view>
@@ -53,7 +53,7 @@
           通过
         </view>
       </block>
-      <block v-if="mode == 'restore'">
+      <block v-if="canRestore">
         <view class="trace-detail__footer__btn trace-detail__footer__restore" @click="restore()">
           恢复
         </view>
@@ -266,6 +266,18 @@ export default {
         },
       ]
     };
+  },
+  computed: {
+    // 是否可以审核
+    canAudit() {
+      return this.$util.checkPermission('additional:audit') && this.mode == 'supply';
+    },
+    canRestore() {
+      return this.mode == 'restore';
+    },
+    showFooter() {
+      return this.canAudit || this.canRestore;
+    }
   },
   onLoad(option) {
     this.mode = option.mode || 'inventory';

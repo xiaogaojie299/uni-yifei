@@ -23,7 +23,7 @@
 </template>
 <script>
 import sField from '@/compontens/s-field';
-import sSelectMulti from '@/compontens/mw-select/s-select-multi';
+import sSelectMulti from '@/compontens/s-select-multi';
 import { detailWarningConfigType, getWasteTypeList, editWarningConfigType } from '@/utils/api';
 export default {
   components:{

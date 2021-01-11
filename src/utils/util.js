@@ -6,6 +6,18 @@ export function checkPermission(key) {
     return permissionKeyList.findIndex(i => i == key) > -1;
 }
 
+// 检查指定的权限是否存在
+export function checkPermissionAny(keys) {
+    // 暂时用Storage, 后期优化
+    let permissionKeyList = uni.getStorageSync('cache:user:permission:key:list');
+    for (let keyIndex in keys) {
+        if (permissionKeyList.findIndex(i => i == keys[keyIndex]) > -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 export function getCache(cache) {
     // 先检查是否已经过期
     let data = uni.getStorageSync('api:cache:' + cache);

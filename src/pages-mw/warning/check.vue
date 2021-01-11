@@ -19,12 +19,12 @@
                 </view>
             </view>
         </view>
-        <view class="warning-check__container__textarea" v-if="canSubmit || canAccept || canRefuse">
+        <view class="warning-check__container__textarea" v-if="showFooter">
             <u-input v-model="replyText" type="textarea" placeholder="填写处理意见..." class="warning-check__container__textarea__input" :custom-style="{padding: '28rpx 22rpx'}" :clearable="false" :height="220"/>
         </view>
       </scroll-view>
     <view class="warning-check__footer">
-        <view class="warning-check__footer__line" v-if="canAccept || canRefuse">
+        <view class="warning-check__footer__line" v-if="showFooter">
             <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
                 <u-loading v-show="refuseLoading" /> 驳回
             </view>
@@ -72,15 +72,18 @@ export default {
   computed: {
       // 是否允许提交
       canSubmit() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:submit');
+          return this.$util.checkPermission('warnInfo:status:submit');
       },
       // 是否允许通过
       canAccept() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:pass');
+          return this.$util.checkPermission('warnInfo:status:pass');
       },
       // 是否允许驳回
       canRefuse() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:reject');
+          return this.$util.checkPermission('warnInfo:status:reject');
+      },
+      showFooter() {
+          return this.canHandle && (this.canSubmit || this.canAccept || this.canRefuse);
       },
       // 底部的固定到底是两排按钮还是一排按钮?
       bottomButtonsHeight() {

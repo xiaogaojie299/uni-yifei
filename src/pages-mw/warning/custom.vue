@@ -33,7 +33,7 @@
         <view class="button-container">
             <view class="button" @click="add()">新增配置</view>
         </view>
-        <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" />
+        <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"/>
     </view>
 </template>
 <script>
@@ -124,13 +124,13 @@ export default {
           // 存到本地，因为没有单独的接口拿数据哦
           uni.setStorageSync('cache:warning-setting:custom', item);
           uni.navigateTo({
-              url: '/pages/admin/warning/custom-edit'
+              url: '/pages-mw/warning/custom-edit'
           });
       },
       add() {
           uni.removeStorageSync('cache:warning-setting:custom');
           uni.navigateTo({
-              url: '/pages/admin/warning/custom-edit'
+              url: '/pages-mw/warning/custom-edit'
           });
       }
   }

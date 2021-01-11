@@ -5,7 +5,7 @@
 </template>
 <script>
 import { getMyHospitalCascadeList, getMyOfficeCascadeList } from '@/utils/api';
-import sSelect from '@/compontens/mw-select/s-select';
+import sSelect from '@/compontens/s-select';
 export default {
     components: {
         sSelect
@@ -68,6 +68,7 @@ export default {
             this.cascadeIndex = tmpIndex;
         },
         loadHospitalCascade() {
+            this.$emit('loading');
             if (this.hospitalId) {
                 getMyOfficeCascadeList({
                     parentId: this.hospitalId
@@ -77,6 +78,8 @@ export default {
                         // 要计算一下是否有默认ID列表
                         this.calcIndex(this.defaultIds, true);
                     }
+                }).finally(e => {
+                    this.$emit('loaded');
                 });
             } else {
                 // 加个缓存
@@ -87,6 +90,7 @@ export default {
                         this.calcIndex(this.defaultIds, true);
                     }
                 }).catch(err => {}).finally(e => {
+                    this.$emit('loaded');
                 });
             }
         },
