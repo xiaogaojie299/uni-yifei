@@ -102,7 +102,18 @@ view,input{
   }
   .border-bottom{
 		border:1px solid#EAEAEA;
-	}
+  }
+  .footer-btn {
+    bottom: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100rpx;
+    background:$my-main-color;
+    font-size: 32rpx;
+    font-family: PingFang-SC-Medium, PingFang-SC;
+    font-weight: 500;
+    color: #ffffff;
+}
   .noCourse{
     height: 120rpx;
     display: flex;

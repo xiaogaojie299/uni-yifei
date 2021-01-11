@@ -38,7 +38,11 @@
                 >
                 </ly-tree>
         </view>
-	
+        <view class="footer">
+            <view @tap="goAddDepart" class="footer-btn flex-ver-center">
+                新增架构
+        </view>
+        </view>
     <!-- <u-button @click="test">测试</u-button> -->
 </view>
 </template>
@@ -75,6 +79,10 @@
 				//this.$refs.tree.setCurrentKey(9);
 			});
         },
+        onShow(){
+            console.log("执行成功");
+             this.$store.commit('setUnitValue',{})
+        },
         created(){
             // this.data = JSON.parse(uni.getStorageSync("hospital"));
                 // 第一种树状图两个接口 
@@ -103,6 +111,11 @@
             search(){
                 console.log(this.$refs.tree.filter);
                 this.$refs.tree.filter(this.name)
+            },
+            goAddDepart(){
+                uni.navigateTo({
+                    url:"./add-depart"
+                })
             },
             // uni-app中emit触发的方法只能接受一个参数，所以会回传一个对象，打印对象即可见到其中的内容
             async handleNodeClick(obj) {

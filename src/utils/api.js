@@ -373,3 +373,7 @@ export function getParent(data){
 export function sysDepartmentEdit(data){
   return request.post("/system/sysDepartment/edit",data)
 }
+// 获取单位名称
+export function unitData(){
+  return request.get("/system/sysDict/getDepartmentTypeList")
+}

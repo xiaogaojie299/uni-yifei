@@ -13,7 +13,7 @@
         </view>
         <view class="header my-box h-100">
             <view class="label flex-center">组织类型</view>
-            <input class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType" />
+            <input @tap="goOrgType" class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType.name" />
             <img src="@/static/images/path.png" />
         </view>
         <!-- 选择按钮 -->
@@ -29,7 +29,7 @@
 <script>
 import {getParent,sysDepartmentEdit} from "@/utils/api"
 import leftree from "./cmps/left-tree"
-
+import {actions} from "vuex"
 export default {
     data(){
         return {
@@ -40,7 +40,6 @@ export default {
             name:"",    //组织名称
             listRegion:[],           // 上个页面获取的树数据
             node:null,            // 父组件传过来的值
-            orgType:""
         }
     },
     provide() {
@@ -53,6 +52,15 @@ export default {
     computed:{
         isSubmit(){
             return this.parent.label && this.name
+        },
+        orgType(){
+            console.log(this.$store.state);
+            if(this.$store.state.unitValue){
+                // return  JSON.parse(uni.getStorageSync("unitValue"));
+                return this.$store.state.unitValue
+            }else{
+                return {}
+            }
         }
     },
     methods:{
@@ -60,8 +68,14 @@ export default {
             this.$refs.handleModel.openModel()
         },
         checkoutValue(node){
+            this.node = node.data;
             this.parent.label = node.data.label;
             this.parent.id = node.data.id;
+        },
+        goOrgType(){    //跳转到组织类型
+            uni.navigateTo({
+                url:"./org-type"+"?orgType="+this.node.orgType
+            })
         },
         submit(){
             let params = this.node;
@@ -99,12 +113,6 @@ export default {
             orgType: 2
             parentId: 40
             treeCode: "0000170002"
-        */
-        let node = JSON.parse(options.node);
-        this.parent.label = node.parent.label;
-        this.parent.id = node.parentId;
-        
-        this.node = node.data;
         this.name = node.label;
         switch( node.data.orgType){
             case 1:
@@ -124,6 +132,8 @@ export default {
         }
         getParent(params).then(res=>{
         })
+        */
+
     }
 }
 </script>

@@ -7,6 +7,7 @@ let store = new vuex.Store({
         areaList:[],     //区域下拉列表
         permissionKeyList: [], // 权限KEY列表
         permissionList: [], // 权限列表(元数据)
+        unitValue:{},   // 单位部门选择 列表
     },
     mutations:{
         setAreaList(state,list){
@@ -19,6 +20,10 @@ let store = new vuex.Store({
         setPermissionKeyList(state, list) {
             state.permissionKeyList = list;
             uni.setStorageSync('cache:user:permission:key:list', list);
+        },
+        setUnitValue(state,list){
+            state.unitValue = list;
+            uni.setStorageSync("unitValue",JSON.stringify(list));
         }
     },
     actions:{

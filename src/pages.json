@@ -239,6 +239,22 @@
 				"navigationBarTextStyle":"white"
 			}
 		},
+		{
+			"path": "pages/admin/isystem/add-depart",
+			"style": {
+				"navigationBarTitleText": "新增",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
+		{
+			"path": "pages/admin/isystem/org-type",
+			"style": {
+				"navigationBarTitleText": "组织类型",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
+			}
+		},
 		
 		{
 			"path": "pages/people/index",
