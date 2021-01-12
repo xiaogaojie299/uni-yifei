@@ -8,7 +8,7 @@
             </view>
             <view class="mw-select-item group" @click="dateClick(2)" v-if="options.timestampSelect || false">
                 <text class="name">{{timestampSelectValue || '查询时间'}}</text>
-                <u-icon :name="!timestampSelectShow ? 'arrow-down': 'arrow-up'"></u-icon>
+                <u-icon :name="!dateShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
             <view class="mw-select-item department" @click="visibleDepartment()" v-if="(options.cascade || false) && (options.department || false)">
                 <u-loading size="24" v-if="officeCascadeLoading"/>
@@ -98,7 +98,7 @@
             </view>
 		</u-popup>
         <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
-        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateParams" :default-time="defaultTime"></s-picker>
+        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateSelectParms" :default-time="defaultTime"></s-picker>
         <s-select title="选择部门" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
         <s-select title="选择科室" v-model="subjectShow" :list="subjectList" @confirm="subjectCallback" :default-value="subjectIndex"></s-select>
     </view>
@@ -144,7 +144,8 @@ export default {
             subjectIndex: [], // 索引
             departmentIndex: [], // 索引
             cascadeIndex: [], // 索引
-            dateParams: {
+            dateSelectParms: {},
+            dateTimeParams: {
                 year: true,
                 month: true,
                 day: true,
@@ -152,8 +153,12 @@ export default {
                 minute: true,
                 second: false
             },
+            dateParams: {
+                year: true,
+                month: true,
+                day: true
+            },
             cascadeShow: false, // 医院选择显示
-            timestampSelectShow: false, // 时间选择器
             dateIndex: 0, // 判断日期选择是第一个还是第二个
             wasteList: [],
             statusList: [
@@ -495,19 +500,22 @@ export default {
             this.dateShow = true;
             switch(this.dateIndex) {
                 case 0:
+                    this.dateSelectParms = this.dateTimeParams;
                     this.defaultTime = this.startTime;
                     break;
                 case 1:
+                    this.dateSelectParms = this.dateTimeParams;
                     this.defaultTime = this.endTime;
                     break;
                 default:
+                    this.dateSelectParms = this.dateParams;
                     this.defaultTime = this.timestampSelectValue;
                     break;
             }
         },
         // 日期变更时间，index是用来标识是前还是后
         dateChange(e) {
-            let str = e.year + '-' + e.month + '-' + e.day + ' ' + e.hour + ':' + e.minute + ':00';
+            let str = e.year + '-' + e.month + '-' + e.day ;
             let timestamp = new Date(str.replace(/-/g,"/")).getTime();
             switch(this.dateIndex) {
                 case 0: 
@@ -521,6 +529,7 @@ export default {
                             break ;
                         }
                     }
+                    str += ' ' + e.hour + ':' + e.minute + ':00';
                     this.startTime = str;
                 break;
                 case 1:
@@ -534,10 +543,12 @@ export default {
                             break ;
                         }
                     }
+                    str += ' ' + e.hour + ':' + e.minute + ':00';
                     this.endTime = str;
                 break;
                 default: 
                     this.timestampSelectValue = str;
+                    this.emitConfirm();
                 break;
             }
         }

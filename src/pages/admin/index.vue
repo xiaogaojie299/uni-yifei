@@ -4,6 +4,7 @@
         <view :class="{'flex-ver-center': true, 'admin-index__menu__item': true, 'admin-index__menu__item__active': index === change}"
             @key="index"
             v-for="(item, index) in kindlist"
+            :key="index"
             @click="setid(index)"
             :key="index"
           >
