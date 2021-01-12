@@ -37,3 +37,18 @@ export function setCache(cache, data, timeout) {
         return data;
     }
 }
+
+// 数组分片
+export function chunk(list, size,) {
+    if(list.length <= 0 || size <= 0){
+      return list;
+    }
+ 
+    let chunks = [];
+ 
+    for(let i = 0; i < list.length; i = i + size) {
+        chunks.push(list.slice(i, i + size));
+    }
+ 
+    return chunks
+}

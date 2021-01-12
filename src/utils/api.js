@@ -192,6 +192,10 @@ export function listMedicalTrace(data) {
 export function detailMedicalTrace(data) {
   return request.get('/medical/mwCollectRecord/queryById', data);
 }
+// 获取收集轨迹
+export function collectTrajectory(data) {
+  return request.get('/medical/mwCollectRecord/collectTrajectory', data);
+}
 
 // 入出库记录页面
 // 获取入库记录
