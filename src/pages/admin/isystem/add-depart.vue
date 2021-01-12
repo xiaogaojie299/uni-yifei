@@ -73,9 +73,20 @@ export default {
             this.parent.id = node.data.id;
         },
         goOrgType(){    //跳转到组织类型
-            uni.navigateTo({
-                url:"./org-type"+"?orgType="+this.node.orgType
-            })
+            try{
+               if(!this.node.orgType){
+                    uni.navigateTo({
+                        url:"./org-type"+"?orgType="+this.node.orgType
+                })
+               }else{
+                   uni.showToast({
+                       title:"请先选择你的的父级组织"
+                   })
+               }
+            }catch(e){
+                //TODO handle the exception
+            }
+           
         },
         submit(){
             let params = this.node;
