@@ -95,7 +95,7 @@ export default {
         },
         cascadeCallback(obj){
         console.log(obj);
-            // this.cascadeIndexCalc(obj) 
+            this.cascadeIndexCalc(obj) 
         },
         handleHospitalShow(){
             this.cascadeShow =true;

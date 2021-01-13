@@ -381,3 +381,8 @@ export function sysDepartmentEdit(data){
 export function unitData(){
   return request.get("/system/sysDict/getDepartmentTypeList")
 }
+
+/* 用户管理 */
+export function userList(){
+  return request.get("/system/user/list")
+}

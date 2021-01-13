@@ -85,6 +85,11 @@ export default {
                }
             }catch(e){
                 //TODO handle the exception
+                console.log(e);
+                uni.showToast({
+                       title:"请先选择父级组织",
+                       icon:"none"
+                   })
             }
            
         },

@@ -35,226 +35,6 @@
 				"navigationBarTextStyle":"white"
 			}
 		},
-		{
-			"path": "pages/admin/index",
-			"style": {
-				"navigationBarTitleText": "管理",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/reports/transfer",
-			"style": {
-				"navigationBarTitleText": "转移联单",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-
-		},
-		{
-			"path": "pages/admin/reports/depart/statistics",
-			"style": {
-				"navigationBarTitleText": "科室产废记录",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-
-		},
-		{
-			"path": "pages/admin/reports/hospital/statistics",
-			"style": {
-				"navigationBarTitleText": "医院产废记录",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-
-		},
-		{
-			"path": "pages/admin/reports/area/statistics",
-			"style": {
-				"navigationBarTitleText": "区域产废记录",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-
-		},
-		{
-			"path": "pages/admin/analysis/type",
-			"style": {
-				"navigationBarTitleText": "医废类型分析",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-		},
-		{
-			"path": "pages/admin/analysis/area",
-			"style": {
-				"navigationBarTitleText": "区域产废分析",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-		},
-		{
-			"path": "pages/admin/analysis/weight",
-			"style": {
-				"navigationBarTitleText": "各环节重量分析",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-		},
-		{
-			"path": "pages/admin/analysis/hospital/rank",
-			"style": {
-				"navigationBarTitleText": "医院产废排行榜",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-		},
-		{
-			"path": "pages/admin/analysis/region/rank",
-			"style": {
-				"navigationBarTitleText": "区域产废排行榜",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"	
-				}
-			}
-		},
-		{
-			"path": "pages/admin/monitor/list",
-			"style": {
-				"navigationBarTitleText": "实时监控",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white",
-				"app-plus":{
-					"titleSize":"36rpx"
-				}
-			}
-		},
-		{
-			"path": "pages/admin/monitor/check-monitor",
-			"style": {
-				"navigationBarTitleText": "查看监控",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/monitor/setting",
-			"style": {
-				"navigationBarTitleText": "监控配置",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/monitor/redact",
-			"style": {
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-
-		{
-			"path": "pages/admin/isystem/login/record",
-			"style": {
-				"navigationBarTitleText": "登录记录",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-
-		{
-			"path": "pages/admin/isystem/deviceAgent",
-			"style": {
-				"navigationBarTitleText": "硬件管理",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/isystem/add-code",
-			"style": {
-				"navigationBarTitleText": "新增特征码",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-
-		{
-			"path": "pages/admin/isystem/device",
-			"style": {
-				"navigationBarTitleText": "厂商管理",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path":"pages/admin/isystem/add-vendor",
-			"style": {
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-
-		{
-			"path": "pages/admin/isystem/depart",
-			"style": {
-				"navigationBarTitleText": "组织架构",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/isystem/edit-depart",
-			"style": {
-				"navigationBarTitleText": "编辑",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/isystem/add-depart",
-			"style": {
-				"navigationBarTitleText": "新增",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
-		{
-			"path": "pages/admin/isystem/org-type",
-			"style": {
-				"navigationBarTitleText": "组织类型",
-				"navigationBarBackgroundColor":"#1539AF",
-				"navigationBarTextStyle":"white"
-			}
-		},
 		
 		{
 			"path": "pages/people/index",
@@ -267,6 +47,7 @@
 				}
 			}
 		},
+		
 		{
 			"path": "pages/people/change-pwd",
 			"style": {
@@ -467,7 +248,245 @@
 				}
 			}
 		]
-	}],
+	},
+	{
+		"root": "page-admin",
+        "pages": [
+			{
+				"path": "admin/isystem/login/record",
+				"style": {
+					"navigationBarTitleText": "登录记录",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+	
+			{
+				"path": "admin/isystem/deviceAgent",
+				"style": {
+					"navigationBarTitleText": "硬件管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/add-code",
+				"style": {
+					"navigationBarTitleText": "新增特征码",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+	
+			{
+				"path": "admin/isystem/device",
+				"style": {
+					"navigationBarTitleText": "厂商管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path":"admin/isystem/add-vendor",
+				"style": {
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+	
+			{
+				"path": "admin/isystem/depart",
+				"style": {
+					"navigationBarTitleText": "组织架构",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/edit-depart",
+				"style": {
+					"navigationBarTitleText": "编辑",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/add-depart",
+				"style": {
+					"navigationBarTitleText": "新增",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/org-type",
+				"style": {
+					"navigationBarTitleText": "组织类型",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			
+			{
+				"path": "admin/isystem/user",
+				"style": {
+					"navigationBarTitleText": "用户管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/index",
+				"style": {
+					"navigationBarTitleText": "管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/reports/transfer",
+				"style": {
+					"navigationBarTitleText": "转移联单",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+	
+			},
+			{
+				"path": "admin/reports/depart/statistics",
+				"style": {
+					"navigationBarTitleText": "科室产废记录",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+	
+			},
+			{
+				"path": "admin/reports/hospital/statistics",
+				"style": {
+					"navigationBarTitleText": "医院产废记录",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+	
+			},
+			{
+				"path": "admin/reports/area/statistics",
+				"style": {
+					"navigationBarTitleText": "区域产废记录",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+	
+			},
+			{
+				"path": "admin/analysis/type",
+				"style": {
+					"navigationBarTitleText": "医废类型分析",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/analysis/area",
+				"style": {
+					"navigationBarTitleText": "区域产废分析",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/analysis/weight",
+				"style": {
+					"navigationBarTitleText": "各环节重量分析",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/analysis/hospital/rank",
+				"style": {
+					"navigationBarTitleText": "医院产废排行榜",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/analysis/region/rank",
+				"style": {
+					"navigationBarTitleText": "区域产废排行榜",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"	
+					}
+				}
+			},
+			{
+				"path": "admin/monitor/list",
+				"style": {
+					"navigationBarTitleText": "实时监控",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"app-plus":{
+						"titleSize":"36rpx"
+					}
+				}
+			},
+			{
+				"path": "admin/monitor/check-monitor",
+				"style": {
+					"navigationBarTitleText": "查看监控",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/monitor/setting",
+				"style": {
+					"navigationBarTitleText": "监控配置",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/monitor/redact",
+				"style": {
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			}
+		]
+	}
+
+],
 	"preloadRule": {
         "pages/admin/index": {
             "network": "all",
@@ -488,7 +507,7 @@
 				"selectedIconPath":"static/images/tabbar/isHome.png"
 			},
 			{
-				"pagePath":"pages/admin/index",
+				"pagePath":"page-admin/admin/index",
 				"text":"管理",
 				"iconPath":"static/images/tabbar/unAdmin.png",
 				"selectedIconPath":"static/images/tabbar/isAdmin.png"

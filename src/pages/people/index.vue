@@ -26,6 +26,7 @@
           </view>
           <img src="@/static/images/path.png" alt="" />
         </view>
+        <u-button @tap="test">测试跳转</u-button>
       </view>
     </view>
   </view>
@@ -52,6 +53,11 @@ export default {
           uni.navigateTo({
               url:"./"+url
           })
+      },
+      test(){
+        uni.navigateTo({
+          url:"/page-isystem/isystem/depart"
+        })
       }
   }
 };

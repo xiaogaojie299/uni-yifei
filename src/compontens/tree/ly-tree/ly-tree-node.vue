@@ -63,7 +63,7 @@
 
 			<view v-if="isEdit" class="operation">
 				<text @click.stop="editNode(node)">编辑</text>
-				<text @click.stop="delNode(node)" v-if="!node.data.canDelete" class="allow-del">删除</text>
+				<text @click.stop="delNode(node)" v-if="node.data.canDelete" class="allow-del">删除</text>
 				<text v-else @click.stop="placeholder(node)" class="no-del">删除</text>
 			</view>
 			

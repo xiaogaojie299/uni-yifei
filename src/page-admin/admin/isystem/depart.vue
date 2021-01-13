@@ -13,7 +13,7 @@
         </view>
         <view>
                 <ly-tree v-if="isshow==2" ref="tree"
-                    :treeData="data"
+                    :treeData="data1"
                     :props = props
                     node-key="id"
                     :isInjectParentInNode="true"
@@ -31,11 +31,11 @@
                     :expand-on-click-node="false"
                     children="children" 
                     highlight-current
-                    expand-current-node-parent
                     @node-expand="handleNodeExpand" 
                     @node-click="handleNodeClick"
                     :filter-node-method="filterNode"
                 >
+                    <!-- expand-current-node-parent -->
                 </ly-tree>
         </view>
         <view class="footer">
@@ -58,6 +58,7 @@
 			return {
                 name:"", //输入框搜索的医院
                 data:[],
+                data1:[],
                 props: function() {
                     return {
                         // 这里的label就可以使用函数进行自定义的渲染了
@@ -88,8 +89,44 @@
                 // 第一种树状图两个接口 
                 if(this.isshow==2){
                      listRegion().then(res=>{
-                        this.data = res.result;
-                        console.log(this.data);
+                        // this.data = res.result;
+                        this.data = JSON.stringify(res.result)
+                        this.data = res.result
+                        console.log(this.data,"测试数据");
+                        this.data1 = [{
+                            canDelete: false,
+                            childrenList:[{
+                                    canDelete: false,
+                                    childrenList:[{
+                                        canDelete: false,
+                                        departName: "泸州市",
+                                        id: 41,
+                                        isWarehouse: 0,
+                                        key: 41,
+                                        level: null,
+                                        orgType: 1,
+                                        parentId: 40,
+                                        treeCode: "0000170013"
+                                    }],
+                                    departName: "四川省",
+                                    id: 40,
+                                    isWarehouse: 0,
+                                    key: 40,
+                                    level: null,
+                                    orgType: 1,
+                                    parentId: -1,
+                                    treeCode: "000017"
+                                }
+                            ],
+                            departName: "平台",
+                            id: -1,
+                            isWarehouse: 0,
+                            key: -1,
+                            level: null,
+                            orgType: 1,
+                            parentId: -999,
+                            treeCode: "00"
+                        }]
                         uni.setStorageSync("listRegion",JSON.stringify(res.result))
                     })
                 }else{
