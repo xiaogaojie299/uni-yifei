@@ -249,7 +249,7 @@ export default {
       position: relative;
       img {
         width: 40rpx;
-        height: 36rpx;
+        height: 42rpx;
       }
       .eys {
         width: 40rpx;
@@ -260,6 +260,8 @@ export default {
         transform: translateY(-50%);
       }
       .ipt {
+        border: none;
+        outline: none;
         width: 100%;
         height: 100%;
         padding-right: 44rpx;

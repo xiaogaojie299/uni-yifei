@@ -18,12 +18,12 @@
                             <img src="@/static/images/down_arrow.png" alt="">
                     </view>
                     
-                    <!-- <view @tap="handleHospitalShow" class="checkDrop">
+                    <view @tap="handleRoleShow" class="checkDrop">
                         <view class="select-title-box nowrap-hidden">
-                            <view class="">{{selectHos.label}}</view>
+                            <view class="">{{selectRole[0].label || "选择角色"}}</view>
                         </view>
                             <img src="@/static/images/down_arrow.png" alt="">
-                    </view> -->
+                    </view>
 
                 </view>
                
@@ -74,13 +74,14 @@
                 </view>
                 <view class="hspList-bottom my-box">
                     <view class="flex">
+                        <view @tap="handleHospitalShow(item.id)" class="btn ml-20 mr-20 compile-btn flex-ver-center">
+                           编辑 
+                        </view>
                         <view @tap="goDetail(item.id,item.status)" class="btn compile-btn flex-ver-center">
                            {{item.status==1?"禁用":"启用"}} 
                         </view>
-                        <view @tap="handleHospitalShow(item.id)" class="btn ml-20 mr-20 other-btn flex-ver-center">
-                           移动 
-                        </view>
-                        <view @tap="del(item.id)" class="btn other-btn flex-ver-center">
+                        
+                        <view @tap="del(item.id)" class="btn ml-20 other-btn flex-ver-center">
                            删除
                         </view>
                     </view>
@@ -90,40 +91,58 @@
         </view>
         
         <view @tap="goAdd" class="footer flex-ver-center">
-            新增特征码
+            新增用户
         </view>
 
         <!-- 选择医院名称 -->
         <!-- <area-drop-down ref="childMethod" :list="firmList" @selectRow="selectRow"></area-drop-down> -->
         <!-- <u-select v-model="show" mode="single-column" label-name="name" value-name="id" :list="firmList" @confirm="selectRow"></u-select> -->
-        <s-select mode="mutil-column-auto" title="选择组织" v-model="show" :list="areaList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
+        <!-- :default-value="cascadeIndex" -->
+        <h-select mode="mutil-column-auto" title="选择组织" v-model="show" :list="areaList" @confirm="cascadeCallback"></h-select>
+        <!-- 角色弹框 -->
+        <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
     </view>    
 </template>
 <script>
-import {monitoringList,deleteMonitor,deviceAgent,hardwareList,moveBatch,delBatch,updateStatus,userList} from "@/utils/api"
+import {monitoringList,deleteMonitor,deviceAgent,hardwareList,moveBatch,updateStatus,userList,sysRole,userDel,userBatch} from "@/utils/api"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
 
-import sSelect from '@/compontens/hospital-select';
+import hSelect from '@/compontens/hospital-select';
+import sSelect from '@/compontens/s-select';
 export default {
     data(){
         return {
             firmList:[],        // 获取公司厂商
             show:false,         // 控制弹出层
+            roleShow:false,
             name:"",            // input框搜索内容
             pageNo:1,
             isRemake:true,      // 判断返回的监控列表是追加还是重新赋值 true:不追加   false:追加
             list:[],             // 数据列表
             monitorList:[],
             areaList:{},    //医院列表
-            selectHos:"",        //选择的医院
+            roleList:{},        // 角色列表
+            selectHos:[{
+                label:"",
+                value:""
+            }],        //选择的医院
+            selectRole:[{
+                label:"",
+                value:""
+            }],
             devIdno:null,             // 监控设备编号
-            moveID:null
+            moveID:null,
+            cascadeIndex:"",
+            roleIndex:0                 // 默认选择的角色值
         }
     },
     components:{
-        sSelect
+        sSelect,
+        hSelect
     },
     created(){
+        this.sysRole();
+        this.init()
     },
     onReachBottom : function(){ //上拉触底加载更多
         this.pageNo++;
@@ -132,7 +151,6 @@ export default {
     },
     onShow(){
         this.deviceAgent();
-        this.init()
     },
     watch:{
     },
@@ -155,6 +173,16 @@ export default {
                 console.log(e);
             }
         },
+        sysRole(){  // 获取角色列表
+            let params = {
+                type:-1
+            }
+            sysRole(params).then(res=>{
+                console.log(res.result);
+                this.roleList = res.result
+            })
+            
+        },
         cascadeIndexCalc(e) {
             let cascadeIndex = [];
             let tmpData = this.areaList;
@@ -176,10 +204,26 @@ export default {
             this.getList();
             // this.cascadeIndexCalc(obj) 
         },
+        roleBack(obj){  // 选择角色传过来的值
+            this.roleList.forEach((item,index)=>{
+                console.log(item.id);
+                if(item.id == obj[0].value){
+                    console.log(item.id);
+                    this.roleIndex = [index];
+                }
+            })
+            this.selectRole = obj;
+            this.list = [];
+            this.isRemake = true;
+            this.pageNo=1;
+            this.getList();
+        },
+        
         handleHospitalShow(id){
-            this.moveID = id;
-            this.childMethod=true;
             this.show = true;
+        },
+        handleRoleShow(){   // 弹出角色选择框
+            this.roleShow = true;
         },
         async selectRow(row){ //选择医院点击确定
             this.isRemake = true        //重新赋值，不加班
@@ -209,18 +253,19 @@ export default {
         async del(id){
             let that = this;
             that.isRemake = true;
+            console.log("id==",id);
             let params = {
                 id
             }
             uni.showModal({
                 title: '提示',
-                content: '是否要删除厂商',
+                content: '是否要删除用户',
                 success: function (res) {
                     if (res.confirm) {
-                        delBatch(params).then(res=>{
+                        userDel(params).then(res=>{
                             let {code,result,message} = res;
                             if(code == 200){
-                            uni.showToast({title:"删除设备成功",icon:"success"})
+                            uni.showToast({title:"删除用户成功",icon:"success"})
                             setTimeout(()=>{
                                 console.log(that);
                                 that.getList();
@@ -230,7 +275,7 @@ export default {
                             uni.showToast({title:message,icon:"none"})
                         }
                         })
-                        // let {code,result,message} = await delBatch(params);
+                        // let {code,result,message} = await userDel(params);
                         
                     } else if (res.cancel) {
                         console.log('用户点击取消');
@@ -249,7 +294,7 @@ export default {
             let that = this;
             that.isRemake = true;
             let params = {
-                id,
+                ids:id,
                 status:status==1?2:1
             }
             let text = status==1?"禁用":"启用"
@@ -258,10 +303,10 @@ export default {
                 content: `确定${text}该厂商`,
                 success: function (res) {
                     if (res.confirm) {
-                        updateStatus(params).then(res=>{
+                        userBatch(params).then(res=>{
                             let {code,result,message} = res;
                             if(code == 200){
-                            uni.showToast({title:`${text}该厂商成功`,icon:"success"})
+                            uni.showToast({title:`${text}该用户成功`,icon:"success"})
                             setTimeout(()=>{
                                 that.getList();
                             },1000)
@@ -270,7 +315,7 @@ export default {
                             uni.showToast({title:message,icon:"none"})
                         }
                         })
-                        // let {code,result,message} = await delBatch(params);
+                        // let {code,result,message} = await userDel(params);
                         
                     } else if (res.cancel) {
                         console.log('用户点击取消');
@@ -308,8 +353,12 @@ export default {
                     keyword:this.name,
                     pageSize:10
                 }
-                if(this.selectHos.length>0){
+                console.log(this.selectHos);
+                if(this.selectHos.length>0 && this.selectHos[0].value!==""){
                     params.hospitalId =Number( this.selectHos[this.selectHos.length-1].value);
+                }
+                if(this.selectRole.length>0 && this.selectRole[0].value!==""){
+                    params.roleName = this.selectRole[0].label;
                 }
                 this.name || delete params.keyword;
                 console.log("params",params);

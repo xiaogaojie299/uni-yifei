@@ -3,10 +3,22 @@
 		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [
+		
 		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36px"	
+				}
+			}
+		},
+		{
+			"path": "pages/test",
+			"style": {
+				"navigationBarTitleText": "测试页面",
 				"navigationBarBackgroundColor":"#1539AF",
 				"navigationBarTextStyle":"white",
 				"app-plus":{

@@ -25,15 +25,18 @@
               v-model="item.value"
               :name="name"
             />
+
             <view style="height: 100%; width: 60rpx">
               <!-- <img class="eys" v-if="index==1" :src="isWatch?require('@/static/images/iseys.png'):require('@/static/images/uneys.png')" alt="" /> -->
             </view>
           </view>
           <!-- <button form-type="submit" class="btn flex-dev-center">确定</button> -->
         </form>
-        <view @tap="goforgetPwd" class="forPwd"> 忘记密码 </view>
+        <view @tap="goforgetPwd" class="forPwd"> <text @tap="goforgetPwd"> 忘记密码 </text></view>
         <!-- 提交按钮 -->
-        <button @tap="submit" class="btn flex-dev-center">登录</button>
+        <view class="login-btn">
+          <button @tap="submit" class="btn flex-dev-center">登录</button>
+        </view>
         <u-toast ref="uToast" />
       </view>
     </view>
@@ -177,14 +180,27 @@ export default {
         width: 100%;
         height: 100%;
         padding-right: 44rpx;
+        border: 1px solid red;
+        border: none;
+        outline: none;
       }
     }
   }
   .forPwd {
     width: 100%;
-    height: 102rpx;
-    text-align: right;
-    line-height: 102rpx;
+    display: flex;
+    justify-content: flex-end;
+
+    text{
+      display: inline-block;
+      line-height: 102rpx;
+    }
+  }
+  .login-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .btn {
     width: 396rpx;

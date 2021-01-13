@@ -26,12 +26,13 @@
           </view>
           <img src="@/static/images/path.png" alt="" />
         </view>
-        <u-button @tap="test">测试跳转</u-button>
+        <!-- <u-button @tap="test">测试跳转</u-button> -->
       </view>
     </view>
   </view>
 </template>
 <script>
+var echarts = require("echarts");
 export default {
   data() {
     return {
@@ -46,6 +47,9 @@ export default {
         },
       ],
     };
+  },
+  created(){
+    console.log(echarts);
   },
   methods:{
       goUrl(url){

@@ -188,7 +188,7 @@ export default {
       '/pages-mw', '/pages-mw', '/pages-mw'
     ];
     // 跳转前缀，之前是无脑跳这个前缀，现在做了分包，要重新处理
-    let prefix = '/page-admin/admin/';
+    let prefix = '/page-admin/admin';
     let urlArray = url.split('/');
     if (urlArray.length > 0) {
       // 如果有配置转发路由, 0是空，1才是第一个路由路径

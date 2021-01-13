@@ -383,6 +383,19 @@ export function unitData(){
 }
 
 /* 用户管理 */
-export function userList(){
-  return request.get("/system/user/list")
+export function userList(data){
+  return request.get("/system/user/list",data)
+}
+// 用户管理获取角色 backend/system/sysRole/list
+export function sysRole(data){
+  return request.get('/system/sysRole/list',data)
+}
+
+// 删除用户管理员
+export function userDel(data){
+  return request.post('/system/user/delete',data)
+}
+// 禁用用户
+export function userBatch(data){
+  return request.post("/system/user/frozenBatch",data)
 }

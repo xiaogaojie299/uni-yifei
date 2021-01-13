@@ -13,7 +13,7 @@
         </view>
         <view>
                 <ly-tree v-if="isshow==2" ref="tree"
-                    :treeData="data1"
+                    :treeData="data"
                     :props = props
                     node-key="id"
                     :isInjectParentInNode="true"
@@ -137,7 +137,11 @@
                         this.data = result;
                     })
                 }
-                   
+                   sysDepartmentTreeList().then(({result})=>{
+                        console.log("result==>",result);
+                        uni.setStorageSync("treeData",JSON.stringify(result))
+                        // this.data = result;
+                    })
                   
         },
         methods:{
