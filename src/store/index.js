@@ -1,6 +1,9 @@
 import vuex from 'vuex';
 import Vue from 'vue';
-import {getMenu, getThreeAreaCascadeList} from "../utils/api";
+import {getMenu, getThreeAreaCascadeList, getMyDepartmentTreeList} from "../utils/api";
+import createPersistedState from 'vuex-persistedstate'; // vuex数据状态state持久化存储
+
+
 Vue.use(vuex);
 let store = new vuex.Store({
     state:{
@@ -8,6 +11,7 @@ let store = new vuex.Store({
         permissionKeyList: [], // 权限KEY列表
         permissionList: [], // 权限列表(元数据)
         unitValue:{},   // 单位部门选择 列表
+        treeData:[],    // 树状图默认省，市，区，医院，科室...
     },
     mutations:{
         setAreaList(state,list){
@@ -24,6 +28,9 @@ let store = new vuex.Store({
         setUnitValue(state,list){
             state.unitValue = list;
             uni.setStorageSync("unitValue",JSON.stringify(list));
+        },
+        setTreeData(state,list){
+            state.treeData = list
         }
     },
     actions:{
@@ -46,8 +53,24 @@ let store = new vuex.Store({
                     context.commit('setPermissionKeyList', keys);
                 }
             });
+        },
+        getTreeData(context){
+            getMyDepartmentTreeList().then(({code,result})=>{
+                if(code==200){
+                    context.commit('setTreeData', result);
+                }
+            })
         }
     },
-    modules: {}
+    modules: {
+        plugins: [createPersistedState({
+	        storage: window.localStorage,   //sessionStorage和localStorage自行切换
+	        reducer (val) {
+	            return {
+	                guideId: val.guideId,
+	            };
+	        }
+	    })]
+    }
 })
 export default store

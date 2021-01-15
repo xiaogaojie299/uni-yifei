@@ -1,7 +1,13 @@
-import ajax from "./ajax";
 import request from "./ajax";
-import qs from "./qs";
-let base = "/base/web/user/";
+/* 
+  >>>>>>>>>>>> 公共模块<<<<<<<<<<<<
+*/
+// 获取 省，市，区，科室，门诊(树状图默认数据)
+export function getMyDepartmentTreeList(){
+  return request.get('/system/sysDepartment/getMyDepartmentTreeList');
+}
+
+/* 登录模块 */
 // 用户登录 
 export function login(data){
   let url ="/system/user/login";

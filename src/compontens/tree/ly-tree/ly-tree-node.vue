@@ -34,10 +34,10 @@
 			</text>
 			<view v-else>
 				<img 
+				@tap.stop="handleExpandIconClick"
 				:src="!node.isLeaf && node.expanded?require('@/static/images/minus.png'):require('@/static/images/add.png')"
 				style="height:40rpx;width:40rpx"
-				@tap.stop="handleExpandIconClick"
-				v-if="node.childNodesId.length>0" 
+				v-if="node.data.orgType<4" 
 				:class="[
 					{ 
 						'is-leaf': node.isLeaf, 
@@ -66,7 +66,8 @@
 				<text @click.stop="delNode(node)" v-if="node.data.canDelete" class="allow-del">删除</text>
 				<text v-else @click.stop="placeholder(node)" class="no-del">删除</text>
 			</view>
-			
+
+
 			<ly-checkbox v-if="checkboxVisible || radioVisible"
 				:type="checkboxVisible ? 'checkbox' : 'radio'" 
 				:checked="node.checked" 
@@ -93,10 +94,10 @@
 					:class="node.icon">
 				</text>
 			</template>
-			
-			<text class="ly-tree-node__label">{{node.label}}</text>
+			<!-- 显示的医院 -->
+			<view class="ly-tree-node__label">{{node.label}}</view>
+			<!-- <view class="ly-tree-node__label" type="text" :value="node.label"> -->
 		</view>
-		
 		<view v-if="!renderAfterExpand || childNodeRendered" 
 			v-show="expanded" 
 			class="ly-tree-node__children" 
@@ -264,6 +265,7 @@
 			},
 			
 			handleClick() {
+				
 				this.tree.store.setCurrentNode(this.node);
 				this.tree.$emit('current-change', {
 					node: this.node,
@@ -271,7 +273,6 @@
 					currentNode: this.tree.store.currentNode
 				});
 				this.tree.currentNode = this.node;
-				
 				if (this.tree.expandOnClickNode) {
 					this.handleExpandIconClick();
 				}
@@ -296,6 +297,7 @@
 			},
 			
 			handleExpandIconClick() {
+				console.log("this.node.isLeaf",this.node);
 				if (this.node.isLeaf) return;
 				
 				if (this.expanded) {
@@ -370,11 +372,13 @@
 </script>
 
 <style lang="scss">
+.placeholder-box{
+	}
 .container{
 	// padding:0 26rpx;
 }
 	.ly-tree-node {
-		white-space: nowrap;
+		// white-space: nowrap;
 		outline: 0;
 	}
 	
@@ -384,6 +388,7 @@
 		height: 100rpx;
 		position: relative;
 	}
+	
 	.ly-tree-node__content>.operation{
 		position: absolute;
 		right: 24rpx;
@@ -468,6 +473,10 @@
 	}
 	
 	.ly-tree-node__label {
+		// border: 1px solid red;
+		width: 240rpx;
+		// overflow: auto;
+		height: auto;
 		font-size: 28rpx
 	}
 	

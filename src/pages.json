@@ -265,6 +265,14 @@
 		"root": "page-admin",
         "pages": [
 			{
+				"path": "admin/isystem/add-user",
+				"style": {
+					"navigationBarTitleText": "新增用户",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
 				"path": "admin/isystem/login/record",
 				"style": {
 					"navigationBarTitleText": "登录记录",
@@ -495,6 +503,7 @@
 					"navigationBarTextStyle":"white"
 				}
 			}
+			
 		]
 	}
 
@@ -538,7 +547,8 @@
 		"navigationBarBackgroundColor": "#1539AF",
 		"backgroundColor": "#1539AF",
 		"usingComponents": {
-			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node"
+			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node",
+			"select-tree":"/compontens/select-tree"
 		}
 	}
 }

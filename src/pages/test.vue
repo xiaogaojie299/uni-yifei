@@ -1,6 +1,12 @@
 <template lang="">
     <view class="">
-        <div id="main" style="width: 800rpx;height:600rpx;"></div>
+        <!-- <div id="main" style="width: 800rpx;height:600rpx;"></div> -->
+        <view class="">
+            <select-tree :isEdit="isEdit"></select-tree>
+        </view>
+        <view class="">
+            
+        </view>
     </view>
 </template>
 <script>
@@ -8,7 +14,7 @@ var echarts = require("echarts");
 export default {
     data(){
         return {
-
+            isEdit:false
         }
     },
     created(){

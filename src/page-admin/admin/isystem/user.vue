@@ -1,5 +1,7 @@
 <template>
     <view class="container">
+        <u-sticky>
+			
         <view class="header">
             <view class="header-cont my-box">
                 <!-- 顶部input -->
@@ -29,6 +31,7 @@
                
             </view>
         </view>
+		</u-sticky>
 
         <!-- 中间主体列表 -->
         <view class="main">
@@ -178,8 +181,8 @@ export default {
                 type:-1
             }
             sysRole(params).then(res=>{
-                console.log(res.result);
                 this.roleList = res.result
+                uni.setStorageSync("roleList", res.result)
             })
             
         },
@@ -287,7 +290,7 @@ export default {
         },
         goAdd(){ //跳转 设备增加页面
             uni.navigateTo({
-                url:"/pages/admin/isystem/add-code"    
+                url:"/page-admin/admin/isystem/add-user"    
             })
         },
         async goDetail(id,status){ //跳转 设备编辑页面
@@ -300,7 +303,7 @@ export default {
             let text = status==1?"禁用":"启用"
             uni.showModal({
                 title: '提示',
-                content: `确定${text}该厂商`,
+                content: `确定${text}该用户`,
                 success: function (res) {
                     if (res.confirm) {
                         userBatch(params).then(res=>{
