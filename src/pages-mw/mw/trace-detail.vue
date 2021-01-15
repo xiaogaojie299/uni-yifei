@@ -1,7 +1,57 @@
 <template>
   <view>
+
+    <view class="trace-detail">
+      <view class="trace-detail__item" v-for="(item, index) in fieldsList" :key="index">
+        <view class="trace-detail__item__key">{{ item.label }}</view>
+        <view :class="{'trace-detail__item__value': true, 'status': item.key == 'auditStatus' && detail.auditStatus == 1}">
+          <block v-if="item.key == 'status'">
+            {{ statusMap[detail[item.key]] }}
+          </block>
+          <block v-else-if="item.key == 'auditStatus'">
+            {{ auditStatusMap[detail[item.key]] }}
+          </block>
+          <block v-else>
+            {{ detail[item.key] || '' }}
+          </block>
+        </view>
+      </view>
+      
+
+      <block v-if="mode == 'supply' || mode == 'restore'">
+        <!-- 已入库 -->
+        <block v-if="detail.status == 2" >
+          <view class="trace-detail__item">
+            <view class="trace-detail__item__key">暂存间</view>
+            <view class="trace-detail__item__value">{{ detail.warehouseName }}</view>
+          </view>
+        </block>
+        <block v-if="detail.status == 3">
+          <view class="trace-detail__item">
+            <view class="trace-detail__item__key">运输单位</view>
+            <view class="trace-detail__item__value">{{ detail.transitCompany }}</view>
+          </view>
+          <view class="trace-detail__item">
+            <view class="trace-detail__item__key">运输人员</view>
+            <view class="trace-detail__item__value">{{ detail.engineDriver }}</view>
+          </view>
+          <view class="trace-detail__item">
+            <view class="trace-detail__item__key">车牌号</view>
+            <view class="trace-detail__item__value">{{ detail.licensePlate }}</view>
+          </view>
+        </block>
+      </block>
+    </view>
+<!-- 
+
     <view class="trace-detail" v-if="mode == 'inventory'">
-      <view class="trace-detail__item" v-for="(item, index) in fieldList" :key="index">
+      <view class="trace-detail__item" v-for="(item, index) in fieldListInventory" :key="index">
+        <view class="trace-detail__item__key">{{ item.label }}</view>
+        <view class="trace-detail__item__value">{{ detail[item.key] || '' }}</view>
+      </view>
+    </view>
+    <view class="trace-detail" v-else-if="mode == 'collect'">
+      <view class="trace-detail__item" v-for="(item, index) in fieldListCollect" :key="index">
         <view class="trace-detail__item__key">{{ item.label }}</view>
         <view class="trace-detail__item__value">{{ detail[item.key] || '' }}</view>
       </view>
@@ -43,8 +93,8 @@
           </block>
         </view>
       </view>
-    </view>
-    <view class="trace-detail__footer" v-if="showFooter">
+    </view> -->
+    <!-- <view class="trace-detail__footer" v-if="showFooter">
       <block v-if="canAudit">
         <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="audit(false)">
           拒绝
@@ -58,7 +108,7 @@
           恢复
         </view>
       </block>
-    </view>
+    </view> -->
   </view>
 </template>
 <script>
@@ -80,9 +130,50 @@ export default {
           '', '未入库', '已入库', '已出库'
       ],
       auditStatusMap: [
-          '', '待审核', '已通过', '已拒绝'
+          '', '未审核', '已通过', '已拒绝'
       ],
-      fieldList: [
+      fieldsList: [],
+      // 入库
+      fieldListInventory: [
+        {
+          key: 'storeTime',
+          label: '入库时间'
+        },
+        {
+          key: 'code',
+          label: '医废编号'
+        },
+        {
+          key: 'boxCode',
+          label: '装箱编号'
+        },
+        {
+          key: 'hospitalName',
+          label: '医院名称'
+        },
+        {
+          key: 'departmentName',
+          label: '科室'
+        },
+        {
+          key: 'wasteTypeStr',
+          label: '医废类型'
+        },
+        {
+          key: 'weight',
+          label: '重量(kg)'
+        },
+        {
+          key: 'storeUser',
+          label: '入库人员'
+        },
+        {
+          key: 'description',
+          label: '备注'
+        },
+      ],
+      // 
+      fieldListCollect: [
         {
           key: 'createTime',
           label: '收集时间'
@@ -281,10 +372,30 @@ export default {
   },
   onLoad(option) {
     this.mode = option.mode || 'inventory';
-    console.log(this.mode);
     this.loadDetail(option.id);
+    this.setFields();
   },
   methods: {
+
+    setFields() {
+        switch(this.mode) {
+            case 'collect':
+                this.fieldsList = this.fieldListCollect;
+                break;
+            case 'inventory':
+                this.fieldsList = this.fieldListInventory;
+                break;
+            case 'checkout':
+                this.fieldsList = this.fieldListCheckout;
+                break;
+            case 'restore':
+                this.fieldsList = this.fieldListRestore;
+                break;
+            case 'supply':
+                this.fieldsList = this.fieldListSupply;
+                break;
+        }
+    },
     loadDetail(id) {
       if (this.mode == 'checkout') {
         // 调的接口不一样

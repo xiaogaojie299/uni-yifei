@@ -15,6 +15,9 @@
         <s-loading v-show="loading" />
         <outbound-setting-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" />
       </view>
+      <view class="button-container" v-if="canEdit">
+        <view class="button" @click="create()">新增配置</view>
+      </view>
   </view>
 </template>
 <script>
@@ -45,6 +48,11 @@ export default {
         keyWord: '',
         list: [],
     };
+  },
+  computed: {
+    canEdit() {
+      return this.$util.checkPermission('outbound:setting:edit')
+    },
   },
   onLoad(option) {
       this.reload();
@@ -104,6 +112,15 @@ export default {
         // 医院ID
         this.hospitalId = e.cascade;
         this.reload();
+      },
+      create() {
+          // 清除
+          uni.removeStorageSync('cache:outbound:detail');
+          setTimeout(() => {
+            uni.navigateTo({
+              url: '/pages-mw/mw/outbound/setting-edit'
+            });
+          }, 800);
       }
   }
 };
@@ -129,6 +146,19 @@ page {
       min-height: 100vh;
       // height: calc(100vh - 180rpx);
       background: #F3F5F7;
+    }
+    .button-container {
+      position: fixed;
+      height: 100rpx;
+      width: 100%;
+      bottom: 0;
+      .button {
+        width: 100%;
+        height: 100%;
+        background: $my-main-color;
+        color: #fff;
+        @include flex-center;
+      }
     }
 }
 </style>

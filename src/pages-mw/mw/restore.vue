@@ -32,7 +32,7 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: false,
+          status: true,
           waste: true,
           timestamp: true
         },
@@ -122,7 +122,7 @@ export default {
         this.hospitalId = e.cascade;
         // 科室ID
         this.departmentId = e.subject;
-        // 审核状态
+        // 状态
         this.status = e.status;
         // 医废类型
         this.wasteType = e.waste;

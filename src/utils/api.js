@@ -277,6 +277,9 @@ export function addWarningConfigItem(data) {
 export function editWarningConfigItem(data) {
   return request.post('/medical/mwWarningConfigItem/edit', data);
 }
+export function removeWarningConfigItem(data) {
+  return request.post('/medical/mwWarningConfigItem/delete', data);
+}
 
 
 

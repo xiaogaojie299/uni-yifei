@@ -7,7 +7,7 @@
         <view class="trace-detail__item__value">{{ detail[item.key] }}</view>
       </view>
     </view>
-    <view class="trace-detail__footer" v-if="canRemove || canEdit">
+    <!-- <view class="trace-detail__footer" v-if="canRemove || canEdit">
       <block>
         <view class="trace-detail__footer__btn trace-detail__footer__cancel" @click="remove()" v-if="canRemove">
           删除
@@ -16,7 +16,7 @@
           编辑
         </view>
       </block>
-    </view>
+    </view> -->
   </view>
 </template>
 <script>

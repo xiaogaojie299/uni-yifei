@@ -39,6 +39,7 @@ class Ajax {
             if (data.slkey_cache_key) {
                 let responseData = getCache(data.slkey_cache_key);
                 if (responseData) {
+                    wx.hideLoading()
                     resolve(responseData);
                     return ;
                 }
@@ -90,7 +91,7 @@ class Ajax {
   
   const ajax = new Ajax({
     //   baseURL:"http://192.168.0.101:7001/backend"
-      baseURL:"http://47.108.162.242/backend"
+      baseURL:"http://47.108.162.242:8080/backend"
   })
   
   /**

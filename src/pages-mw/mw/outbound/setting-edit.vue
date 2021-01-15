@@ -218,7 +218,7 @@ export default {
             uni.removeStorageSync('cache:outbound:detail');
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages-mw/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }
@@ -242,7 +242,7 @@ export default {
             });
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages-mw/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }

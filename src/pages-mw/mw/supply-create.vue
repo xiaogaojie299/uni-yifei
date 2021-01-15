@@ -19,6 +19,7 @@
       </u-cell-item>
       <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
         <u-field
+          type="digit"
 			    placeholder="支持小数"
           v-model="weight"
           slot="right-icon"
@@ -412,6 +413,7 @@ export default {
             icon: 'none'
           })
           setTimeout(() => {
+            uni.setStorageSync('willRefresh', 1);
             uni.navigateBack();
           }, 800);
         }

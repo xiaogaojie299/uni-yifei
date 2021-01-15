@@ -182,7 +182,7 @@ export default {
             auditStatusList: [
                 {
                     k: 1,
-                    v: '待审核'
+                    v: '未审核'
                 },
                 {
                     k: 2,
@@ -332,6 +332,9 @@ export default {
             this.status = '';
             this.startTime = '';
             this.endTime = '';
+            this.warningType = '';
+            this.warningStatus = '';
+            this.auditStatus = '';
             this.cascadeLabel = '选择组织';
             this.resetDepartment();
             this.resetSubject();
