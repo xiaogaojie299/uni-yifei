@@ -5,6 +5,7 @@ import store from "./store/index"
 import * as util from '@/utils/util';
 Vue.use(uView);
 Vue.config.productionTip = false
+Vue.prototype.$util = util;
 App.mpType = 'app'
 const app = new Vue({
   ...App,
