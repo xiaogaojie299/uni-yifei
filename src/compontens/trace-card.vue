@@ -553,19 +553,18 @@ export default {
                         {
                             key: 'warningTargetName',
                             label: '预警对象',
-                            color: '#1539AF'
+                            color: '#1539AF',
+                            callback: () => {
+                                uni.navigateTo({
+                                    url: '/pages-mw/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
+                                })
+                            }
                         }
                     ],
                     [
                         {
                             key: 'message',
-                            label: '预警信息',
-                            callback: () => {
-                                console.log('hello');
-                                uni.navigateTo({
-                                    url: '/pages-mw/mw/trace-record?id=' + this.item.warningTargetId + '&mode=' + this.mode
-                                })
-                            }
+                            label: '预警信息'
                         }
                     ]
                 ]

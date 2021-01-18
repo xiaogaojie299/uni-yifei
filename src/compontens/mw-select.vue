@@ -57,6 +57,14 @@
                         <view :class="{tag: true, active: warningType == item.k}" :key="index" v-for="(item, index) in warningTypeList" @click="selectWarningType(index)">{{item.v}}</view>
                     </view>
                 </view>
+                <view class="tools-field" v-if="options.trans">
+                    <view class="tools-field-name">
+                        运输单位
+                    </view>
+                    <view class="tools-field-container">
+                        <view :class="{tag: true, active: trans == item.k}" :key="index" v-for="(item, index) in transList" @click="selectTrans(index)">{{item.k}}</view>
+                    </view>
+                </view>
                 <view class="tools-field" v-if="options.warningStatus">
                     <view class="tools-field-name">
                         预警状态
@@ -104,7 +112,7 @@
     </view>
 </template>
 <script>
-import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList } from '@/utils/api';
+import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList, listSelect } from '@/utils/api';
 import sSelect from './s-select';
 import sPicker from './s-picker';
 import sCheckbox from './s-checkbox';
@@ -264,6 +272,9 @@ export default {
                 },
             ],
 
+            // 运输单位
+            transList: [],
+
             cascadeList: [], 
             cascadeLabel: '选择组织',
             departmentLabel: '部门',
@@ -280,6 +291,7 @@ export default {
             warningType: '', // 预警类型
             warningStatus: '', // 预警状态
             auditStatus: '', // 审核状态
+            trans: '',
 
         }
     },
@@ -336,6 +348,8 @@ export default {
             this.warningStatus = '';
             this.auditStatus = '';
             this.cascadeLabel = '选择组织';
+            this.transList = [];
+            this.trans = '';
             this.resetDepartment();
             this.resetSubject();
         },
@@ -356,7 +370,8 @@ export default {
                 endTime: this.endTime,
                 timestampSelectValue: this.timestampSelectValue,
                 warningType: this.warningType,
-                warningStatus: !this.warningStatus ? '' : this.warningStatus
+                warningStatus: !this.warningStatus ? '' : this.warningStatus,
+                trans: this.trans
             });
         },
         visibleDepartment() {
@@ -399,6 +414,23 @@ export default {
                 }
             }).catch(err => {}).finally(e => {
 
+            });
+        },
+        // 加载运输人员
+        loadTransList() {
+            listSelect({
+                parentId: this.departmentId, // 科室ID
+                wasteType: this.waste
+            }).then(resp => {
+                if (resp.code == 200) {
+                this.transList = resp.result.map(item => {
+                    return {
+                        // label: [item.engineDriver, item.licensePlate, item.transitCompany].join('/'),
+                        k: item.transitCompany,
+                        v: item.id
+                    }
+                });
+                }
             });
         },
         loadHospitalCascade() {
@@ -453,6 +485,11 @@ export default {
                 }
 
                 this.departmentIndex = [index];
+                
+                // 加载运输人员
+                if (this.options.trans) {
+                    this.loadTransList();
+                }
             }
         },
         cascadeIndexCalc(e) {
@@ -482,6 +519,10 @@ export default {
         // 选择类型
         selectWaste(index) {
             this.wasteId = this.wasteList[index].id;
+            // 加载运输人员
+            if (this.options.trans) {
+                this.loadTransList();
+            }
         },
         selectWarningType(index) {
             this.warningType = this.warningTypeList[index].k;
@@ -492,6 +533,9 @@ export default {
         // 选择状态
         selectStatus(index) {
             this.status = this.statusList[index].k;
+        },
+        selectTrans(index) {
+            this.trans = this.transList[index].k;
         },
         // 选择审核状态
         selectAuditStatus(index) {

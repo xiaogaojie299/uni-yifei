@@ -34,7 +34,8 @@ export default {
           subject: true,
           status: false,
           waste: true,
-          timestamp: true
+          timestamp: true,
+          trans: true
         },
         traceOptions: {
           detail: true
@@ -54,6 +55,7 @@ export default {
         transitConfigId: 0, // 出库配置ID
         wasteType: '', // 医废类型
         keyWord: '',
+        transitCompany: '',
         list: [],
     };
   },
@@ -103,7 +105,8 @@ export default {
           wasteType: this.wasteType,
           startTime: this.startTime,
           endTime: this.endTime,
-          keyWord: this.keyWord
+          keyWord: this.keyWord,
+          transitCompany: this.transitCompany
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
@@ -124,6 +127,8 @@ export default {
         this.status = e.status;
         // 医废类型
         this.wasteType = e.waste;
+        // 运输单位
+        this.transitCompany = e.trans;
         // 时间
         this.startTime = e.startTime;
         this.endTime = e.endTime;
