@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入预警对象查询" v-model="keyword" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入医废编号、车牌号、运输单位查询" v-model="keyWord" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -13,48 +13,46 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" :options="traceOptions" mode="warning"/>
+        <outbound-setting-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" />
+      </view>
+      <view class="button-container" v-if="canEdit">
+        <view class="button" @click="create()">新增配置</view>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
-import sLoading from '@/compontens//s-loading';
-import { listWarningRecord } from "@/utils/api.js";
+import mwSelect from '@/compontens/mw-select';
+import outboundSettingCard from '@/compontens/outbound-setting-card';
+import sLoading from '@/compontens/s-loading';
+import { listTransitConfig } from "@/utils/api.js";
 export default {
   components:{
-    mwSelect, traceCard, sLoading
+    mwSelect, outboundSettingCard, sLoading
   },
   data() {
     return {
         options: {
           cascade: true,
-          department: true,
-          subject: true,
-          warningStatus: true,
-          warningType: true,
-          timestamp: true
-        },
-        traceOptions: {
-          warningCheck: true,
-          warning: true,
-          warningDetail: true,
+          department: false,
+          subject: false,
+          status: false,
+          waste: false,
+          timestamp: false
         },
         loading: false,
         pages: 0,
         total: 0,
         pageNo: 1,
         pageSize: 10,
-        departmentId: '', // 科室ID
-        startTime: '',
-        endTime: '',
         hospitalId: '', // 医院ID
-        status: '', // 状态
-        type: '', // 预警类型
-        keyword: '', // 预警对象
+        keyWord: '',
         list: [],
     };
+  },
+  computed: {
+    canEdit() {
+      return this.$util.checkPermission('outbound:setting:edit')
+    },
   },
   onLoad(option) {
       this.reload();
@@ -91,18 +89,14 @@ export default {
         this.paginate();
       },
       // 加载数据
-      paginate() {
+      async paginate() {
         this.loading = true;
-        listWarningRecord({
+
+        listTransitConfig({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          officeId: this.departmentId,
-          status: this.status,
-          type: this.type,
-          startTime: this.startTime,
-          endTime: this.endTime,
-          keyword: this.keyword
+          keyWord: this.keyWord, // 车牌号
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
@@ -112,21 +106,21 @@ export default {
         }).catch(err => {}).finally(e => {
           this.loading = false;
           uni.stopPullDownRefresh();
-        });
+        })
       },
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
-        // 科室ID
-        this.departmentId = e.subject;
-        // 审核状态
-        this.status = e.warningStatus;
-        // 医废类型
-        this.type = e.warningType;
-        // 时间
-        this.startTime = e.startTime;
-        this.endTime = e.endTime;
         this.reload();
+      },
+      create() {
+          // 清除
+          uni.removeStorageSync('cache:outbound:detail');
+          setTimeout(() => {
+            uni.navigateTo({
+              url: '/pages-mw/mw/outbound/setting-edit'
+            });
+          }, 800);
       }
   }
 };
@@ -152,6 +146,19 @@ page {
       min-height: 100vh;
       // height: calc(100vh - 180rpx);
       background: #F3F5F7;
+    }
+    .button-container {
+      position: fixed;
+      height: 100rpx;
+      width: 100%;
+      bottom: 0;
+      .button {
+        width: 100%;
+        height: 100%;
+        background: $my-main-color;
+        color: #fff;
+        @include flex-center;
+      }
     }
 }
 </style>

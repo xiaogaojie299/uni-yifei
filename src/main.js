@@ -9,8 +9,7 @@ Vue.prototype.$util = util;
 App.mpType = 'app'
 const app = new Vue({
   ...App,
-  store,
-  util
+  store
 })
 app.$mount()
 export default Vue;

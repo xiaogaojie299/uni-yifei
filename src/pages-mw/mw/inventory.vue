@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入医废编号查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入医废编号、装箱编号查询" v-model="keyWord" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -13,15 +13,15 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @restore="restore(index)" :options="traceOptions" mode="restore"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="inventory"/>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
-import { getMedicalTraceListDelete } from "@/utils/api.js";
+import { listStoreMedicalTrace } from "@/utils/api.js";
 export default {
   components:{
     mwSelect, traceCard, sLoading
@@ -37,7 +37,6 @@ export default {
           timestamp: true
         },
         traceOptions: {
-          restore: true,
           detail: true
         },
         loading: false,
@@ -54,7 +53,7 @@ export default {
         transitCompany: '', // 搜索关键词
         transitConfigId: 0, // 出库配置ID
         wasteType: '', // 医废类型
-        code: '',
+        keyWord: '',
         list: [],
     };
   },
@@ -68,7 +67,7 @@ export default {
     this.next();
   },
   methods: {
-      restore(index) {
+      remove(index) {
         this.list.splice(index, 1);
       },
       reload() {
@@ -96,7 +95,7 @@ export default {
       async paginate() {
         this.loading = true;
 
-        getMedicalTraceListDelete({
+        listStoreMedicalTrace({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -105,7 +104,7 @@ export default {
           wasteType: this.wasteType,
           startTime: this.startTime,
           endTime: this.endTime,
-          code: this.code
+          keyWord: this.keyWord
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];

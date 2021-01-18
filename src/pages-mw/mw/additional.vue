@@ -15,14 +15,14 @@
         <s-loading v-show="loading" />
         <trace-card v-for="(item, index) in list" :key="index" :item="item" @audit="audit($event, index)" :options="traceOptions" mode="supply"/>
       </view>
-      <view class="button-container">
+      <view class="button-container" v-if="canCreate">
         <view class="button" @click="create()">新增补录</view>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
 import { listSupplementMedicalTrace } from "@/utils/api.js";
 export default {
@@ -36,6 +36,7 @@ export default {
           department: true,
           subject: true,
           auditStatus: true,
+          status: false,
           waste: true,
           timestamp: true
         },
@@ -61,10 +62,19 @@ export default {
         list: [],
     };
   },
+  computed: {
+    canCreate() {
+      return this.$util.checkPermission('additional:add');
+    }
+  },
   onLoad(option) {
     this.reload();
   },
   onShow() {
+      if(uni.getStorageSync('willRefresh')) {
+          this.reload(); 
+          uni.removeStorageSync('willRefresh');
+      }
   },
   onPullDownRefresh() {
     this.reload();
@@ -139,7 +149,7 @@ export default {
       // 新增补录
       create() {
         uni.navigateTo({
-          url: '/pages/admin/mw/supply-create'
+          url: '/pages-mw/mw/supply-create'
         });
       }
   }

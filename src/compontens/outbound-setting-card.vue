@@ -81,7 +81,7 @@ export default {
                 uni.setStorageSync('cache:outbound:detail', this.item);
                 // 跳转
                 uni.navigateTo({
-                    url: '/pages/admin/mw/outbound-setting-detail'
+                    url: '/pages-mw/mw/outbound/setting-detail'
                 })
             } catch (e) {
                 // error
@@ -96,7 +96,7 @@ export default {
                 // 没有单独的接口，直接跳转
                 uni.setStorageSync('cache:outbound:detail', this.item);
                 uni.navigateTo({
-                    url: '/pages/admin/mw/outbound-setting-edit'
+                    url: '/pages-mw/mw/outbound/setting-edit'
                 })
             } catch (e) {
                 // error

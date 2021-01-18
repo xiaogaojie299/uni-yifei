@@ -52,17 +52,17 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndexList" :default-ids="hospitalIds" />
+    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndexList" :default-ids="hospitalIds" @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
 
     <!-- <s-select mode="mutil-column-auto" title="选择医院" v-model="hospitalShow" :list="hospitalList" @confirm="hospitalCallback" :default-value="hospitalIndexList"></s-select> -->
     <s-select-multi multi title="选择医废类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteCheckedIndexList"/>
   </view>
 </template>
 <script>
-import sSelect from '@/compontens/mw-select/s-select';
-import sSelectMulti from '@/compontens/mw-select/s-select-multi';
-import sPicker from '@/compontens/mw-select/s-picker';
-import sCheckbox from '@/compontens/mw-select/s-checkbox';
+import sSelect from '@/compontens/s-select';
+import sSelectMulti from '@/compontens/s-select-multi';
+import sPicker from '@/compontens/s-picker';
+import sCheckbox from '@/compontens/s-checkbox';
 import hospitalSelect from '@/compontens/hospital-select';
 import { getMyHospitalCascadeList, getWasteTypeList, editTransitConfig, addTransitConfig } from "@/utils/api.js";
 export default {
@@ -218,7 +218,7 @@ export default {
             uni.removeStorageSync('cache:outbound:detail');
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages/admin/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }
@@ -242,7 +242,7 @@ export default {
             });
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages/admin/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }

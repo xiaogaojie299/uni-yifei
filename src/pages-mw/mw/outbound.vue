@@ -4,7 +4,7 @@
         <view class="filter-box">
             <!-- 关键词搜索框 -->
             <view class="filter-search">
-              <u-search placeholder="输入医废编号查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
+              <u-search placeholder="输入医废编号、装箱编号查询" v-model="keyWord" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
                 <mw-select :options="options" @confirm="searchConfirm"/>
@@ -13,15 +13,15 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="checkout"/>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
-import { listHistoryMedicalTrace } from "@/utils/api.js";
+import { listCheckoutMedicalTrace } from "@/utils/api.js";
 export default {
   components:{
     mwSelect, traceCard, sLoading
@@ -32,14 +32,13 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: true,
+          status: false,
           waste: true,
-          timestamp: true
+          timestamp: true,
+          trans: true
         },
         traceOptions: {
-          record: true,
-          remove: true,
-          status: true,
+          detail: true
         },
         loading: false,
         pages: 0,
@@ -55,7 +54,8 @@ export default {
         transitCompany: '', // 搜索关键词
         transitConfigId: 0, // 出库配置ID
         wasteType: '', // 医废类型
-        code: '',
+        keyWord: '',
+        transitCompany: '',
         list: [],
     };
   },
@@ -94,9 +94,9 @@ export default {
         this.paginate();
       },
       // 加载数据
-      paginate() {
+      async paginate() {
         this.loading = true;
-        listHistoryMedicalTrace({
+        listCheckoutMedicalTrace({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -105,7 +105,8 @@ export default {
           wasteType: this.wasteType,
           startTime: this.startTime,
           endTime: this.endTime,
-          code: this.code
+          keyWord: this.keyWord,
+          transitCompany: this.transitCompany
         }).then(resp => {
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
@@ -115,7 +116,7 @@ export default {
         }).catch(err => {}).finally(e => {
           this.loading = false;
           uni.stopPullDownRefresh();
-        });
+        })
       },
       searchConfirm(e) {
         // 医院ID
@@ -126,6 +127,8 @@ export default {
         this.status = e.status;
         // 医废类型
         this.wasteType = e.waste;
+        // 运输单位
+        this.transitCompany = e.trans;
         // 时间
         this.startTime = e.startTime;
         this.endTime = e.endTime;

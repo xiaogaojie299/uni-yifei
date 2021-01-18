@@ -8,7 +8,7 @@
                 disabled
                 @click="hospitalShow = true"
             >
-                <view class="button-search" slot="right" @click="reload()">查询</view>
+                <!-- <view class="button-search" slot="right" @click="reload()">查询</view> -->
             </u-field>
         </u-sticky>
         <view class="warning-custom__container">
@@ -17,8 +17,11 @@
                     <view class="warning-custom__box__data__item">
                         医院名称：<text style="font-weight: 500;">{{ item.customHospitalName }}</text>
                     </view>
-                    <view class="warning-custom__box__data__item">
+                    <view class="warning-custom__box__data__item" v-if="type == 1">
                         科室：<text style="font-weight: 500;">{{ item.customOfficeName }}</text>
+                    </view>
+                    <view class="warning-custom__box__data__item" v-if="type == 4">
+                        类型：<text style="font-weight: 500;">{{ item.wasteTypeName }}</text>
                     </view>
                     <view class="warning-custom__box__data__item">
                         超时时长(天)：<text style="font-weight: 500;">{{ item.customValue }}</text>
@@ -26,19 +29,19 @@
                 </view>
                 <view class="warning-custom__box__action">
                     <u-icon name="edit-pen" size="40" color="#1539AF" @click="edit(item)" />
-                    <u-icon name="trash" size="40" color="#FFB42B" />
+                    <u-icon name="trash" size="40" color="#FFB42B" @click="remove(item, index)"/>
                 </view>
             </view>
         </view>
         <view class="button-container">
-            <view class="button" @click="add()">新增配置</view>
+            <view class="button" @click="add()">新增</view>
         </view>
-        <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" />
+        <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"/>
     </view>
 </template>
 <script>
 import HospitalSelect from '@/compontens/hospital-select.vue';
-import { listWarningConfigItem } from '@/utils/api';
+import { listWarningConfigItem, removeWarningConfigItem } from '@/utils/api';
 export default {
   components:{
       HospitalSelect
@@ -46,6 +49,12 @@ export default {
   onLoad(option) {
       this.type = option.type;
       this.reload();
+  },
+  onShow() {
+      if(uni.getStorageSync('willRefresh')) {
+          this.reload(); 
+          uni.removeStorageSync('willRefresh');
+      }
   },
   onPullDownRefresh() {
     this.reload();
@@ -117,22 +126,44 @@ export default {
               let hospital = e.e[e.e.length - 1];
               this.hospitalLabel = hospital.label;
               this.hospitalId = hospital.value;
-              console.log(this.hospitalId, hospital);
+              this.reload();
           }
       },
       edit(item) {
           // 存到本地，因为没有单独的接口拿数据哦
           uni.setStorageSync('cache:warning-setting:custom', item);
           uni.navigateTo({
-              url: '/pages/admin/warning/custom-edit'
+              url: '/pages-mw/warning/custom-edit?type=' + this.type
           });
       },
       add() {
           uni.removeStorageSync('cache:warning-setting:custom');
           uni.navigateTo({
-              url: '/pages/admin/warning/custom-edit'
+              url: '/pages-mw/warning/custom-edit?type=' + this.type
           });
-      }
+      },
+      remove(item, index) {
+        let _this = this;
+        uni.showModal({
+            title: '提示',
+            content: '您确认要删除该条数据吗？',
+            success: function (res) {
+                if (res.confirm) {
+                    removeWarningConfigItem({
+                        id: item.id
+                    }).then(resp => {
+                        if (resp.code == 200) {
+                            uni.showToast({
+                                title: '删除成功',
+                                icon: 'none'
+                            });
+                            _this.list.splice(index, 1);
+                        }
+                    });
+                }
+            }
+        });
+    }
   }
 }
 </script>

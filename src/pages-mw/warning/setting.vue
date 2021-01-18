@@ -4,7 +4,8 @@
             暂无配置
         </view>
         <block v-else>
-            <s-field :label="labelList[type].label" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()"/>
+            <u-field :label="labelList[type].label" label-width="300" input-align="right" type="digit" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()" v-if="type > 5"/>
+            <u-field :label="labelList[type].label" label-width="300" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()" v-else/>
             <block v-if="type == 8 || type == 9">
                 <u-cell-group>
                     <u-cell-item title="设置类型值" @click="wasteShow = true" :arrow="true"  arrow-direction="right" :value="wasteLabel">
@@ -15,7 +16,7 @@
             </block>
             <view class="warning-setting__button__container">
                 <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
-                    <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '保存中' : '保存'}}
+                    <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
                 </view>
             </view>
         </block>
@@ -23,7 +24,7 @@
 </template>
 <script>
 import sField from '@/compontens/s-field';
-import sSelectMulti from '@/compontens/mw-select/s-select-multi';
+import sSelectMulti from '@/compontens/s-select-multi';
 import { detailWarningConfigType, getWasteTypeList, editWarningConfigType } from '@/utils/api';
 export default {
   components:{
@@ -204,9 +205,10 @@ export default {
           }).then(resp => {
               if (resp.code == 200) {
                   uni.showToast({
-                      title: '保存成功',
+                      title: '提交成功',
                       icon: 'none'
                   })
+                  uni.navigateBack();
               }
           }).finally(e => {
               this.submitLoading = false;

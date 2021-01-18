@@ -6,6 +6,10 @@
                 <text class="name">{{cascadeLabel}}</text>
                 <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
+            <view class="mw-select-item group" @click="dateClick(2)" v-if="options.timestampSelect || false">
+                <text class="name">{{timestampSelectValue || '查询时间'}}</text>
+                <u-icon :name="!dateShow ? 'arrow-down': 'arrow-up'"></u-icon>
+            </view>
             <view class="mw-select-item department" @click="visibleDepartment()" v-if="(options.cascade || false) && (options.department || false)">
                 <u-loading size="24" v-if="officeCascadeLoading"/>
                 <text class="name">{{departmentLabel}}</text>
@@ -53,6 +57,14 @@
                         <view :class="{tag: true, active: warningType == item.k}" :key="index" v-for="(item, index) in warningTypeList" @click="selectWarningType(index)">{{item.v}}</view>
                     </view>
                 </view>
+                <view class="tools-field" v-if="options.trans">
+                    <view class="tools-field-name">
+                        运输单位
+                    </view>
+                    <view class="tools-field-container">
+                        <view :class="{tag: true, active: trans == item.k}" :key="index" v-for="(item, index) in transList" @click="selectTrans(index)">{{item.k}}</view>
+                    </view>
+                </view>
                 <view class="tools-field" v-if="options.warningStatus">
                     <view class="tools-field-name">
                         预警状态
@@ -94,13 +106,13 @@
             </view>
 		</u-popup>
         <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
-        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateParams" :default-time="defaultTime"></s-picker>
+        <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateSelectParms" :default-time="defaultTime"></s-picker>
         <s-select title="选择部门" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
         <s-select title="选择科室" v-model="subjectShow" :list="subjectList" @confirm="subjectCallback" :default-value="subjectIndex"></s-select>
     </view>
 </template>
 <script>
-import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList } from '@/utils/api';
+import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList, listSelect } from '@/utils/api';
 import sSelect from './s-select';
 import sPicker from './s-picker';
 import sCheckbox from './s-checkbox';
@@ -127,6 +139,7 @@ export default {
     },
     data() {
         return {
+            timestampSelectValue: '', // 默认选中的时间
             cascadeLoading: false, // 医院加载中
             officeCascadeLoading: false, // 部门加载中
             defaultTime: '',
@@ -139,13 +152,19 @@ export default {
             subjectIndex: [], // 索引
             departmentIndex: [], // 索引
             cascadeIndex: [], // 索引
-            dateParams: {
+            dateSelectParms: {},
+            dateTimeParams: {
                 year: true,
                 month: true,
                 day: true,
                 hour: true,
                 minute: true,
                 second: false
+            },
+            dateParams: {
+                year: true,
+                month: true,
+                day: true
             },
             cascadeShow: false, // 医院选择显示
             dateIndex: 0, // 判断日期选择是第一个还是第二个
@@ -171,7 +190,7 @@ export default {
             auditStatusList: [
                 {
                     k: 1,
-                    v: '待审核'
+                    v: '未审核'
                 },
                 {
                     k: 2,
@@ -253,6 +272,9 @@ export default {
                 },
             ],
 
+            // 运输单位
+            transList: [],
+
             cascadeList: [], 
             cascadeLabel: '选择组织',
             departmentLabel: '部门',
@@ -269,6 +291,7 @@ export default {
             warningType: '', // 预警类型
             warningStatus: '', // 预警状态
             auditStatus: '', // 审核状态
+            trans: '',
 
         }
     },
@@ -305,7 +328,6 @@ export default {
             }
             this.cascadeShow = !this.cascadeShow;
         },
-
         resetDepartment() {
             this.departmentLabel = '部门';
             this.departmentIndex = [];
@@ -322,7 +344,12 @@ export default {
             this.status = '';
             this.startTime = '';
             this.endTime = '';
+            this.warningType = '';
+            this.warningStatus = '';
+            this.auditStatus = '';
             this.cascadeLabel = '选择组织';
+            this.transList = [];
+            this.trans = '';
             this.resetDepartment();
             this.resetSubject();
         },
@@ -341,8 +368,10 @@ export default {
                 waste: this.wasteId,
                 startTime: this.startTime,
                 endTime: this.endTime,
+                timestampSelectValue: this.timestampSelectValue,
                 warningType: this.warningType,
-                warningStatus: !this.warningStatus ? '' : this.warningStatus
+                warningStatus: !this.warningStatus ? '' : this.warningStatus,
+                trans: this.trans
             });
         },
         visibleDepartment() {
@@ -385,6 +414,23 @@ export default {
                 }
             }).catch(err => {}).finally(e => {
 
+            });
+        },
+        // 加载运输人员
+        loadTransList() {
+            listSelect({
+                parentId: this.departmentId, // 科室ID
+                wasteType: this.waste
+            }).then(resp => {
+                if (resp.code == 200) {
+                this.transList = resp.result.map(item => {
+                    return {
+                        // label: [item.engineDriver, item.licensePlate, item.transitCompany].join('/'),
+                        k: item.transitCompany,
+                        v: item.id
+                    }
+                });
+                }
             });
         },
         loadHospitalCascade() {
@@ -439,6 +485,11 @@ export default {
                 }
 
                 this.departmentIndex = [index];
+                
+                // 加载运输人员
+                if (this.options.trans) {
+                    this.loadTransList();
+                }
             }
         },
         cascadeIndexCalc(e) {
@@ -468,6 +519,10 @@ export default {
         // 选择类型
         selectWaste(index) {
             this.wasteId = this.wasteList[index].id;
+            // 加载运输人员
+            if (this.options.trans) {
+                this.loadTransList();
+            }
         },
         selectWarningType(index) {
             this.warningType = this.warningTypeList[index].k;
@@ -479,6 +534,9 @@ export default {
         selectStatus(index) {
             this.status = this.statusList[index].k;
         },
+        selectTrans(index) {
+            this.trans = this.transList[index].k;
+        },
         // 选择审核状态
         selectAuditStatus(index) {
             this.auditStatus = this.auditStatusList[index].k;
@@ -487,11 +545,24 @@ export default {
         dateClick(index) {
             this.dateIndex = index;
             this.dateShow = true;
-            this.dateIndex == 0 ? this.defaultTime = this.startTime : this.defaultTime = this.endTime;
+            switch(this.dateIndex) {
+                case 0:
+                    this.dateSelectParms = this.dateTimeParams;
+                    this.defaultTime = this.startTime;
+                    break;
+                case 1:
+                    this.dateSelectParms = this.dateTimeParams;
+                    this.defaultTime = this.endTime;
+                    break;
+                default:
+                    this.dateSelectParms = this.dateParams;
+                    this.defaultTime = this.timestampSelectValue;
+                    break;
+            }
         },
         // 日期变更时间，index是用来标识是前还是后
         dateChange(e) {
-            let str = e.year + '-' + e.month + '-' + e.day + ' ' + e.hour + ':' + e.minute + ':00';
+            let str = e.year + '-' + e.month + '-' + e.day ;
             let timestamp = new Date(str.replace(/-/g,"/")).getTime();
             switch(this.dateIndex) {
                 case 0: 
@@ -505,9 +576,10 @@ export default {
                             break ;
                         }
                     }
+                    str += ' ' + e.hour + ':' + e.minute + ':00';
                     this.startTime = str;
                 break;
-                default:
+                case 1:
                     // 需要校验：开始时间不允许小于结束时间
                     if (this.startTime != '') {
                         if (timestamp < new Date(this.startTime.replace(/-/g,"/")).getTime()) {
@@ -518,7 +590,12 @@ export default {
                             break ;
                         }
                     }
+                    str += ' ' + e.hour + ':' + e.minute + ':00';
                     this.endTime = str;
+                break;
+                default: 
+                    this.timestampSelectValue = str;
+                    this.emitConfirm();
                 break;
             }
         }
@@ -531,24 +608,30 @@ export default {
     padding: 32rpx 20rpx;
     height: 100rpx;
     box-sizing: border-box;
+    // width: 100%;
     position: relative;
+    &-container {
+        width: 100%;
+        justify-content: space-around;
+    }
     .mw-select-item {
         background: rgba(255, 255, 255, .3);
         border-radius: 30rpx;
         margin: 0 10rpx;
-        width: 160rpx;
+        min-width: 160rpx;
         height: 54rpx;
         padding: 2rpx 30rpx;
         color: #fff;
         display: flex;
         font-size: 24rpx;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
         .name {
             @include text-overflow;
         }
         &.group {
-            width: 240rpx;
+            min-width: 240rpx;
+            max-width: 48%;
         }
     }
 }

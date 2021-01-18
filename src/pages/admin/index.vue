@@ -1,7 +1,41 @@
 <template>
-  <view class="content">
-    <view class="ld">
-      <!-- :class="{active:index===change}" -->
+  <view class="admin-index">
+      <scroll-view class="admin-index__menu">
+        <view :class="{'flex-ver-center': true, 'admin-index__menu__item': true, 'admin-index__menu__item__active': index === change}"
+            @key="index"
+            v-for="(item, index) in kindlist"
+            :key="index"
+            @click="setid(index)"
+          >
+          {{item.meta ? (item.meta.title || '') : ''}}
+        </view>
+      </scroll-view>
+      <scroll-view 
+          class="admin-index__menu" 
+          scroll-y
+          scroll-with-animation
+          :scroll-into-view="clickId"
+          @scroll="scroll"
+          >
+          <view :class="{'admin-index__menu__item__active': index2 === subMenuActive, 'admin-index__menu__item': true}" v-for="(item2, index2) in kindlist[change].children" :key="index2" @tap="goUrl(item2.path, index2)">
+            {{ item2.meta ? (item2.meta.title || '') : '' }}
+          </view>
+      </scroll-view>
+      <scroll-view class="admin-index__menu" scroll-y scroll-with-animation>
+          <view class="admin-index__menu__item" v-for="(subMenu, subMenuIndex) in subMenuList" :key="subMenuIndex" @tap="goUrl(subMenu.route, subMenuActive)">
+            {{ subMenu.name }}
+          </view>
+      </scroll-view>
+
+
+
+
+
+
+
+
+
+    <!-- <view class="ld">
       <view class="left">
         <view
           v-for="(item, index) in kindlist"
@@ -26,6 +60,9 @@
             {{ item2.meta ? (item2.meta.title || '') : '' }}
           </view>
         </scroll-view>
+      </view>
+
+      <view class="right">
         <scroll-view
           :scroll-y="true"
           style="white-space: nowrap; height: 100vh;"
@@ -38,7 +75,7 @@
           </view>
         </scroll-view>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 
@@ -91,31 +128,42 @@ export default {
         console.log(e);
       }
   },
-  // 自定义路由跳转
-  jumpCustom(url) {
-		uni.navigateTo({
-			url: '/pages/admin' + url
-		});
-  },
 	goUrl(url, index) {
-		console.log("点击跳转",url);
-    console.log("跳转","/pages/admin"+url);
+    // this.subMenuActive = -1;
+    // this.subMenuList = [];
 
-    switch (url) {
-      case '/mw/outbound/setting':
-        url = '/mw/outbound-setting';
-        break;
-      // 预警配置要单独做处理
-      case '/warning/setting':
-        // 设置为选中
+    // 三级目录的特殊处理
+    if (url == '/warning/setting') {
         this.subMenuActive = index;
         this.warningSetting();
         return ;
-        break;
     }
-		uni.navigateTo({
-			url:"/pages/admin" + url
-		})
+
+    // 做了分包，路由有变动，routeMap和prefixMap的索引一一对应
+    let routeMap = [
+      'mw', 'warning', 'wraning'
+    ];
+    let prefixMap = [
+      '/pages-mw', '/pages-mw', '/pages-mw'
+    ];
+    // 跳转前缀，之前是无脑跳这个前缀，现在做了分包，要重新处理
+    let prefix = '/pages/admin';
+
+    let urlArray = url.split('/');
+    if (urlArray.length > 0) {
+      // 如果有配置转发路由, 0是空，1才是第一个路由路径
+      let routeIndex = routeMap.findIndex(i => i == urlArray[1]);
+      if (routeIndex > -1) {
+        prefix = prefixMap[routeIndex];
+      }
+    }
+
+    // emmmmm 这个错别单词真是让我脑壳痛
+    url = url.replace(/wraning/g, 'warning');
+    uni.navigateTo({
+      url: prefix + url
+    })
+
   },
   warningSetting() {
     let menus = [
@@ -195,6 +243,38 @@ export default {
 </script>
 
 <style lang="scss">
+.admin-index {
+  display: flex;
+  flex-direction: row;
+  font-size: 28rpx;
+  &__menu {
+    @include text-overflow;
+    height: 100vh;
+    width: 240rpx;
+    background: #fff;
+    &__item {
+        text-align: center;
+        width: inherit;
+        height: 80rpx;
+        line-height: 80rpx;
+        &__active {
+          font-weight: 500;
+          color: #000;
+        }
+    }
+    &:first-child {
+      background: #f9f9f9 !important;
+      .admin-index__menu__item__active {
+        font-weight: 500;
+        background-color: #fff !important;
+        color: $my-main-color !important;
+      }
+    }
+  }
+}
+
+
+
 .ld {
   display: flex;
   font-size: 32rpx;

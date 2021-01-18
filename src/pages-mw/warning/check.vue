@@ -19,12 +19,12 @@
                 </view>
             </view>
         </view>
-        <view class="warning-check__container__textarea" v-if="canSubmit || canAccept || canRefuse">
+        <view class="warning-check__container__textarea" v-if="showFooter">
             <u-input v-model="replyText" type="textarea" placeholder="填写处理意见..." class="warning-check__container__textarea__input" :custom-style="{padding: '28rpx 22rpx'}" :clearable="false" :height="220"/>
         </view>
       </scroll-view>
-    <view class="warning-check__footer">
-        <view class="warning-check__footer__line" v-if="canAccept || canRefuse">
+    <view class="warning-check__footer" v-if="showFooter">
+        <view class="warning-check__footer__line">
             <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
                 <u-loading v-show="refuseLoading" /> 驳回
             </view>
@@ -72,19 +72,22 @@ export default {
   computed: {
       // 是否允许提交
       canSubmit() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:submit');
+          return this.$util.checkPermission('warnInfo:status:submit');
       },
       // 是否允许通过
       canAccept() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:pass');
+          return this.$util.checkPermission('warnInfo:status:pass');
       },
       // 是否允许驳回
       canRefuse() {
-          return this.canHandle && this.$util.checkPermission('warnInfo:status:reject');
+          return this.$util.checkPermission('warnInfo:status:reject');
+      },
+      showFooter() {
+          return this.canHandle && (this.canSubmit || this.canAccept || this.canRefuse);
       },
       // 底部的固定到底是两排按钮还是一排按钮?
       bottomButtonsHeight() {
-          return this.canSubmit && (this.canAccept || this.canRefuse) ? 200 : 100;
+          return (this.canSubmit && (this.canAccept || this.canRefuse)) ? 200 : 100;
       }
   },
   onPullDownRefresh() {
@@ -140,7 +143,12 @@ export default {
                 // 填充的文本置空
                 this.replyText = '';
                 // 重新加载数据
-                uni.startPullDownRefresh();
+                // uni.startPullDownRefresh();
+
+                setTimeout(() => {
+                    uni.setStorageSync('willRefresh', 1);
+                    uni.navigateBack();
+                }, 800);
             }
         }).finally(e => {
             this.$set(this, loadingKey, false);
@@ -151,11 +159,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-page {
-    background: #F3F5F7;
-    min-height: 100vh;
-}
 .warning-check {
+    height: 100vh;
+    background:#f3f5f7;
+    overflow: hidden;
     &__container {
         // height: calc(100vh - 200rpx);
         &__box {
@@ -187,21 +194,21 @@ page {
             }
         }
         &__textarea {
+            background: #fff;
             &__input {
                 background: #fff;
-                padding: 20rpx ;
             }
         }
     }
     &__footer {
         width: 100%;
-        // height: 200rpx;
         position: fixed;
+        background: #f3f5f7;
         bottom: 0;
         &__line {
             // height: 100rpx;
             box-sizing: border-box;
-            padding: 10rpx 0;
+            padding-top: 10rpx;
             display: flex;
             justify-content: center;
         }

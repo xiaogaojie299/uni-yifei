@@ -192,6 +192,10 @@ export function listMedicalTrace(data) {
 export function detailMedicalTrace(data) {
   return request.get('/medical/mwCollectRecord/queryById', data);
 }
+// 获取收集轨迹
+export function collectTrajectory(data) {
+  return request.get('/medical/mwCollectRecord/collectTrajectory', data);
+}
 
 // 入出库记录页面
 // 获取入库记录
@@ -272,6 +276,9 @@ export function addWarningConfigItem(data) {
 // 编辑预警数据项
 export function editWarningConfigItem(data) {
   return request.post('/medical/mwWarningConfigItem/edit', data);
+}
+export function removeWarningConfigItem(data) {
+  return request.post('/medical/mwWarningConfigItem/delete', data);
 }
 
 
@@ -354,6 +361,18 @@ export function deleteVendor(data){
   return request.post(url,data)
 }
 // 获取组织架构后的科室 sysDepartment/listRegionChildren?
+export function listRegion(data){
+  return request.get('/system/sysDepartment/listRegion',data)
+}
+// 获取组织架构后的科室 sysDepartment/listRegionChildren?
 export function listRegionChildren(data){
   return request.get('/system/sysDepartment/listRegionChildren',data)
+}
+// 获取组织树
+export function sysDepartmentTreeList(){
+  return request.get('/system/sysDepartment/sysDepartmentTreeList')
+}
+// 获取父组织
+export function getParent(data){
+  return request.get("/system/sysUserDepartment/queryById",data)
 }

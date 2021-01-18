@@ -13,15 +13,15 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="checkout"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @restore="restore(index)" :options="traceOptions" mode="restore"/>
       </view>
   </view>
 </template>
 <script>
-import mwSelect from '@/compontens/mw-select/mw-select';
-import traceCard from '@/compontens/mw-select/trace-card';
+import mwSelect from '@/compontens/mw-select';
+import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
-import { listCheckoutMedicalTrace } from "@/utils/api.js";
+import { getMedicalTraceListDelete } from "@/utils/api.js";
 export default {
   components:{
     mwSelect, traceCard, sLoading
@@ -32,11 +32,12 @@ export default {
           cascade: true,
           department: true,
           subject: true,
-          status: false,
+          status: true,
           waste: true,
           timestamp: true
         },
         traceOptions: {
+          restore: true,
           detail: true
         },
         loading: false,
@@ -67,7 +68,7 @@ export default {
     this.next();
   },
   methods: {
-      remove(index) {
+      restore(index) {
         this.list.splice(index, 1);
       },
       reload() {
@@ -94,7 +95,8 @@ export default {
       // 加载数据
       async paginate() {
         this.loading = true;
-        listCheckoutMedicalTrace({
+
+        getMedicalTraceListDelete({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
@@ -120,7 +122,7 @@ export default {
         this.hospitalId = e.cascade;
         // 科室ID
         this.departmentId = e.subject;
-        // 审核状态
+        // 状态
         this.status = e.status;
         // 医废类型
         this.wasteType = e.waste;

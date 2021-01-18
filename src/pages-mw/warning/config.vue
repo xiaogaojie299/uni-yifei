@@ -39,13 +39,13 @@ export default {
       // 跳转到配置设置界面
       jump() {
         uni.navigateTo({
-            url: '/pages/admin/warning/setting?type=' + this.type
+            url: '/pages-mw/warning/setting?type=' + this.type
         })
       },
       // 跳转到选择医院界面
       jumpCustom() {
         uni.navigateTo({
-            url: '/pages/admin/warning/custom?type=' + this.type
+            url: '/pages-mw/warning/custom?type=' + this.type
         })
       }
   }

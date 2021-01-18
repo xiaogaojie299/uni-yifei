@@ -3,10 +3,10 @@
     <u-cell-group>
       <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
       <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')">
-        <!-- <u-loading v-show="hospitalLoading" slot="icon"/> -->
+        <u-loading v-show="hospitalLoading" slot="icon"/>
       </u-cell-item>
       <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="setShow('departmentShow')">
-        <!-- <u-loading v-show="officeCascadeLoading" slot="icon"/> -->
+        <u-loading v-show="officeCascadeLoading" slot="icon"/>
       </u-cell-item>
       <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="setShow('officeUserShow')">
         <u-loading v-show="officeUserLoading" slot="icon"/>
@@ -19,6 +19,7 @@
       </u-cell-item>
       <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
         <u-field
+          type="digit"
 			    placeholder="支持小数"
           v-model="weight"
           slot="right-icon"
@@ -58,8 +59,8 @@
     </view>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"  />
-    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :hospital-id="hospitalId"/>
+    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"  @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
+    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :hospital-id="hospitalId"  @loading="officeCascadeLoading = true" @loaded="officeCascadeLoading = false"/>
     <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
     <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId', 'officeUserList', 'createUserIndex')" :default-value="createUserIndex"></s-select>
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
@@ -69,9 +70,9 @@
   </view>
 </template>
 <script>
-import sSelect from '@/compontens/mw-select/s-select';
-import sPicker from '@/compontens/mw-select/s-picker';
-import sCheckbox from '@/compontens/mw-select/s-checkbox';
+import sSelect from '@/compontens/s-select';
+import sPicker from '@/compontens/s-picker';
+import sCheckbox from '@/compontens/s-checkbox';
 import hospitalSelect from '@/compontens/hospital-select';
 import { listSelect, getMyHospitalCascadeList, getMyOfficeCascadeList, getMyOfficeUserList, getWasteTypeList, addSupplementMedicalTrace, getMyWarehouseOfficeList } from "@/utils/api.js";
 export default {
@@ -412,6 +413,7 @@ export default {
             icon: 'none'
           })
           setTimeout(() => {
+            uni.setStorageSync('willRefresh', 1);
             uni.navigateBack();
           }, 800);
         }
