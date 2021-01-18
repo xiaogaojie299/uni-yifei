@@ -11,7 +11,7 @@
         <u-loading v-show="wasteLoading" slot="icon"/>
       </u-cell-item>
     </u-cell-group>
-    <u-field label="设置超时时长(天)" label-width="220" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" placeholder="填写时长(纯数字，不能有小数)" :clearable="false" @blur="numberCheck()"/>
+    <u-field label="设置超时时长(天)" label-width="300" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" placeholder="填写时长(纯数字，不能有小数)" :clearable="false" @blur="numberCheck()"/>
     <view class="warning-setting-custom-edit__button__container">
       <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
@@ -296,6 +296,12 @@ export default {
   font-weight: 500;
   font-size: 32rpx;
 }
+/deep/ .u-label-text {
+  font-weight: 500;
+  font-size: 32rpx;
+  color: #606266;
+  // width: 300rpx;
+}
 /deep/ .u-cell__value {
   font-weight: 500;
   font-size: 32rpx;
@@ -304,6 +310,7 @@ export default {
   // .u-field {
   //   padding: 0rpx !important;
   // }
+  
   &__button__container {
       position: fixed;
       height: 100rpx;
