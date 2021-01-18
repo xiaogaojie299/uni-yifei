@@ -301,9 +301,9 @@ export default {
   font-size: 32rpx;
 }
 .warning-setting-custom-edit {
-  .u-field {
-    padding: 0rpx !important;
-  }
+  // .u-field {
+  //   padding: 0rpx !important;
+  // }
   &__button__container {
       position: fixed;
       height: 100rpx;
