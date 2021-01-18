@@ -609,7 +609,7 @@ export default {
                     || this.canAudit // 审核
                     || this.canCheckWarning // 处理异常
                     ;
-            return true;
+            return flag;
         }
     },
     methods: {
