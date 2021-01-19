@@ -125,7 +125,14 @@ export default {
         this.hospitalLabel = detail.hospitalName;
         this.wasteLabel = detail.wasteType;
         this.hospitalIds = detail.hospitalIdList.slice(1);
+        uni.setNavigationBarTitle({
+          title: '编辑出库配置'
+        });
         return ;
+      } else {
+        uni.setNavigationBarTitle({
+          title: '添加出库配置'
+        });
       }
     },
     // 获取医废类型列表
@@ -218,7 +225,7 @@ export default {
             uni.removeStorageSync('cache:outbound:detail');
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages-mw/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }
@@ -242,7 +249,7 @@ export default {
             });
             setTimeout(() => {
               uni.navigateTo({
-                url: '/pages-mw/mw/outbound-setting'
+                url: '/pages-mw/mw/outbound/setting'
               });
             }, 800);
           }

@@ -23,8 +23,8 @@
             <u-input v-model="replyText" type="textarea" placeholder="填写处理意见..." class="warning-check__container__textarea__input" :custom-style="{padding: '28rpx 22rpx'}" :clearable="false" :height="220"/>
         </view>
       </scroll-view>
-    <view class="warning-check__footer">
-        <view class="warning-check__footer__line" v-if="showFooter">
+    <view class="warning-check__footer" v-if="showFooter">
+        <view class="warning-check__footer__line">
             <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
                 <u-loading v-show="refuseLoading" /> 驳回
             </view>
@@ -143,7 +143,12 @@ export default {
                 // 填充的文本置空
                 this.replyText = '';
                 // 重新加载数据
-                uni.startPullDownRefresh();
+                // uni.startPullDownRefresh();
+
+                setTimeout(() => {
+                    uni.setStorageSync('willRefresh', 1);
+                    uni.navigateBack();
+                }, 800);
             }
         }).finally(e => {
             this.$set(this, loadingKey, false);

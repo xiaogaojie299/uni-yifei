@@ -69,6 +69,7 @@ export default {
             this.cascadeIndex = tmpIndex;
         },
         loadHospitalCascade() {
+            console.log('hello ?');
             this.$emit('loading');
             if (this.hospitalId) {
                 getMyOfficeCascadeList({
@@ -93,6 +94,7 @@ export default {
                 }).catch(err => {}).finally(e => {
                     this.$emit('loaded');
                 });
+                console.log('hello1 ?');
             }
         },
         cascadeIndexCalc(e) {

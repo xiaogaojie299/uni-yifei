@@ -57,7 +57,13 @@ export default {
     };
   },
   onLoad(option) {
-      this.reload();
+    this.reload();
+  },
+  onShow() {
+    if(uni.getStorageSync('willRefresh')) {
+        this.reload(); 
+        uni.removeStorageSync('willRefresh');
+    }
   },
   onPullDownRefresh() {
     this.reload();

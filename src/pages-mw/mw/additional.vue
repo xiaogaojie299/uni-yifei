@@ -36,6 +36,7 @@ export default {
           department: true,
           subject: true,
           auditStatus: true,
+          status: false,
           waste: true,
           timestamp: true
         },
@@ -70,6 +71,10 @@ export default {
     this.reload();
   },
   onShow() {
+      if(uni.getStorageSync('willRefresh')) {
+          this.reload(); 
+          uni.removeStorageSync('willRefresh');
+      }
   },
   onPullDownRefresh() {
     this.reload();

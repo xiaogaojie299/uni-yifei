@@ -13,7 +13,7 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions"/>
+        <trace-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" :options="traceOptions" mode="collect"/>
       </view>
   </view>
 </template>

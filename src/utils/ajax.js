@@ -39,6 +39,7 @@ class Ajax {
             if (data.slkey_cache_key) {
                 let responseData = getCache(data.slkey_cache_key);
                 if (responseData) {
+                    wx.hideLoading()
                     resolve(responseData);
                     return ;
                 }
