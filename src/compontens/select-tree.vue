@@ -49,6 +49,7 @@
 </template>
 
 <script>
+    /* 选择树状图 */
     import {listRegionChildren ,listRegion,sysDepartmentTreeList,getMyDepartmentTreeList} from '@/utils/api' 
     import LyTree from '@/compontens/tree/ly-tree/ly-tree.vue'
 	export default {
