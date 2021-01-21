@@ -119,8 +119,11 @@
                     拒绝
                 </view>
             </block>
-            <view class="trace-card__footer__button primary" @click.stop="warningCheck(false)" v-if="canCheckWarning">
-                立即处理
+            <view class="trace-card__footer__button primary" @click.stop="warningCheck(1)" v-if="canCheckWarningSubmit">
+                提交
+            </view>
+            <view class="trace-card__footer__button primary" @click.stop="warningCheck(2)" v-if="canCheckWarningAudit">
+                处理
             </view>
         </view>
     </view>
@@ -592,10 +595,21 @@ export default {
         canRestore() {
             return this.options.restore;
         },
-        // 是否可以处理异常
-        canCheckWarning() {
+        checkWarningText() {
             return (this.$util.checkPermissionAny([
                 'warnInfo:status:submit', 'warnInfo:status:pass', 'warnInfo:status:reject'
+            ])) && this.options.warningCheck && this.item.status != 3;
+        },
+        // 是否可以处理异常
+        canCheckWarningSubmit() {
+            return (this.$util.checkPermissionAny([
+                'warnInfo:status:submit'
+            ])) && this.options.warningCheck && this.item.status != 3;
+        },
+        // 是否可以处理异常
+        canCheckWarningAudit() {
+            return (this.$util.checkPermissionAny([
+                'warnInfo:status:pass', 'warnInfo:status:reject'
             ])) && this.options.warningCheck && this.item.status != 3;
         },
         // 是否可以查看流转过程
@@ -607,7 +621,8 @@ export default {
                     || this.canDelete // 删除
                     || this.canRestore // 恢复
                     || this.canAudit // 审核
-                    || this.canCheckWarning // 处理异常
+                    || this.canCheckWarningSubmit // 处理异常
+                    || this.canCheckWarningAudit // 处理异常
                     ;
             return flag;
         }
@@ -668,7 +683,7 @@ export default {
             //     this.warningCheck();
             // }
             if (this.options.warningDetail || false) {
-                this.warningCheck();
+                this.warningCheck(1);
             }
             if (this.options.detail || false) {
                 uni.navigateTo({
@@ -681,9 +696,10 @@ export default {
                 url: '/pages-mw/mw/trace-record?id=' + this.item.id
             })
         },
-        warningCheck() {
+        // 提交是1，审核是2
+        warningCheck(type) {
             uni.navigateTo({
-                url: '/pages-mw/warning/check?id=' + this.item.id
+                url: '/pages-mw/warning/check?type=' + type + '&id=' + this.item.id
             })
         },
         itemClick(e, item, field) {

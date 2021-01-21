@@ -24,19 +24,23 @@
         </view>
       </scroll-view>
     <view class="warning-check__footer" v-if="showFooter">
-        <view class="warning-check__footer__line">
-            <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
-                <u-loading v-show="refuseLoading" /> 驳回
+        <block v-if="type == 2">
+            <view class="warning-check__footer__line">
+                <view v-if="canRefuse" :class="{'warning-check__footer__btn': true, 'warning-check__footer__cancel': true, 'warning-check__footer__disabled': refuseLoading}" @click="handle(4, 'refuseLoading')">
+                    <u-loading v-show="refuseLoading" /> 驳回
+                </view>
+                <view v-if="canAccept" :class="{'warning-check__footer__btn': true, 'warning-check__footer__confirm': true, 'warning-check__footer__disabled': acceptLoading}" @click="handle(3, 'acceptLoading')">
+                    <u-loading v-show="acceptLoading" /> 通过
+                </view>
             </view>
-            <view v-if="canAccept" :class="{'warning-check__footer__btn': true, 'warning-check__footer__confirm': true, 'warning-check__footer__disabled': acceptLoading}" @click="handle(3, 'acceptLoading')">
-                <u-loading v-show="acceptLoading" /> 通过
+        </block>
+        <block v-else>
+            <view class="warning-check__footer__line" v-if="canSubmit">
+                <view :class="{'warning-check__footer__btn': true, 'warning-check__footer__submit': true, 'warning-check__footer__disabled': submitLoading}" @click="handle(2, 'submitLoading')">
+                    <u-loading v-show="submitLoading" /> 提交
+                </view>
             </view>
-        </view>
-        <view class="warning-check__footer__line" v-if="canSubmit">
-            <view :class="{'warning-check__footer__btn': true, 'warning-check__footer__submit': true, 'warning-check__footer__disabled': submitLoading}" @click="handle(2, 'submitLoading')">
-                <u-loading v-show="submitLoading" /> 提交
-            </view>
-        </view>
+        </block>
     </view>
   </view>
 </template>
@@ -48,6 +52,7 @@ export default {
   data() {
     return {
         id: '',
+        type: 1,
         // 提交加载Flag
         submitLoading: false,
         refuseLoading: false,
@@ -68,6 +73,7 @@ export default {
   onLoad(option) {
     this.loadRecordList(option.id);
     this.id = option.id;
+    this.type = option.type;
   },
   computed: {
       // 是否允许提交
