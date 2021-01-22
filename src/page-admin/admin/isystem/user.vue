@@ -15,7 +15,7 @@
                 <view class="checkDrop-box flex-ver-center">
                      <view @tap="handleHospitalShow" class="checkDrop">
                         <view class="select-title-box nowrap-hidden">
-                            <view class="">{{selectHos[selectHos.length-1].label ||'选择组织'}}</view>
+                            <view class="">{{selectTree.label ||'选择组织'}}</view>
                         </view>
                             <img src="@/static/images/down_arrow.png" alt="">
                     </view>
@@ -77,7 +77,7 @@
                 </view>
                 <view class="hspList-bottom my-box">
                     <view class="flex">
-                        <view @tap="handleHospitalShow(item.id)" class="btn ml-20 mr-20 compile-btn flex-ver-center">
+                        <view @tap="go_edit(item)" class="btn ml-20 mr-20 compile-btn flex-ver-center">
                            编辑 
                         </view>
                         <view @tap="goDetail(item.id,item.status)" class="btn compile-btn flex-ver-center">
@@ -101,7 +101,7 @@
         <!-- <area-drop-down ref="childMethod" :list="firmList" @selectRow="selectRow"></area-drop-down> -->
         <!-- <u-select v-model="show" mode="single-column" label-name="name" value-name="id" :list="firmList" @confirm="selectRow"></u-select> -->
         <!-- :default-value="cascadeIndex" -->
-        <h-select mode="mutil-column-auto" title="选择组织" v-model="show" :list="areaList" @confirm="cascadeCallback"></h-select>
+        <!-- <h-select mode="mutil-column-auto" title="选择组织" v-model="show" :list="areaList" @confirm="cascadeCallback"></h-select> -->
         <!-- 角色弹框 -->
         <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
     </view>    
@@ -136,8 +136,16 @@ export default {
             devIdno:null,             // 监控设备编号
             moveID:null,
             cascadeIndex:"",
-            roleIndex:0                 // 默认选择的角色值
+            roleIndex:0,                 // 默认选择的角色值
+            selectTree:{}               // 选择医院传过来的值
         }
+    },
+    watch:{
+        selectTree(){
+            this.cascadeCallback();
+            
+        },
+        deep:true
     },
     components:{
         sSelect,
@@ -154,8 +162,6 @@ export default {
     },
     onShow(){
         this.deviceAgent();
-    },
-    watch:{
     },
     methods:{
         async init(){
@@ -175,6 +181,15 @@ export default {
             }catch(e){
                 console.log(e);
             }
+        },
+        go_edit(item){
+            console.log(item);
+            // uni.navigateTo({
+            //     url:"/page-admin/admin/isystem/add-user"    
+            // })
+            uni.navigateTo({
+                url:"/page-admin/admin/isystem/edit-user"+"?form="+JSON.stringify(item)
+            })
         },
         sysRole(){  // 获取角色列表
             let params = {
@@ -200,8 +215,7 @@ export default {
         },
         cascadeCallback(obj){
             this.list = [];
-            this.selectHos = obj.e;
-            console.log(obj);
+            this.selectHos = this.selectTree;
             this.isRemake = true;
             this.pageNo=1;
             this.getList();
@@ -223,7 +237,10 @@ export default {
         },
         
         handleHospitalShow(id){
-            this.show = true;
+            let params = this.selectTree;
+            params.hospital = true;
+            this.$goTree(params)
+            // this.show = true;
         },
         handleRoleShow(){   // 弹出角色选择框
             this.roleShow = true;
@@ -357,8 +374,11 @@ export default {
                     pageSize:10
                 }
                 console.log(this.selectHos);
-                if(this.selectHos.length>0 && this.selectHos[0].value!==""){
-                    params.hospitalId =Number( this.selectHos[this.selectHos.length-1].value);
+                // if(this.selectHos.length>0 && this.selectHos[0].value!==""){
+                //     params.hospitalId =Number( this.selectHos[this.selectHos.length-1].value);
+                // }
+                if(JSON.stringify(this.selectHos)!=="{}"){
+                    params.hospitalId =this.selectHos.value;
                 }
                 if(this.selectRole.length>0 && this.selectRole[0].value!==""){
                     params.roleName = this.selectRole[0].label;

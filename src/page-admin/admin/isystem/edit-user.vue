@@ -1,38 +1,69 @@
 <template lang="">
     <view class="container">
         <view class="header my-box h-100">
-            <view class="label flex-center">父级组织</view>
-            <input @tap="openTree" class="pr-30" type="text" placeholder="请选择你的父级组织" disabled :value="parent.label" />
+            <view class="label flex-center">所属组织</view>
+            <input @tap="openTree" class="pr-30" type="text" placeholder="请选择你的所属组织" disabled :value="form.area" />
             <img src="@/static/images/path.png" />
+        </view>
+        <view class="header my-box h-100">
+            <view class="label flex-center">姓名</view>
+            <input type="text" v-model="form.name" placeholder="请输入你的姓名" value="" />
             
         </view>
         <view class="header my-box h-100">
-            <view class="label flex-center">组织名称</view>
-            <input type="text" v-model="name" placeholder="请输入你的组织名称" value="" />
+            <view class="label flex-center">用户名</view>
+            <input type="text" v-model="form.account" placeholder="请输入你的用户名" value="" />
             
         </view>
         <view class="header my-box h-100">
-            <view class="label flex-center">组织类型</view>
-            <input @tap="goOrgType" class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType.name" />
+            <view class="label flex-center">手机号码</view>
+            <input type="text" v-model="form.phone" placeholder="请输入你的手机号码" value="" />
+            
+        </view>
+       <view class="header my-box h-100">
+            <view class="label flex-center">角色</view>
+            <input @tap="handleRoleShow" class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="form.roleName" />
             <img src="@/static/images/path.png" />
         </view>
+        <view class="header my-box h-100">
+            <view class="label flex-center">密码</view>
+            <input type="text" v-model="form.password" placeholder="请输入你的密码" value="" />
+            
+        </view>
+        
         <!-- 选择按钮 -->
-        <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存
+        <!-- <view v-if="!isSubmit" class="footer-btn flex-ver-center">
+            保 存{{isSubmit}}
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
+            保 存{{isSubmit}}
+        </view> -->
+        <view @tap="submit" class="footer-btn flex-ver-center allow">
             保 存
-        </view>
-        <leftree @checkoutValue="checkoutValue" ref="handleModel" />
+        </view> 
+        <leftree :expandKeys="form.departmentId" :checkedKeys="form.checkedKeys" @checkoutValue="checkoutValue" ref="handleModel" />
+         <!-- 角色弹框 --> 
+        <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
     </view>
 </template>
 <script>
-import {getParent,sysDepartmentEdit} from "@/utils/api"
-import leftree from "./cmps/left-tree"
-import {actions} from "vuex"
-export default {
+ import {getParent,sysDepartmentEdit,getMyDepartmentTreeList,userEdit} from "@/utils/api"
+ import sSelect from '@/compontens/s-select';
+ import leftree from "./cmps/left-tree"
+ import {actions} from "vuex"
+ export default {
     data(){
         return {
+            form:{
+                departmentLabel:"",     // 选择组织
+                departmentId:"",   // 选择组织ID
+                name:"",       // 用户姓名
+                account:"",       // 用户名
+                phone:"",        // 手机号码
+                roleId:"",        
+                roleName:"",
+                password:""          // 用户密码    
+            },
             parent:{
                 label:"",
                 id:null
@@ -40,6 +71,9 @@ export default {
             name:"",    //组织名称
             listRegion:[],           // 上个页面获取的树数据
             node:null,            // 父组件传过来的值
+            roleShow:false,          // 角色选择框的显示与隐藏
+            roleList:[],
+            roleIndex:[0]                 // 默认选择的角色值
         }
     },
     provide() {
@@ -47,12 +81,30 @@ export default {
         };
   },
     components:{
-        leftree,
+        leftree,sSelect
+    },
+    watch:{
+        "form":{
+            handler(newValue,oldValue){
+                console.log(newValue);
+            },
+            deep:true
+        }
+    },
+    created(){
+        this.roleList = uni.getStorageSync("roleList");
+        console.log(this.roleList);
     },
     computed:{
-        isSubmit(){
-            return this.parent.label && this.name && this.orgType.name
-        },
+            isSubmit(){
+                for (var k in this.form &&this.form.departmentId){
+                    if(!this.form[k]){
+                        return false
+                    }else{
+                        return true
+                    }
+                }
+            },
         orgType(){
             console.log(this.$store.state);
             if(this.$store.state.unitValue){
@@ -61,30 +113,43 @@ export default {
             }else{
                 return {}
             }
-        }
+        },
     },
     methods:{
+        roleBack(obj){  // 选择角色传过来的值
+            this.roleList.forEach((item,index)=>{
+                console.log(item.id);
+                if(item.id == obj[0].value){
+                    console.log(item.id);
+                    this.roleIndex = [index];
+                }
+            })
+            console.log(obj);
+            this.form.roleName= obj[0].label;
+            this.form.roleId= obj[0].value;
+            console.log(this.form);
+        },
         openTree(){
-            this.$refs.handleModel.openModel()
+            this.$refs.handleModel.openModel(this.form);
+        },
+        handleRoleShow(){   // 弹出角色选择框
+            this.roleShow = true;
         },
         checkoutValue(node){
-            this.node = node.data;
-            this.parent.label = node.data.label;
-            this.parent.id = node.data.id;
+            console.log(node);
+            this.form.area = node.data.label;
+            this.form.value = node.data.value;
+            // this.form.area = 
         },
         goOrgType(){    //跳转到组织类型
             try{
-            console.log(this.node);
-                
-               if(this.node.id){
+               if(!this.node.orgType){
                     uni.navigateTo({
                         url:"./org-type"+"?orgType="+this.node.orgType
-                        // url:"/page-admin/admin/isystem/org-type"+"?orgType="+this.node.orgType
-                    })
+                })
                }else{
                    uni.showToast({
-                       title:"请先选择你的的父级组织",
-                       icon:"none"
+                       title:"请先选择你的的父级组织"
                    })
                }
             }catch(e){
@@ -98,12 +163,12 @@ export default {
            
         },
         submit(){
-            let params = this.node;
+            try{
+            let params = this.form;
             delete params.childrenList;
             params.parentId = this.parent.id;
             params.departName = this.name;
-            console.log("params",params);
-            sysDepartmentEdit(params).then(res=>{
+            userEdit(params).then(res=>{
                 if(res.code==200){
                     uni.showToast({
                         title:"编辑成功",
@@ -117,12 +182,14 @@ export default {
                    
                 }
             })
+            }catch(e){
+                console.log(e);
+            }
+            
         }
     },
-    watch:{
-        
-    },
     onLoad(options){
+        this.form = JSON.parse(options.form)
         /* 
             canDelete: true
             departName: "测试123"

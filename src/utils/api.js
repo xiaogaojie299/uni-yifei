@@ -188,7 +188,6 @@ export function getMyWarehouseOfficeList(data) {
   let url = "/system/sysDepartment/getMyWarehouseOfficeList";
   return request.get(url, data)
 }
-
 /** 医废相关接口 */
 
 // 医废溯源列表 
@@ -423,4 +422,10 @@ export function userDel(data){
 // 禁用用户
 export function userBatch(data){
   return request.post("/system/user/frozenBatch",data)
+}
+
+// 编辑用户
+// system/user/edit
+export function userEdit(data){
+  return request.post("/system/user/edit",data)
 }

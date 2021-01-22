@@ -6,16 +6,23 @@
       <!-- 下拉框 -->
       <view class="header-item my-box">
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleHospitalShow">
-          {{ selectTree.label||"医院名称"}}
+          {{ selectTree.label||"请选择医院"}}
         </view>
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleStatisticalShow">
           {{ selectStatistical.label||"统计方式"}}
         </view>
-        <view v-if="selectStatistical.value!=3" class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
+        <!-- <view v-if="selectStatistical.value!=3" class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
+          {{ timeText||"统计时间"}}
+        </view> -->
+        <view v-if="selectStatistical.value==1" class="hospitalName pl-10 nowrap-hidden" @tap="handle_time">
           {{ timeText||"统计时间"}}
         </view>
-        <view v-else class="hospitalName pl-10 nowrap-hidden" @tap="handleQuarterShow">
-          {{quarterYear.value?quarterYear.value+'年'+selectQuarter.label:"统计时间"}}
+        <view v-else-if="selectStatistical.value==3" class="hospitalName pl-10 nowrap-hidden" @tap="handleQuarterShow">
+          <!-- {{quarterYear.value?quarterYear.value+'年'+selectQuarter.label:"统计时2"}} -->
+          {{timeText ||"统计时间" }}
+        </view>
+        <view v-else class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
+          {{ timeText||"统计时间"}}
         </view>
       </view>
     </view>
@@ -34,14 +41,20 @@
     </view>
     <view class="footer"></view>
      <!-- 下拉选择框 -->
+     <!-- 选择开始时间和起止时间 -->
+     <u-calendar v-model="endTimeShow" mode="range" @change="change"></u-calendar>
+     <!-- <my-calendar> </my-calendar> -->
      <!-- 医院名称 -->
       <!-- <u-select v-model="hospitalShow" mode="mutil-column-auto" :list="hospitalList" @confirm="confirmHospital"></u-select> -->
     <!-- 统计方式 -->
-    <u-select v-model="statisticalShow" mode="single-column" :list="statisticalList" @confirm="confirmStatistical"></u-select>
+    <u-select v-model="statisticalShow" :default-value="statisticalIndex" mode="single-column" :list="statisticalList" @confirm="confirmStatistical"></u-select>
     <!-- 开始时间 -->
-    <u-picker mode="time" v-model="timerShow" :params="timerParams" @confirm="confirmTimer"></u-picker>
+    <u-picker v-if="selectStatistical.value==2" mode="time" v-model="timerShow" :params="timerParams" :default-time="defaultMonthTime" @confirm="confirmTimer"></u-picker>
+    <u-picker v-else mode="time" v-model="timerShow" :params="{year: true,month: false,day: false,}" :default-time="defaultYearTime" @confirm="confirmTimer"></u-picker>
+    <!-- <s-picker v-model="timerShow" mode="time" @confirm="confirmTimer" :params="timerParams" :default-time="defaultTime"></s-picker> -->
     <!-- 按照季度 -->
-    <u-select v-model="quarterShow" mode="mutil-column" :list="quarterList" @confirm="confirmQuarter"></u-select>  
+    <u-select v-model="quarterShow" title="选择季度" mode="mutil-column" :list="quarterList" :default-value="quarterIndex" @confirm="confirmQuarter"></u-select>  
+    <!-- <s-select v-model="quarterShow" title="选择季度" mode="mutil-column" :list="quarterList" :default-value="quarterIndex" @confirm="confirmQuarter" /> -->
   </view>
 </template>
 <script>
@@ -49,7 +62,12 @@ import { getMyHospitalCascadeList, listSelect,getTransformList,getOfficeReportLi
 import {getTimeType} from "@/utils/getData.js"
 import statisticsTable from "../tableCmps/statistics-table"
 import fullYear from "@/utils/year"
+import mixins from "@/mixins/mx-calendar"
+import sSelect from '@/compontens/s-select';
+import SSelect from '../../../../compontens/s-select.vue';
+import sPicker from '@/compontens/s-picker';
 export default {
+  mixins:[mixins],
   data() {
     return {
       value1: "",      // 选择医院值
@@ -100,20 +118,28 @@ export default {
 						label: '年度统计'
           },
       ],
+      quarterIndex:[1,0], // 季度默认选中
+      statisticalIndex:[0],  // 记录统计选中下标
+      defaultMonthTime:"",
+      defaultYearTime:"",
       quarterList:[[{
-						value: '-01-01 00:00:00/-03-31 23:59:59',
-						label: '第一季度'
+            value:0,
+						time: '-01-01 00:00:00/-03-31 23:59:59',
+            label: '第一季度',
 					},
 					{
-						value: '-04-01 00:00:00/-06-30 23:59:59',
+            value:1,
+						time: '-04-01 00:00:00/-06-30 23:59:59',
 						label: '第二季度'
           },
           {
-						value: '-07-01 00:00:00/-09-30 23:59:59',
+            value:2,
+						time: '-07-01 00:00:00/-09-30 23:59:59',
 						label: '第三季度'
           },
           {
-						value: '-10-01 00:00:00/-12-31 23:59:59',
+            value:3,
+						time: '-10-01 00:00:00/-12-31 23:59:59',
 						label: '第四季度'
           }]],
       timerParams:{
@@ -128,6 +154,7 @@ export default {
       quarterShow:false,        //控制季度显示
       selectStatistical:[],  //选择统计方式
       selectTime:[],         // 选择统计时间
+      endTimeShow:false,    // 起始时间选择
       selectQuarter:[],       //选择的季度
       quarterYear:"",          //选择季度的年份
       timeText:""               //选择时间时候的文本
@@ -136,24 +163,62 @@ export default {
   computed:{
   },
   components:{
-    statisticsTable
+    statisticsTable,
+    SSelect,
+    sPicker
   },
   watch:{
-    selectStatistical(){
-      this.selectTime=[];
-      this.selectQuarter=[];
+    "selectStatistical":{
+      handler(){
+        this.selectTime=[];
+        this.selectQuarter=[];
+        this.timeText = "";
+        this.defaultMonthTime ="";
+        this.defaultYearTime="";
+      },
+      // this.selectTime=[];
+      // this.selectQuarter=[];
+      deep:true,
     },
-    deep:true
+    "selectTree":{
+      handler(){
+        if(this.selectStatistical.value && this.timeStar &&this.timeEnd){
+          this.getTableList();
+        }
+      },
+      deep:true
+    }
   },
   created(){
     let year = fullYear();
+    year.forEach(item=>{
+      if(item.defaultIndex){
+        this.quarterIndex[0] = item.defaultIndex
+      }
+    })
     this.quarterList.unshift(year);
   },
   onBackPress(event){
     this.$store.commit('setCheckedNodes',{});
   },
-  
   methods: {
+    change(e){
+        this.timeText = e.startDate + "" + e.endDate;
+        this.timeStar=`${e.startDate} 00:00:00`;
+        this.timeEnd=`${e.endDate} 23:59:59`;
+        this.getTableList() //获取数据
+    },
+    handle_time(){  // 按日期选择开始时间和结束时间
+      // this.$refs.childNode
+      // this.$refs.childNode.handle_close();
+      if(!this.selectStatistical.value){ // 判断是否选择统计方式
+        return  uni.showToast({
+          title:"请选择统计方式",
+          icon:"none"
+        })
+      }
+      this.endTimeShow = true;
+    },
     handleHospitalShow(){   //多选框的显示与隐藏
       // this.hospitalShow=true;
       let params=this.selectTree;
@@ -161,19 +226,44 @@ export default {
       this.$goTree(params);
     },
     handleStatisticalShow(){   //多选框的显示与隐藏
+      if(!this.selectTree.value){ // 判断是否选择医院
+        return  uni.showToast({
+          title:"请选择医院",
+          icon:"none"
+        })
+      }
       this.statisticalShow=true;
     },
+    
     handleTimerShow(){
+      if(!this.selectStatistical.value){ // 判断是否选择统计方式
+        return  uni.showToast({
+          title:"请选择统计方式",
+          icon:"none"
+        })
+      }
+      // 默认显示的时间，2025-07-02 || 2025-07-02 13:01:00 || 2025/07/02
+       this.defaultTime = "2020-01";
       this.timerShow=true;
     },
     handleQuarterShow(){
+      if(!this.selectStatistical.value){ // 判断是否选择统计方式
+        return  uni.showToast({
+          title:"请选择统计方式",
+          icon:"none"
+        })
+      }
       this.quarterShow=true;
     },
     confirmStatistical(e){
+      console.log(e);
+      this.statisticalIndex=[e[0].value -1]
       this.selectStatistical=e[0];
       switch(this.selectStatistical.value){
         case "2":
           this.timerParams.day=false;
+          this.timerParams.month=true;
+          this.timerParams.year=true;
           break;
           case "4":
             this.timerParams.day=false;
@@ -182,11 +272,12 @@ export default {
           default:
             this.timerParams.day=true;
             this.timerParams.month=true;
-            this.timerParams.month=true;
+            this.timerParams.year=true;
       }
       console.log(this.timerParams);
     },
      confirmTimer(e){
+       console.log(e);
        this.selectTime=e;
        let {year,month} = e;
        console.log(e.month==undefined);
@@ -194,11 +285,14 @@ export default {
         let monthDays=new Date(year,month,0).getDate(); //判断当前月有多少天
         this.timeStar=`${year}-${month}-01 00:00:00`;
         this.timeEnd=`${year}-${month}-${monthDays} 23:59:59`;
-        this.timeText =`${year}/${month}` 
+        this.timeText =`${year}/${month}`;
+        this.defaultMonthTime=`${year}-${month}`;
+
        }else if(e.month==undefined){    //按年查询
         this.timeStar=`${year}-01-01 00:00:00`;
         this.timeEnd=`${year}-12-31 23:59:59`;
-        this.timeText =`${year}年` 
+        this.timeText =`${year}年`;
+        this.defaultYearTime = `${year}-01-01`;
        }
        else{
         //  选择开始日期和结束日期的 （这里逻辑还没有写）
@@ -207,13 +301,23 @@ export default {
        }
        this.getTableList()    //调用获取 表格数据的方法
     },
-    confirmQuarter(e){
+    columnchange(e){
+      // 滚动下表
       console.log(e);
-      this.selectQuarter=e[1];     //选择季度
-      this.quarterYear=e[0];      // 选择季度年份
-      let timer = e[1].value.split("/");
-      this.timeStar=e[0].value+timer[0];
-      this.timeEnd=e[0].value+timer[1];
+    },
+    confirmQuarter(e){
+      let yearIndex = e[0].value;
+      let jiduIndex = e[1].value;
+      let year =this.quarterList[0][yearIndex].label;
+      this.quarterIndex[0]=yearIndex;
+      this.quarterIndex[1]=jiduIndex;
+      // this.selectQuarter=e[1].value;     //选择季度
+      this.selectQuarter = this.quarterList[1][jiduIndex];
+      let timer = this.selectQuarter.time.split("/");
+      this.timeStar=year+timer[0];
+      this.timeEnd=year+timer[1];
+      this.timeText = year +"年"+"-"+e[1].label;
+      console.log(this.timeText);
       this.getTableList()    //调用获取 表格数据的方法
     },
     async init() {
@@ -249,6 +353,18 @@ export default {
     },
     // 获取表单数据
     async getTableList(){
+      if(!this.selectTree.value){ // 判断是否选择医院
+        return  uni.showToast({
+          title:"请选择医院",
+          icon:"none"
+        })
+      }
+      if(!this.selectStatistical.value){ // 判断是否选择医院
+        return  uni.showToast({
+          title:"请选择统计方式",
+          icon:"none"
+        })
+      }
       let params = {
         departmentId:this.selectTree.value,
         statisticalWayType:this.selectStatistical.value,
@@ -315,14 +431,14 @@ export default {
   justify-content: space-between;
 }
 /deep/ .u-icon__icon {
-  color: #fff !important;
+  color: #000 !important;
 }
 /deep/ .u-dropdown__menu__item__text,
 .u-icon__icon {
   overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
-  color: #fff !important;
+  color: #000 !important;
 }
 /deep/ .u-dropdown-item__options{
   height: 500rpx !important;

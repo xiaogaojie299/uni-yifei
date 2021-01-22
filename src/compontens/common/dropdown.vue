@@ -76,10 +76,10 @@ export default {
         justify-content: space-between;
   }
   /deep/ .u-icon__icon{
-      color: #fff !important;
+      color: #fff ;
   }
   /deep/ .u-dropdown__menu__item__text,.u-icon__icon{
-      color: #fff !important;
+      color: rgb(173, 147, 147);
   }
 .header {
   height: 108rpx;

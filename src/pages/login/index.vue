@@ -4,7 +4,7 @@
     <view class="header flex-ver-center">
       <view class="header-cont">
         <!-- 头部log -->
-        <img class="log" src="" alt="" />
+        <img class="log" src="@/static/images/logo.png" alt="" />
         <view class="title"> 医疗废物信息化管理平台 </view>
       </view>
     </view>

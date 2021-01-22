@@ -3,15 +3,24 @@
         <!-- <div id="main" style="width: 600px;height:400px;"></div> -->
         <view class="">
             <!-- <select-tree :isEdit="isEdit"></select-tree> -->
+            <my-calendar> </my-calendar>
         </view>
         <view class="">
-            <u-button @tap="goTree()">测试{{checkedNodes}}</u-button>
+            <u-button @tap="goTest()">测试{{checkedNodes}}{{timeStar}}</u-button>
         </view>
+        <!-- <view class="">
+            <u-button @tap="goTree()">测试{{checkedNodes}}</u-button>
+        </view> -->
     </view>
 </template>
 <script>
 var echarts = require("echarts");
+import mixins from "@/mixins/mx-calendar"
 export default {
+    provide:{
+        "_this":this
+    },
+    mixins:[mixins],
     data(){
         return {
             isEdit:false,
@@ -28,6 +37,11 @@ export default {
         this.init()
     },
     methods:{
+        goTest(){
+            console.log('测试');
+        this.handleOpen();
+
+        },
         goTree(){
             this.$goTree()
         },

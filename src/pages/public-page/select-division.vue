@@ -77,7 +77,13 @@
         },
         computed:{
             treeData(){
-                let checkOnlyLeaf = this.pageParams.checkOnlyLeaf   // 判断树结构显示的数据
+                let checkOnlyLeaf = this.pageParams.checkOnlyLeaf;   // 判断树结构显示的数据 为true只能选择医院
+                let hospital = this.pageParams.hospital;                // 选择医院 也可选择科室
+                console.log(hospital);
+                if(hospital){
+                    this.treeDataOpt.nodeKey = "value";
+                     return JSON.parse(localStorage.getItem("hospital"))
+                }
                 if(checkOnlyLeaf){
                     this.treeDataOpt.nodeKey = "value";
                     /* 
@@ -130,7 +136,6 @@
 		// 如果不需要不用到这些方法，需要删除相应代码，打印大量日志会造成性能损耗
 		onLoad(options) {
             this.pageParams = JSON.parse(options.params);
-            this.checkedNodes = 
 			this.$nextTick(() => {
 				// expand-current-node-parent配置表示展开当前节点的父节点
 				//this.$refs.tree.setCurrentKey(9);

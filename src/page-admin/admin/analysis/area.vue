@@ -4,7 +4,7 @@
       <!-- 下拉框 -->
       <view class="header-item my-box">
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleHospitalShow">
-          {{ selectHos.label||"医院名称"}}
+          {{ selectHos.label||"请选择医院"}}
         </view>
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleStatisticalShow">
           {{ selectStatistical.label||"统计方式"}}

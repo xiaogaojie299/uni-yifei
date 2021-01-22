@@ -13,7 +13,10 @@
             <view class="header flex-center my-box h-100">
 				{{item.name}}
                 <input v-if="index==1" disabled placeholder="选择单位名称" @tap="openSelect" :value="iptValue" />
-                <img v-if="index==1" src="@/static/images/down_arrow.png" />
+                <!-- <img v-if="index==1" src="@/static/images/down_arrow.png" /> -->
+                <view class="icon-img" v-if="index==1">
+                    <u-icon name="arrow-up"  color="#dddddd"></u-icon> 
+                </view>
                     <!-- <view class="unit">你好</view> -->
                 </view>
 			</u-radio>
@@ -172,13 +175,10 @@ export default {
                     padding-left:20rpx;
                     // top:50%;
                 }
-                img{
+                .icon-img{
                     position: absolute;
                     left:360rpx;
-                    border:1px solid red;
-                    width: 22rpx;
-                    height:18rpx;
-                }   
+                }
                 
             }
             .footer-btn {

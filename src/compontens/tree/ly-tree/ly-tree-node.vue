@@ -215,7 +215,7 @@
 		methods: {
 			editNode(node){
 				uni.navigateTo({
-					url:"/pages/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
+					url:"/page-admin/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
 				})
 				console.log("跳转编辑页面");
 			},

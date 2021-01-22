@@ -57,7 +57,7 @@ class Ajax {
                 success: res => {
                     if(res.data.code==202){
                         uni.navigateTo({
-                            path:"../pages/login/index.vue"
+                            url:"/pages/login/index"
                         })
                     } else {
                         // 这里要处理一下，如果有缓存标记，处理一下缓存

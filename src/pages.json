@@ -342,6 +342,14 @@
 				}
 			},
 			{
+				"path":"admin/isystem/edit-user",
+				"style": {
+					"navigationBarTitleText": "编辑用户",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
 				"path": "admin/isystem/add-depart",
 				"style": {
 					"navigationBarTitleText": "新增",
@@ -515,6 +523,7 @@
 				}
 			}
 			
+			
 		]
 	}
 ],
@@ -558,7 +567,8 @@
 		"backgroundColor": "#1539AF",
 		"usingComponents": {
 			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node",
-			"select-tree":"/compontens/select-tree"
+			"select-tree":"/compontens/select-tree",
+			"my-calendar":"/compontens/my-calendar"
 		}
 	}
 }

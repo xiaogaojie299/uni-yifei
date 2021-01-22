@@ -12,6 +12,7 @@ let store = new vuex.Store({
         permissionList: [], // 权限列表(元数据)
         unitValue:{},   // 单位部门选择 列表
         treeData:[],    // 树状图默认省，市，区，医院，科室...
+        leftTreeData:[],    // 用户管路 left-tree组件中的数数据。。。。。。。。。。。
         checkedNodes:{} //选择的树节点
     },
     mutations:{
@@ -33,6 +34,9 @@ let store = new vuex.Store({
         setTreeData(state,list){
             state.treeData = list
         },
+        setLeftTreeData(state,list){
+            state.leftTreeData = list
+        },
         setCheckedNodes(state,obj){
             console.log("obj==>",obj);
             state.checkedNodes = obj
@@ -44,6 +48,13 @@ let store = new vuex.Store({
             if(code==200){
                 this.context.commit('setAreaList',result)
             }
+        },
+        async getLeftTreeData(context){
+            getMyDepartmentTreeList().then(({code,result})=>{
+                if(code==200){
+                    context.commit('setLeftTreeData', result);
+                }
+            })
         },
         setPermissionList(context) {
             getMenu().then(resp => {

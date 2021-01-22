@@ -48,6 +48,7 @@
 
 <script>
 import lyTree from "@/compontens/tree/ly-tree/ly-tree.vue";
+import {getMyDepartmentTreeList} from '@/utils/api' 
 export default {
   data() {
     return {
@@ -74,7 +75,28 @@ export default {
   },
   watch:{
   },
+  onShow(){
+    this.init()
+  },
   methods: {
+    init(){
+      try{
+          if(this.$store.state.leftTreeData.length==0){
+      console.log("没有吗？");
+      this.$store.dispatch('getLeftTreeData')
+       getMyDepartmentTreeList().then(res=>{
+        this.treeData = res.result;
+      })
+    }else{
+      console.log(this.$store.state);
+      this.treeData = this.$store.state.leftTreeData;
+    }
+      }catch(e){
+        console.log(e);
+        //TODO handle the exception
+      }
+      
+    },
       quite(){
           this.show = false;
           this.checkoutValue = [];
@@ -85,10 +107,19 @@ export default {
           this.show = false;
           uni.setStorageSync("checkoutValue",JSON.stringify(this.checkoutValue));
       },
-      openModel() {
+      openModel(params={}) {
         this.show = true;
-        this.expandKeys = [];
-        this.checkedKeys= [];
+        this.init()
+        console.log(params);
+        if(params.departmentId){
+          setTimeout(()=> {
+             this.expandKeys = [params.departmentId];
+            this.checkedKeys= [params.id];
+            console.log(this.checkedKeys= [params.id]);
+        }, 500);
+        }
+        // this.expandKeys = [];
+        // this.checkedKeys= [];
       if(this.checkoutValue.checkedKeys.length>0){   //判断用户之前已经选择好了的id，默认展开
         this.checkoutValue = JSON.parse(uni.getStorageSync("checkoutValue")) ;
           setTimeout(()=> {
@@ -112,7 +143,9 @@ export default {
     },
   },
   created() {
-    this.treeData = JSON.parse(uni.getStorageSync("treeData"));
+    // this.treeData = JSON.parse(uni.getStorageSync("treeData"));
+    
+   
     // setTimeout(()=>{
     //     this.expandKeys.push("42");
     // },1000)

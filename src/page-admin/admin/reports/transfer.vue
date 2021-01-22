@@ -2,22 +2,34 @@
   <view>
     <view class="header">
       <!-- 下拉框 -->
-      <view class="">
+      <view class="dropdown">
+        <view class="dropdown_hosp">
+          <view @click="goTree" class="flex-ver-center select nowrap-hidden">
+          <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> <u-icon name="arrow-down"></u-icon>
+          </view>
+        </view>
         <u-dropdown height="100" duration="0">
             <!-- @change="selectArea" -->
             <!-- :title="options1[selectIndex1]||'选择医院'" -->
-          <u-dropdown-item
+          <!-- <u-dropdown-item
+          v-show="true"
+            disabled
             v-model="value1"
             :title="title1||'请选择医院'"
             :options="options1"
             @change="selectArea"
+          ></u-dropdown-item> -->
+
+           <u-dropdown-item
+            disabled
           ></u-dropdown-item>
+
           <!-- :title="options2[selectIndex2].label||'运输单位'" -->
           <u-dropdown-item
             v-model="value2"
             :title="value2||'运输方式'"
             :options="options2"
-            :disabled="!title1"
+            :disabled="!selectTree.label"
             @change="selectUnit"
           ></u-dropdown-item>
           <!-- :disabled="!value2" -->
@@ -81,7 +93,8 @@ export default {
       timeStar:"",         //月份开始
       timerEnd:"",          //月份结束
       tableData:{},       //表格中的数据
-      tableTitle:[]
+      tableTitle:[],
+      selectTree:{},    // 选中的科室
     };
   },
   computed:{
@@ -92,6 +105,13 @@ export default {
   },
   components:{
     transferTable
+  },
+  watch:{
+    selectTree(){
+        console.log("监听成功");
+        this.watchMethod();
+    },
+      deep:true
   },
   methods: {
     async init() {
@@ -106,15 +126,19 @@ export default {
             item.realValue=item.test
             return item
           }); //获取区域下拉框
-          
-          console.log("this.options1", this.options1);
         }
       } catch (error) {}
     },
+    goTree(){
+      let params= this.selectTree;
+      params.checkOnlyLeaf = true;
+      this.$goTree(params);
+    },
     // 按照区域查询统计方式
     async watchMethod() {
+      let {value,label} = this.selectTree;
       let params = {
-        parentId: this.options1[this.selectIndex1].realValue,
+        parentId: value,
       };
       let { code, result, message } = await listSelect();
       try {
@@ -141,8 +165,9 @@ export default {
         endTime:this.timerEnd
       }
       */
+     let {value,label} = this.selectTree;
       let params={
-        departmentId:44, //医院区域ID
+        departmentId:value, //医院区域ID
         transitCompany:"处置中心", //运输处置中心
         startTime:this.timeStar,
         endTime:this.timerEnd
@@ -233,6 +258,34 @@ export default {
 }
 /deep/ .u-dropdown-item__options{
   height: 500rpx !important;
+}
+.dropdown{
+  display: flex;
+  position: relative;
+  .dropdown_hosp{
+    position: absolute;
+    padding-left: 10rpx;
+    height: 100rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index:1000;
+    .select{
+      font-size: 15px;
+      color: #ffffff;
+      width: 240rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:0 20rpx;
+    height: 44rpx;
+    border-radius: 12px;
+    background: #5b74c7;
+    text{
+      width: 200rpx;
+    }
+    }
+  }
 }
 .header {
   height: 108rpx;
