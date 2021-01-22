@@ -3,7 +3,7 @@
       <u-sticky>
         <view class="filter-box">
             <view class="filter-tools">
-                <mw-select :options="options" @confirm="searchConfirm"/>
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
             </view>
         </view>
       </u-sticky>
@@ -32,7 +32,9 @@
 import mwSelect from '@/compontens/mw-select';
 import sLoading from '@/compontens/s-loading';
 import { collectTrajectory } from '@/utils/api';
+import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
+  mixins: [ mwSelectMixin ],
     components: {
       mwSelect, sLoading
     },

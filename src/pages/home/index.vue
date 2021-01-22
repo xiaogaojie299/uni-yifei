@@ -2,7 +2,7 @@
   <view class="container">
     <view class="header">
       <view class="my-box header-cont">
-        <view class="list-item" v-for="(item,index) in list" :key="index">
+        <view class="list-item" v-for="(item,index) in list" :key="index" @click="navigateTo(item.url)">
           <img class="" :src="item.imgUrl" alt="" />
           <view class="" style="width:100rpx;">
             <view v-if="index==3" class="font-s-28">
@@ -95,7 +95,6 @@ import monthChart from "./cmps/monthChart"
 import * as utilDate from "@/utils/getData"
 import { getMenu,getIndex,getTodayRankList,getLastSevenDaysStatistics,getLastSevenDaysStatisticsX } from "@/utils/api.js";
 import {getAreaList,getHosList,getProvinceCity} from "@/utils/menuList.js"
-
 var _self;
 var canvaColumn = null;
 export default {
@@ -161,6 +160,12 @@ export default {
     this.getTotalData();
   },
   methods: {
+    navigateTo(url) {
+      console.log(url);
+      url && uni.navigateTo({
+        url
+      })
+    },
     selectGatherBtn(data) { // params是对象 起止时间和终止时间  index是下标
     let {params} = data
       this.getServeData(params)
@@ -193,22 +198,33 @@ export default {
      if(res.code==200){
       //  res.result
       let {todayCheckout,todayCollect,todayStore,totalNonCheckout,totalNonStore}=res.result
+      let { startTime, endTime } = utilDate.getToday();
+      let timeParams = 'startTime=' + startTime + '&endTime=' + endTime;
       this.list.forEach((item,index)=>{
         switch (index){
           case 0:
-          item.num = String(todayCollect);    //今日收集
+            item.num = String(todayCollect);    // 今日收集
+            item.url = '/pages-mw/mw/collect?' + timeParams
           break;
           case 1:
-            item.num= String(todayStore);      //今日入库
+            item.num= String(todayStore);      // 今日入库
+            item.url = '/pages-mw/mw/inventory?' + timeParams
             break;
           case 2:
-             item.num= String(todayStore);     //未处理预警
+             item.num= String(todayCheckout);     // 今日出库
+             item.url = '/pages-mw/mw/checkout?' + timeParams
+             break
+          case 3:
+             item.num = 0;   // 未处理预警
+             item.url = '/pages-mw/warning/info?warningStatus=1'
              break
           case 4: 
-          item.num = String(totalNonStore)     //未出库
+            item.num = String(totalNonStore)     // 未入库
+            item.url = '/pages-mw/mw/trace?status=1'
           break;
           case 5: 
-          item.num = String(totalNonCheckout)     //未入库
+            item.num = String(totalNonCheckout)     // 未出库
+            item.url = '/pages-mw/mw/trace?status=2'
           break;
           default:
             item.num = "0"

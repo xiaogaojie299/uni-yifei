@@ -7,7 +7,7 @@
               <u-search placeholder="输入预警对象查询" v-model="keyword" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
-                <mw-select :options="options" @confirm="searchConfirm"/>
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
             </view>
         </view>
       </u-sticky>
@@ -22,7 +22,9 @@ import mwSelect from '@/compontens/mw-select';
 import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
 import { listWarningRecord } from "@/utils/api.js";
+import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
+  mixins: [ mwSelectMixin ],
   components:{
     mwSelect, traceCard, sLoading
   },
@@ -50,7 +52,7 @@ export default {
         startTime: '',
         endTime: '',
         hospitalId: '', // 医院ID
-        status: '', // 状态
+        warningStatus: '', // 状态
         type: '', // 预警类型
         keyword: '', // 预警对象
         list: [],
@@ -103,8 +105,7 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          officeId: this.departmentId,
-          status: this.status,
+          status: this.warningStatus,
           type: this.type,
           startTime: this.startTime,
           endTime: this.endTime,
@@ -123,10 +124,8 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
-        // 科室ID
-        this.departmentId = e.subject;
         // 审核状态
-        this.status = e.warningStatus;
+        this.warningStatus = e.warningStatus;
         // 医废类型
         this.type = e.warningType;
         // 时间

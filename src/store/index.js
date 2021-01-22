@@ -38,7 +38,6 @@ let store = new vuex.Store({
             state.leftTreeData = list
         },
         setCheckedNodes(state,obj){
-            console.log("obj==>",obj);
             state.checkedNodes = obj
         }
     },
@@ -77,6 +76,13 @@ let store = new vuex.Store({
                 }
             })
         }
+    },
+    getters: {
+        // nodesChecked: state => {
+        //     let checkedNodes = state.checkedNodes;
+        //     store.commit('setCheckedNodes', {});
+        //     return checkedNodes;
+        // },
     },
     modules: {
         plugins: [createPersistedState({

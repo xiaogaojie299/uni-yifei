@@ -7,7 +7,7 @@
               <u-search placeholder="输入医废编号查询" v-model="code" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
-                <mw-select :options="options" @confirm="searchConfirm"/>
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
             </view>
         </view>
       </u-sticky>
@@ -25,7 +25,9 @@ import mwSelect from '@/compontens/mw-select';
 import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
 import { listSupplementMedicalTrace } from "@/utils/api.js";
+import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
+  mixins: [ mwSelectMixin ],
   components:{
     mwSelect, traceCard, sLoading
   },
@@ -50,7 +52,6 @@ export default {
         pageNo: 1,
         pageSize: 10,
         auditStatus: '', // 审核状态
-        departmentId: '', // 科室ID
         startTime: '',
         endTime: '',
         hospitalId: '', // 医院ID
@@ -114,7 +115,6 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          departmentId: this.departmentId,
           status: this.status,
           auditStatus: this.auditStatus,
           wasteType: this.wasteType,
@@ -135,8 +135,6 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
-        // 科室ID
-        this.departmentId = e.subject;
         // 审核状态
         this.auditStatus = e.auditStatus;
         // 医废类型

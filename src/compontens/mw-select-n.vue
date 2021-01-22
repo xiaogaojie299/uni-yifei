@@ -2,11 +2,22 @@
     <view class="mw-select flex-between">
         <view class="mw-select-container flex">
             <view class="mw-select-item group" @click="showCascade()" v-if="options.cascade || false">
-                <text class="name">{{ cascadeData.label || '选择医院' }}</text>
+                <u-loading size="24" v-if="cascadeLoading"/>
+                <text class="name">{{cascadeLabel}}</text>
+                <u-icon :name="!cascadeShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
             <view class="mw-select-item group" @click="dateClick(2)" v-if="options.timestampSelect || false">
                 <text class="name">{{timestampSelectValue || '查询时间'}}</text>
                 <u-icon :name="!dateShow ? 'arrow-down': 'arrow-up'"></u-icon>
+            </view>
+            <view class="mw-select-item department" @click="visibleDepartment()" v-if="(options.cascade || false) && (options.department || false)">
+                <u-loading size="24" v-if="officeCascadeLoading"/>
+                <text class="name">{{departmentLabel}}</text>
+                <u-icon :name="!departmentShow ? 'arrow-down': 'arrow-up'"></u-icon>
+            </view>
+            <view class="mw-select-item" @click="visibleSubject()" v-if="(options.cascade || false) && (options.department || false) && (options.subject || false)">
+                <text class="name">{{subjectLabel}}</text>
+                <u-icon :name="!subjectShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
         </view>
         <view class="mw-more" v-if="(options.waste || false) || (options.status || false) || (options.timestamp || false) || (options.warningType || false)|| (options.warningStatus || false)">
@@ -94,7 +105,10 @@
                 </view>
             </view>
 		</u-popup>
+        <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="cascadeList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
         <s-picker v-model="dateShow" mode="time" @confirm="dateChange" :params="dateSelectParms" :default-time="defaultTime"></s-picker>
+        <s-select title="选择部门" v-model="departmentShow" :list="departmentList" @confirm="departmentCallback" :default-value="departmentIndex"></s-select>
+        <s-select title="选择科室" v-model="subjectShow" :list="subjectList" @confirm="subjectCallback" :default-value="subjectIndex"></s-select>
     </view>
 </template>
 <script>
@@ -103,7 +117,6 @@ import sSelect from './s-select';
 import sPicker from './s-picker';
 import sCheckbox from './s-checkbox';
 import SSelectMulti from './s-select-multi.vue';
-import { mapState } from 'vuex';
 export default {
     components: {
         sSelect, sPicker, sCheckbox,
@@ -122,22 +135,23 @@ export default {
             default() {
                 return {};
             }
-        },
-        defaultValue: {
-            type: Object,
-            default() {
-                return {};
-            }
         }
     },
     data() {
         return {
-            cascadeData: {},
             timestampSelectValue: '', // 默认选中的时间
+            cascadeLoading: false, // 医院加载中
             officeCascadeLoading: false, // 部门加载中
             defaultTime: '',
             moreShow: false, // 更多筛选显示
             dateShow: false, // 日期选择显示
+            departmentShow: false, // 部门选择显示
+            departmentList: [], // 部门&科室列表
+            subjectShow: false, // 科室选择显示
+            subjectList: [], // 科室列表
+            subjectIndex: [], // 索引
+            departmentIndex: [], // 索引
+            cascadeIndex: [], // 索引
             dateSelectParms: {},
             dateTimeParams: {
                 year: true,
@@ -152,6 +166,7 @@ export default {
                 month: true,
                 day: true
             },
+            cascadeShow: false, // 医院选择显示
             dateIndex: 0, // 判断日期选择是第一个还是第二个
             wasteList: [],
             statusList: [
@@ -260,9 +275,17 @@ export default {
             // 运输单位
             transList: [],
 
+            cascadeList: [], 
+            cascadeLabel: '选择组织',
+            departmentLabel: '部门',
+            subjectLabel: '科室',
+
+
             cascadeId: '', // 选中的医院ID
             wasteId: '', // 选中的类型ID
+            subjectId: '', // 选中的科室ID
             status: '', // 入库状态
+            departmentId: '',
             startTime: '', // 开始时间
             endTime: '', // 结束时间
             warningType: '', // 预警类型
@@ -273,51 +296,47 @@ export default {
         }
     },
     mounted() {
-        this.setDefaultValue();
+        this.loadHospitalCascade();
         this.loadWasteType();
     },
     computed: {
-        ...mapState([
-            'checkedNodes'
-        ])
     },
     watch: {
-        defaultValue: {
-            handler: function(n, o) {
-                this.setDefaultValue();
-            },
-            deep: true
+        cascadeId(n, o) {
+            n && this.loadOfficeCascadeList(n)
         },
-        checkedNodes: function(n) {
-            this.cascadeData = n;
-            this.cascadeId = n.value;
-            if (this.options.trans) {
-                this.loadTransList();
-            }
-            this.emitConfirm();
+        departmentShow(n, o) {
+            n && (this.dateShow = this.cascadeShow = this.moreShow = this.subjectShow = false);
+        },
+        subjectShow(n, o) {
+            n && (this.dateShow = this.cascadeShow = this.moreShow = this.departmentShow = false);
+        },
+        cascadeShow(n, o) {
+            n && (this.dateShow = this.departmentShow = this.moreShow = this.subjectShow = false);
+        },
+        moreShow(n, o) {
+            n && (this.cascadeShow = this.departmentShow = this.subjectShow = false);
+        },
+        dateShow(n, o) {
+            n && (this.departmentShow = this.cascadeShow = this.subjectShow = false);
         }
     },
     methods: {
-        setDefaultValue() {
-            for (let i in this.defaultValue) {
-                this.$set(this.$data, i, this.defaultValue[i]);
-            }
-            this.emitConfirm();
-
-            // if (this.defaultValue.startTime && this.defaultValue.endTime) {
-            //     this.startTime = this.defaultValue.startTime;
-            //     this.endTime = this.defaultValue.endTime;
-            //     this.emitConfirm();
-            // }
-            // if (this.warningStatus) {
-            //     this.warningStatus = this.defaultValue.warningStatus;
-            // }
-            // if (this.status) {
-            //     this.status = this.defaultValue.
-            // }
-        },
         showCascade() {
-            this.$toTree(Object.assign(this.cascadeData, {}));
+            if (this.cascadeLoading) {
+                return ;
+            }
+            this.cascadeShow = !this.cascadeShow;
+        },
+        resetDepartment() {
+            this.departmentLabel = '部门';
+            this.departmentIndex = [];
+            this.departmentId = '';
+        },
+        resetSubject() {
+            this.subjectLabel = '科室';
+            this.subjectIndex = [];
+            this.subjectId = '';
         },
         reset() {
             this.cascadeId = '';
@@ -331,6 +350,8 @@ export default {
             this.cascadeLabel = '选择组织';
             this.transList = [];
             this.trans = '';
+            this.resetDepartment();
+            this.resetSubject();
         },
         confirm() {
             this.moreShow = false;
@@ -340,6 +361,8 @@ export default {
         emitConfirm() {
             this.$emit('confirm', {
                 cascade: this.cascadeId,
+                department: this.departmentId,
+                subject: this.subjectId,
                 status: !this.status ? '' : this.status,
                 auditStatus: !this.auditStatus ? '' : this.auditStatus,
                 waste: this.wasteId,
@@ -350,6 +373,39 @@ export default {
                 warningStatus: !this.warningStatus ? '' : this.warningStatus,
                 trans: this.trans
             });
+        },
+        visibleDepartment() {
+            // 如果没有选择医院，是不允许选择科室和部门的
+            if (!this.cascadeId) {
+                uni.showToast({
+                    title: '请先选择组织',
+                    icon: 'none'
+                });
+                return ;
+            }
+            if (this.officeCascadeLoading) {
+                return ;
+            }
+            this.departmentShow = !this.departmentShow;
+        },
+        visibleSubject() {
+            // 如果没有选择医院，是不允许选择科室和部门的
+            if (!this.departmentId) {
+                uni.showToast({
+                    title: '请先选择部门',
+                    icon: 'none'
+                });
+                return ;
+            }
+            console.log(this.subjectList);
+            if (this.subjectList.length == 0) {
+                uni.showToast({
+                    title: '当前部门没有科室',
+                    icon: 'none'
+                });
+                return ;
+            }
+            this.subjectShow = !this.subjectShow;
         },
         loadWasteType() {
             getWasteTypeList().then(resp => {
@@ -363,7 +419,7 @@ export default {
         // 加载运输人员
         loadTransList() {
             listSelect({
-                parentId: this.cascadeId, // 科室ID
+                parentId: this.departmentId, // 科室ID
                 wasteType: this.waste
             }).then(resp => {
                 if (resp.code == 200) {
@@ -376,6 +432,89 @@ export default {
                 });
                 }
             });
+        },
+        loadHospitalCascade() {
+            this.cascadeLoading = true;
+            getMyHospitalCascadeList().then(resp => {
+                if (resp.code == 200) {
+                    this.cascadeList = resp.result[0].children || [];
+                }
+            }).catch(err => {}).finally(e => {
+                this.cascadeLoading = false;
+            });
+        },
+        loadOfficeCascadeList(parentId) {
+            this.officeCascadeLoading = true;
+            getMyOfficeCascadeList({
+                parentId
+            }).then(resp => {
+                if (resp.code == 200) {
+                    this.departmentList = resp.result || [];
+                }
+            }).catch(err => {}).finally(e => {
+                this.officeCascadeLoading = false;
+            });
+        },
+        // 科室选择的回调事件
+        subjectCallback(e) {
+            this.subjectId = e[0].value;
+            this.subjectLabel = e[0].label;
+            let index = this.subjectList.findIndex(item => item.value == e[0].value);
+            if (index > -1) {
+                this.subjectIndex = [index];
+            }
+            // 回调父组件
+            this.emitConfirm();
+        },
+        // 部门选择的回调事件
+        departmentCallback(e) {
+            this.departmentId = e[0].value;
+            this.departmentLabel = e[0].label;
+            let index = this.departmentList.findIndex(item => item.value == e[0].value);
+            if (index > -1) {
+                // 这里仍然有一个问题，即：可能某些部门下没有科室，应该如何处理？
+
+                // 1. 该条数据是处理有科室的，有科室继续选
+                this.subjectList = this.departmentList[index].children || [];
+
+                // 2. 该方法处理没有科室的，把当前部门的ID支持赋值给科室ID
+                if (this.subjectList.length == 0) {
+                    this.subjectId = e[0].value;
+                    // 执行查询
+                    this.emitConfirm();
+                }
+
+                this.departmentIndex = [index];
+                
+                // 加载运输人员
+                if (this.options.trans) {
+                    this.loadTransList();
+                }
+            }
+        },
+        cascadeIndexCalc(e) {
+            let cascadeIndex = [];
+            let tmpData = this.cascadeList;
+            for (let i in e) {
+                let index = tmpData.findIndex(item => item.value == e[i].value);
+                if (index > -1) {
+                    cascadeIndex.push(index);
+                    tmpData = tmpData[index].children;
+                }
+            }
+            this.cascadeIndex = cascadeIndex;
+        },
+        // 选择医院的回调
+        cascadeCallback(e) {
+            let hospital = e[e.length - 1];
+            this.cascadeLabel = hospital.label;
+            this.cascadeId = hospital.value;
+            this.resetDepartment();
+            this.resetSubject();
+            // 计算一下他的4个索引，方便重新选择时继续渲染
+            this.cascadeIndexCalc(e);
+            // 回调父组件
+            this.emitConfirm();
         },
         // 选择类型
         selectWaste(index) {
