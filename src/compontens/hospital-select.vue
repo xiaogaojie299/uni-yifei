@@ -58,6 +58,7 @@ export default {
         calcIndex(e, isIndex) {
             let tmpIndex = [];
             let tmpData = this.cascadeList;
+            console.log("tmpData==>",tmpData);
             for (let i in e) {
                 let index = tmpData.findIndex(item => item.value == (!isIndex ? e[i].value : e[i]));
                 if (index > -1) {

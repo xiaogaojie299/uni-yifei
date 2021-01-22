@@ -12,23 +12,23 @@
             </view>
         </view>
         <view>
-                <ly-tree v-if="isshow==2" ref="tree"
+                <!-- <ly-tree v-if="isshow==2" ref="tree"
                     :treeData="data"
                     :props = props
                     node-key="id"
                     :isInjectParentInNode="true"
-                    expand-on-click-node="false"
+                    :expand-on-click-node="false"
                     highlight-current
                     expand-current-node-parent
                     @node-expand="handleNodeExpand" 
                     @node-click="handleNodeClick"
                     :filter-node-method="filterNode"
                 >
-                </ly-tree>
-                <ly-tree v-else ref="tree"
-                    :treeData="data"
+                </ly-tree> -->
+                <ly-tree ref="tree"
+                    :treeData="treeData"
                     node-key="id"
-                    expand-on-click-node="false"
+                    :expand-on-click-node="false"
                     children="children" 
                     highlight-current
                     expand-current-node-parent
@@ -37,23 +37,42 @@
                     :filter-node-method="filterNode"
                 >
                 </ly-tree>
+
+                
+
         </view>
-	
+        <view class="footer">
+            <view @tap="goAddDepart" class="footer-btn flex-ver-center">新增架构</view>
+        </view>
     <!-- <u-button @click="test">测试</u-button> -->
 </view>
 </template>
 
 <script>
-    import {listRegionChildren ,listRegion,sysDepartmentTreeList} from '@/utils/api' 
+    import {listRegionChildren ,listRegion,sysDepartmentTreeList,getMyDepartmentTreeList} from '@/utils/api' 
     import LyTree from '@/compontens/tree/ly-tree/ly-tree.vue'
 	export default {
 		components: {
 			LyTree
         },
+        props:{
+            /* 树状图数据 默认科室 */
+            treeData:{
+                type:Array,
+                default:()=>{
+                    console.log(this);
+                   return JSON.parse(localStorage.getItem("treeData"))
+                }
+            },
+            isEdit:{
+                type:Boolean,
+                default:true
+            }
+        },
 		data() {
 			return {
                 name:"", //输入框搜索的医院
-                data:[],
+                defaultData:[],     // 默认显示树状图数据结构
                 props: function() {
                     return {
                         // 这里的label就可以使用函数进行自定义的渲染了
@@ -75,13 +94,53 @@
 				//this.$refs.tree.setCurrentKey(9);
 			});
         },
+        onShow(){
+            console.log("执行成功");
+             this.$store.commit('setUnitValue',{})
+        },
         created(){
-            // this.data = JSON.parse(uni.getStorageSync("hospital"));
+            /* 
                 // 第一种树状图两个接口 
                 if(this.isshow==2){
                      listRegion().then(res=>{
-                        this.data = res.result;
-                        console.log(this.data);
+                        // this.data = res.result;
+                        this.data = JSON.stringify(res.result)
+                        this.data = res.result
+                        console.log(this.data,"测试数据");
+                        this.data1 = [{
+                            canDelete: false,
+                            childrenList:[{
+                                    canDelete: false,
+                                    childrenList:[{
+                                        canDelete: false,
+                                        departName: "泸州市",
+                                        id: 41,
+                                        isWarehouse: 0,
+                                        key: 41,
+                                        level: null,
+                                        orgType: 1,
+                                        parentId: 40,
+                                        treeCode: "0000170013"
+                                    }],
+                                    departName: "四川省",
+                                    id: 40,
+                                    isWarehouse: 0,
+                                    key: 40,
+                                    level: null,
+                                    orgType: 1,
+                                    parentId: -1,
+                                    treeCode: "000017"
+                                }
+                            ],
+                            departName: "平台",
+                            id: -1,
+                            isWarehouse: 0,
+                            key: -1,
+                            level: null,
+                            orgType: 1,
+                            parentId: -999,
+                            treeCode: "00"
+                        }]
                         uni.setStorageSync("listRegion",JSON.stringify(res.result))
                     })
                 }else{
@@ -92,7 +151,12 @@
                         this.data = result;
                     })
                 }
-                   
+             */
+                sysDepartmentTreeList().then(({result})=>{
+                    uni.setStorageSync("treeData",JSON.stringify(result))
+                })
+
+                this.getTreeDalta()
                   
         },
         methods:{
@@ -104,9 +168,22 @@
                 console.log(this.$refs.tree.filter);
                 this.$refs.tree.filter(this.name)
             },
+            goAddDepart(){
+                uni.navigateTo({
+                    url:"./add-depart"
+                })
+            },
+            getTreeDalta(data){
+                getMyDepartmentTreeList().then(({code,result})=>{
+                    console.log("result==>",result);
+                    this.defaultData = result;
+                })
+            },
             // uni-app中emit触发的方法只能接受一个参数，所以会回传一个对象，打印对象即可见到其中的内容
             async handleNodeClick(obj) {
-                if(this.isshow ==2){
+                console.log(obj);
+                /* 
+                    if(this.isshow ==2){
                     console.log("打印成功");
                      //获取接口数据写法（此方法调用两个接口）
                     if (!obj.expanded) return; // 如果是关闭就返回
@@ -121,8 +198,9 @@
                                 console.log(obj.key);
                                 this.$refs.tree.updateKeyChildren(obj.key,result);
                             })
-                    
                 }
+                 */
+                
                 
                     /* 
                 console.log(obj);
@@ -150,7 +228,6 @@
 <style lang="scss" scoped>
     .header{
             width: 100%;
-            // height: 180rpx;
             height: 120rpx;
             background: $my-main-color;
             .header-cont{

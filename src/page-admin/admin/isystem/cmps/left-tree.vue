@@ -2,16 +2,19 @@
   <view class="">
     <u-popup mode="right" width="550" v-model="show">
       <view class="content">
-        <scroll-view scroll-y="true" style="height: 100vh">
+        <scroll-view scroll-y="true" style="height:calc(100vh - 100rpx)">
           <ly-tree
             ref="tree"
             :isEdit="false"
             :treeData="treeData"
             node-key="id"
             show-radio
-            expand-on-click-node="false"
+            expand-on-click-node
             :filter-node-method="filterNode"
             checkOnClickNode
+            :highlight-current="true"
+            :default-expanded-keys="expandKeys"
+            :default-checked-keys="checkedKeys"
             @check="handleCheck"
             @radio-change="handleRadioChange"
             @node-click="handleNodeClick"
@@ -28,10 +31,13 @@
         </scroll-view>
           <!-- <u-button @click="show = false;">{{checkValue.label}}</u-button> -->
           <view class="btn-group">
-            <view class="">
+            <view @tap="quite" class="">
                 取消
             </view>
-            <view class="">
+            <view v-if="checkoutValue.checkedKeys.length==0"  class="opcity">
+                确定
+            </view>
+            <view v-else @tap="submit">
                 确定
             </view>
         </view>
@@ -47,7 +53,7 @@ export default {
     return {
       show: false,  //遮罩层开关
       treeData: [], //树结构数据
-      checkoutValue:null,   //选择的节点数据
+      checkoutValue:{checkedKeys:[]},   //选择的节点数据
       props: function () {
         return {
           // 这里的label就可以使用函数进行自定义的渲染了
@@ -58,15 +64,40 @@ export default {
           children: "childrenList", // 指把数据中的‘childs’当做children当做子节点数据
         };
       },
+      expandKeys:[],          //默认展开的数
+      checkedKeys:[]          // 默认选中的节点
     };
   },
 
   components: {
     lyTree,
   },
+  watch:{
+  },
   methods: {
+      quite(){
+          this.show = false;
+          this.checkoutValue = [];
+      },
+      submit(){
+          this.$emit("checkoutValue",this.checkoutValue);
+        //   this.parentId = this.checkoutValue;
+          this.show = false;
+          uni.setStorageSync("checkoutValue",JSON.stringify(this.checkoutValue));
+      },
       openModel() {
-      this.show = true;
+        this.show = true;
+        this.expandKeys = [];
+        this.checkedKeys= [];
+      if(this.checkoutValue.checkedKeys.length>0){   //判断用户之前已经选择好了的id，默认展开
+        this.checkoutValue = JSON.parse(uni.getStorageSync("checkoutValue")) ;
+          setTimeout(()=> {
+            this.expandKeys.push(this.checkoutValue.data.parentId)
+            // this.checkedKeys.push(this.checkoutValue.data.id);
+            this.checkedKeys = this.checkoutValue.checkedKeys;
+        }, 500);
+      }
+        
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -75,16 +106,16 @@ export default {
     handleNodeClick(obj) {
     },
     handleCheck(node) {
-      console.log("handleCheck", node);
       this.checkoutValue = node
     },
     handleRadioChange(obj) {
-    //   console.log("handleRadioChange", obj);
     },
   },
   created() {
     this.treeData = JSON.parse(uni.getStorageSync("treeData"));
-    console.log("adata==", this.treeData);
+    // setTimeout(()=>{
+    //     this.expandKeys.push("42");
+    // },1000)
   }
 };
 </script>
@@ -92,6 +123,9 @@ export default {
 <style lang="scss" scoped>
 .content {
   text-align: center;
+}
+.opcity{
+    opacity: 0.3;
 }
 .btn-group{
             position: fixed;

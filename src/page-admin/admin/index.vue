@@ -105,6 +105,7 @@ export default {
       topList: [],
       isLeftClick: false,
       subMenuActive: '', // 被选中的二级菜单索引
+      sysMenus:[],        // 自定义的系统管理二级目录
       subMenuList: [], // 自定义的菜单列表, 展示在第三列 {name: '菜单名称', route: '跳转路由,不需要带mw/admin,直接走goUrl方法'}
     };
   },
@@ -120,9 +121,48 @@ export default {
       try {
         let { code, result, message } = await getMenu();
         	if (code == 200) {
-				console.log("result",result);
-				result.menu.splice(0,1);
-				this.kindlist=result.menu;
+          result.menu.splice(0,1);
+          this.sysMenus=[
+            {
+              id: 14,
+              meta: {title:"组织架构"},
+              path: "/isystem/depart",
+              route: "1"
+            },
+            {
+              id: 14,
+              meta: {title:"角色管理"},
+              path: "/isystem/role",
+              route: "1"
+            },
+            {
+              id: 14,
+              meta: {title:"用户管理"},
+              path: "/isystem/user",
+              route: "1"
+            },
+            {
+              id: 14,
+              meta: {title:"厂商管理"},
+              path: "/isystem/device",
+              route: "1"
+            },
+            {
+              id: 14,
+              meta: {title:"硬件管理"},
+              path: "/isystem/deviceAgent",
+              route: "1"
+            },
+            {
+              id: 14,
+              meta: {title:"登录记录"},
+              path: "/isystem/login/record",
+              route: "1"
+            }
+          ]
+            result.menu[5].children=this.sysMenus;
+            console.log(result.menu);
+				  this.kindlist=result.menu;
         }
       } catch (e) {
         console.log(e);
@@ -138,6 +178,7 @@ export default {
         this.warningSetting();
         return ;
     }
+    console.log("url",url);
 
     // 做了分包，路由有变动，routeMap和prefixMap的索引一一对应
     let routeMap = [
@@ -147,8 +188,7 @@ export default {
       '/pages-mw', '/pages-mw', '/pages-mw'
     ];
     // 跳转前缀，之前是无脑跳这个前缀，现在做了分包，要重新处理
-    let prefix = '/pages/admin';
-
+    let prefix = '/page-admin/admin';
     let urlArray = url.split('/');
     if (urlArray.length > 0) {
       // 如果有配置转发路由, 0是空，1才是第一个路由路径
@@ -163,7 +203,7 @@ export default {
     uni.navigateTo({
       url: prefix + url
     })
-
+    console.log("跳转/",prefix + url);
   },
   warningSetting() {
     let menus = [
@@ -194,6 +234,7 @@ export default {
         route: route + '?type=' + typeId
       });
     }
+    console.log(this.subMenuList);
   },
     setid(i) {
       this.clickId = "po" + i;

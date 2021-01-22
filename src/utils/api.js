@@ -1,7 +1,13 @@
-import ajax from "./ajax";
 import request from "./ajax";
-import qs from "./qs";
-let base = "/base/web/user/";
+/* 
+  >>>>>>>>>>>> 公共模块<<<<<<<<<<<<
+*/
+// 获取 省，市，区，科室，门诊(树状图默认数据)
+export function getMyDepartmentTreeList(){
+  return request.get('/system/sysDepartment/getMyDepartmentTreeList');
+}
+
+/* 登录模块 */
 // 用户登录 
 export function login(data){
   let url ="/system/user/login";
@@ -375,4 +381,30 @@ export function sysDepartmentTreeList(){
 // 获取父组织
 export function getParent(data){
   return request.get("/system/sysUserDepartment/queryById",data)
+}
+// 编辑组织
+export function sysDepartmentEdit(data){
+  return request.post("/system/sysDepartment/edit",data)
+}
+// 获取单位名称
+export function unitData(){
+  return request.get("/system/sysDict/getDepartmentTypeList")
+}
+
+/* 用户管理 */
+export function userList(data){
+  return request.get("/system/user/list",data)
+}
+// 用户管理获取角色 backend/system/sysRole/list
+export function sysRole(data){
+  return request.get('/system/sysRole/list',data)
+}
+
+// 删除用户管理员
+export function userDel(data){
+  return request.post('/system/user/delete',data)
+}
+// 禁用用户
+export function userBatch(data){
+  return request.post("/system/user/frozenBatch",data)
 }

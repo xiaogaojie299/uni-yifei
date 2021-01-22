@@ -20,7 +20,7 @@
                 <view class="gr-head mt-30 flex-center">
                     <!-- <img src="@/static/images/rank_icon.png" /> -->
                     <view class="title">
-                        医院收集排行
+                        医院收集排行123
                     </view>
                 </view>
                 <!-- 按钮组 -->
