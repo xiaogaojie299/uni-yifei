@@ -224,7 +224,7 @@ export default {
           break;
           case 5: 
             item.num = String(totalNonCheckout)     // 未出库
-            item.url = '/pages-mw/mw/trace?status=3'
+            item.url = '/pages-mw/mw/trace?status=2'
           break;
           default:
             item.num = "0"
