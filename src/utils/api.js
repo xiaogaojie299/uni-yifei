@@ -41,6 +41,22 @@ export function getIndex(){
   let url = "/index/getIndex";
   return request.get(url);
 }
+export function getTodayRankList(params){
+  let url = "/index/getTodayRankStatistics";
+  return request.get(url,params);
+}
+// getLastSevenDaysStatistics
+export function getLastSevenDaysStatistics(params){
+  let url = "/index/getLastSevenDaysStatistics";
+  return request.get(url,params);
+}
+
+// getLastSevenDaysStatisticsX  ，
+export function getLastSevenDaysStatisticsX(params){
+  let url = "/index/getLastSevenDaysStatisticsX";
+  return request.get(url,params);
+}
+
 // 获取未处理预警
 
 /* ------------- */

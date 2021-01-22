@@ -36,6 +36,7 @@
 		
 		methods: {
 			handleClick() {
+				console.log("还能选择");
 				this.$emit('check', this.checked);
 			}
 		}

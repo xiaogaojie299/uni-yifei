@@ -1,10 +1,12 @@
 <template>
   <view>
     <view class="header">
+      <view class="">
+      </view>
       <!-- 下拉框 -->
       <view class="header-item my-box">
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleHospitalShow">
-          {{ selectHos.label||"医院名称"}}
+          {{ selectTree.label||"医院名称"}}
         </view>
         <view class="hospitalName pl-10 nowrap-hidden" @tap="handleStatisticalShow">
           {{ selectStatistical.label||"统计方式"}}
@@ -33,7 +35,7 @@
     <view class="footer"></view>
      <!-- 下拉选择框 -->
      <!-- 医院名称 -->
-      <u-select v-model="hospitalShow" mode="mutil-column-auto" :list="hospitalList" @confirm="confirmHospital"></u-select>
+      <!-- <u-select v-model="hospitalShow" mode="mutil-column-auto" :list="hospitalList" @confirm="confirmHospital"></u-select> -->
     <!-- 统计方式 -->
     <u-select v-model="statisticalShow" mode="single-column" :list="statisticalList" @confirm="confirmStatistical"></u-select>
     <!-- 开始时间 -->
@@ -81,10 +83,10 @@ export default {
       tableTitle:[],
       hospitalList:{},    //医院列表
       statisticalList:[
-          // {
-					// 	value: '1',
-					// 	label: '日期统计'
-					// },
+          {
+						value: '1',
+						label: '日期统计'
+					},
 					{
 						value: '2',
 						label: '月度统计'
@@ -119,11 +121,11 @@ export default {
 					month: true,
           day: true,
       },
+      selectTree:{},            //选择的医院 (从上个页面传过来的)
       hospitalShow:false,         //控制医院选择select框开关
       statisticalShow:false,      //控制统计时间
       timerShow:false,          //控制时间显示
       quarterShow:false,        //控制季度显示
-      selectHos:{},        //选择的医院
       selectStatistical:[],  //选择统计方式
       selectTime:[],         // 选择统计时间
       selectQuarter:[],       //选择的季度
@@ -132,14 +134,12 @@ export default {
     };
   },
   computed:{
-    
   },
   components:{
     statisticsTable
   },
   watch:{
     selectStatistical(){
-      console.log("监听成功");
       this.selectTime=[];
       this.selectQuarter=[];
     },
@@ -148,11 +148,17 @@ export default {
   created(){
     let year = fullYear();
     this.quarterList.unshift(year);
-    console.log('hhh',this.quarterList);
   },
+  onBackPress(event){
+    this.$store.commit('setCheckedNodes',{});
+  },
+  
   methods: {
     handleHospitalShow(){   //多选框的显示与隐藏
-      this.hospitalShow=true;
+      // this.hospitalShow=true;
+      let params=this.selectTree;
+      params.checkOnlyLeaf = true;  // 只能选择医院
+      this.$goTree(params);
     },
     handleStatisticalShow(){   //多选框的显示与隐藏
       this.statisticalShow=true;
@@ -162,10 +168,6 @@ export default {
     },
     handleQuarterShow(){
       this.quarterShow=true;
-    },
-    confirmHospital(e){ //点击确定
-    console.log(e[e.length-1]);
-      this.selectHos=e[e.length-1];
     },
     confirmStatistical(e){
       this.selectStatistical=e[0];
@@ -215,58 +217,6 @@ export default {
       this.getTableList()    //调用获取 表格数据的方法
     },
     async init() {
-      let lists=  [
-					{
-						value: 1,
-						label: '中国',
-						children: [
-							{
-								value: 2,
-								label: '广东',
-								children: [
-									{
-										value: 3,
-										label: '深圳'
-									},
-									{
-										value: 4,
-										label: '广州'
-									}
-								]
-							},
-							{
-								value: 5,
-								label: '广西',
-								children: [
-									{
-										value: 6,
-										label: '南宁'
-									},
-									{
-										value: 7,
-										label: '桂林'
-									}
-								]
-							}
-						]
-					},
-					{
-						value: 8,
-						label: '美国',
-						children: [
-							{
-								value: 9,
-								label: '纽约',
-								children: [
-									{
-										value: 10,
-										label: '皇后街区'
-									}
-								]
-							}
-						]
-					}
-        ]
       let { code, message, result } = await getMyHospitalCascadeList();
       try {
         if (code == 200) {
@@ -300,7 +250,7 @@ export default {
     // 获取表单数据
     async getTableList(){
       let params = {
-        departmentId:this.selectHos.value,
+        departmentId:this.selectTree.value,
         statisticalWayType:this.selectStatistical.value,
         startTime:this.timeStar,
         endTime:this.timeEnd

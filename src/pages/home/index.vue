@@ -1,41 +1,84 @@
 <template>
-  <view>
+  <view class="container">
     <view class="header">
       <view class="my-box header-cont">
         <view class="list-item" v-for="(item,index) in list" :key="index">
           <img class="" :src="item.imgUrl" alt="" />
           <view class="" style="width:100rpx;">
-            <view v-if="index==3" class="font-s-36">{{item.num || 0}}条</view>
-            <view v-else class="font-s-36">{{item.num || 0}}kg</view>
+            <view v-if="index==3" class="font-s-28">
+              <span v-if="item.num.length<6">{{item.num+'条'}}</span>
+              <u-notice-bar v-else color="white" :play-state="playState" :speed="50" :volume-icon="false" :list="[item.num+'条']"></u-notice-bar>
+            </view>
+            <view v-else class="font-s-28">
+              <!-- {{item.num || 0}}kg -->
+              <span v-if="item.num.length<6">{{item.num+'kg'}}</span>
+              <u-notice-bar v-else :autoplay="false" color="white" :play-state="playState" :speed="50" :volume-icon="false" :list="[item.num+'kg']"></u-notice-bar>
+            </view>
             <view class="font-s-24 nowrap">{{item.title}}</view>
           </view>
         </view>
       </view>
     </view>
     <view class="main"> 
-        <view class="my-box">
+        <view class="my-box"> 
             <!-- 医院收集排行 -->
             <view class="gather-rank">
                 <!-- 标题图片 -->
                 <view class="gr-head mt-30 flex-center">
                     <!-- <img src="@/static/images/rank_icon.png" /> -->
                     <view class="title">
-                        医院收集排行123
+                        医院收集排行
                     </view>
                 </view>
                 <!-- 按钮组 -->
-                <view class="btn-groups">
-                   <view @tap="selectBtn(index)" class="btn-item flex-ver-center" :class="{active:index==isActive}" v-for="(item,index) in btns" :key="index">{{item.title}}</view>
-                </view>
+                <!-- <view class="btn-groups">
+                   <view @tap="selectBtn(index,item.params)" class="btn-item flex-ver-center" :class="{active:index==isActive}" v-for="(item,index) in btns" :key="index">{{item.title}}</view>
+                </view> -->
+                <btn-group :btns="gatherBtns" @selectBtn="selectGatherBtn" />
                 <!-- 统计报表 -->
-                <view class="qiun-columns">
-                  <view class="qiun-bg-white qiun-title-bar qiun-common-mt" >
-                    <view class="qiun-title-dot-light">基本柱状图</view>
-                  </view>
-                  <view class="qiun-charts" >
-                    <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" @touchstart="touchColumn"></canvas>
+                <view v-if="chartData.length>0" class="chart">
+                  <scroll-view scroll-x="true"  class="scroll-content">
+                    <view style="width:1000rpx;">
+                      <ChartColumn widgetType="ColumnByTodayRank" :chartData="chartData" />
+                    </view>
+                  </scroll-view>
                 </view>
-	</view>
+            </view>
+            <!-- 收集总量排行榜 -->
+
+             <view class="gather-rank">
+                <!-- 标题图片 -->
+                <view class="gr-head mt-30 flex-center">
+                    <!-- <img src="@/static/images/rank_icon.png" /> -->
+                    <view class="title">
+                        医院收集排行
+                    </view>
+                </view>
+                <btn-group :btns="gatherTotalBtns" @selectBtn="selectTotalBtn" />
+                <!-- 统计报表 -->
+                <view v-if="chartTotalData.length>0" class="chart">
+                  <!-- <ChartColumn widgetType="ColumnByTodayCollectTotal" :chartData="chartTotalData" /> -->
+                    <!-- 
+                      写的太罗嗦了，  不知道echarts在uni中会有这么多问题/ 什么功能都不能用md
+                     index===1 是按月显示 需要对scroll进行滑动
+                     -->
+                    <view class="" v-if="index!=1">
+                        <scroll-view scroll-x="true"  class="scroll-content">
+                          <view style="width:500px">
+                            <ChartColumn widgetType="ColumnByTodayCollectTotal" :chartData="chartTotalData" />
+                          </view>
+                      </scroll-view>
+                    </view>
+
+                   <view v-else class="">
+                      <scroll-view scroll-x="true"  class="scroll-content">
+                        <view style="width:2000rpx">
+                          <monthChart :index="index" :chartData="chartTotalData" />
+                        </view>
+                    </scroll-view>
+                  </view>
+                  
+                </view>
             </view>
         </view>
     </view>
@@ -43,104 +86,105 @@
   </view>
 </template>
 <script>
-import { getMenu,getIndex } from "@/utils/api.js";
+import ChartPie from "@/compontens/chartCmps/ChartPie"
 import uCharts from "../../compontens/u-charts/u-charts";
+import btnGroup from "./cmps/btn-group"
+import ChartColumn from "./cmps/ChartColumn"
+import monthChart from "./cmps/monthChart"
+
+import * as utilDate from "@/utils/getData"
+import { getMenu,getIndex,getTodayRankList,getLastSevenDaysStatistics,getLastSevenDaysStatisticsX } from "@/utils/api.js";
 import {getAreaList,getHosList,getProvinceCity} from "@/utils/menuList.js"
+
 var _self;
 var canvaColumn = null;
 export default {
+  
   data() {
     return {
+      playState:"paused", // paused 暂停  play滚动继续播放
+      chartData:[],
+      chartTotalData:[],
       list: [
-        { imgUrl: require("@/static/images/collect_icon.png"),title:"今日收集",num:0},
+        { imgUrl: require("@/static/images/collect_icon.png"),title:"今日收集",num:"0"},
 
-        { imgUrl: require("@/static/images/out_store.png"),title:"今日入库",num:0},
+        { imgUrl: require("@/static/images/out_store.png"),title:"今日入库",num:"0"},
 
-        { imgUrl: require("@/static/images/put_store.png") ,title:"今日出库",num:0},
+        { imgUrl: require("@/static/images/put_store.png") ,title:"今日出库",num:"0"},
 
-        { imgUrl: require("@/static/images/early_warn.png"),title:"未处理预警" ,num:0},
+        { imgUrl: require("@/static/images/early_warn.png"),title:"未处理预警" ,num:"0"},
 
-        { imgUrl: require("@/static/images/no_store.png"),title:"未入库",num:0},
+        { imgUrl: require("@/static/images/no_store.png"),title:"未入库",num:"0"},
 
-        { imgUrl: require("@/static/images/is_store.png"),title:"未出库",num:0},
+        { imgUrl: require("@/static/images/is_store.png"),title:"未出库",num:"0"},
         
       ],
-      btns: [
-        { title: "今日" },
-        { title: "月" },
-        { title: "季度" },
-        { title: "半年" },
-        { title: "年" },
+      gatherBtns: [
+        { title: "今日",params:utilDate.getToday() },
+        { title: "月",params:utilDate.getMonth()},
+        { title: "季度",params:utilDate.getQuarter() },
+        { title: "半年",params:utilDate.getHalfYear() },
+        { title: "年",params:utilDate.getYear()},
+      ],
+      gatherTotalBtns:[
+        { title: "七日",params:utilDate.getSevenDay() },
+        { title: "月",params:utilDate.getMonth()},
+        { title: "季度",params:utilDate.getQuarter() },
+        { title: "半年",params:utilDate.getHalfYear() },
+        { title: "年",params:utilDate.getYear()},
       ],
       isActive: 0, //选中
-      cWidth: "",
-      cHeight: "",
-      pixelRatio: 1,
-      serverData: "",
+      index:0    // 总量查询选择的下标 来判断图表的宽度
     };
   },
+  computed:{
+    totalWidth(){
+      let index = this.index;
+      console.log(index);
+      switch (index){
+        case 0:
+          return `width:694rpx;border:1px solid red;`;
+        case 1:
+          return `width:2000rpx;border:1px solid red;`
+        default: 
+        return `width:800rpx;border:1px solid red;`;
+      }
+    }
+  },
+  components:{
+    ChartColumn,
+    btnGroup,
+    monthChart
+  },
+  created(){
+    this.getServeData();
+    this.getTotalData();
+  },
   methods: {
-    selectBtn(index) {
-      this.isActive = index;
+    selectGatherBtn(data) { // params是对象 起止时间和终止时间  index是下标
+    let {params} = data
+      this.getServeData(params)
     },
-
-    getServerData() {
-      let _self = this;
-      uni.request({
-        url: "https://unidemo.dcloud.net.cn/hello-uniapp-ucharts-data.json",
-        data: {},
-        success: function (res) {
-          console.log(res.data.Column);
-          //下面这个根据需要保存后台数据，我是为了模拟更新柱状图，所以存下来了
-          _self.serverData = res.data.Column;
-          let Column = { categories: [], series: [] };
-          //这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-          Column.categories = res.data.Column.categories;
-          //这里的series数据是后台做好的，如果您的数据没有和前面我注释掉的格式一样，请自行拼接数据
-          Column.series = [res.data.Column.series[0]];
-          console.log("Column==>", Column);
-          _self.showColumn("canvasColumn", Column);
-        },
-        fail: () => {
-          console.log("网络错误，小程序端请检查合法域名");
-        },
-      });
+    selectTotalBtn(data){
+      let {params,index} = data;
+      this.index = index;
+      this.getTotalData(params)
     },
-    showColumn(canvasId, chartData) {
-      let _self = this;
-      canvaColumn = new uCharts({
-        $this: _self,
-        canvasId: canvasId,
-        type: "column",
-        legend: true,
-        fontSize: 11,
-        background: "#FFFFFF",
-        pixelRatio: _self.pixelRatio,
-        animation: true,
-        categories: chartData.categories,
-        series: chartData.series,
-        xAxis: {
-          disableGrid: true,
-        },
-        yAxis: {},
-        dataLabel: true,
-        width: _self.cWidth * _self.pixelRatio,
-        height: _self.cHeight * _self.pixelRatio,
-        extra: {
-          column: {
-            width:
-              (_self.cWidth * _self.pixelRatio * 0.45) /
-              chartData.categories.length,
-          },
-        },
-      });
-    },
-    changeData() {
-      let _self = this;
-      canvaColumn.updateData({
-        series: _self.serverData.ColumnB.series,
-        categories: _self.serverData.ColumnB.categories,
-      });
+    getServeData(time = utilDate.getToday()){     // 从后台获取今日排行数数据
+            getTodayRankList(time).then(resp=>{
+                if(resp.code==200){
+                  this.chartData = resp.result;
+                }
+            })
+      },
+    getTotalData(time = utilDate.getSevenDay()){  // 医废收集总量
+    time.type =this.index<2?1:2;
+    console.log("time.type==>",time);
+      getLastSevenDaysStatisticsX(time).then(resp=>{ 
+          if(resp.code==200){
+            this.chartTotalData = resp.result.source;
+          }
+      })
     },
       // 获取出入库记录
   async init(){
@@ -152,25 +196,25 @@ export default {
       this.list.forEach((item,index)=>{
         switch (index){
           case 0:
-          item.num = todayCollect;    //今日收集
+          item.num = String(todayCollect);    //今日收集
           break;
           case 1:
-            item.num= todayStore;      //今日入库
+            item.num= String(todayStore);      //今日入库
             break;
           case 2:
-             item.num= todayStore;     //未处理预警
+             item.num= String(todayStore);     //未处理预警
              break
           case 4: 
-          item.num = totalNonStore     //未出库
+          item.num = String(totalNonStore)     //未出库
           break;
           case 5: 
-          item.num = totalNonCheckout     //未入库
+          item.num = String(totalNonCheckout)     //未入库
           break;
           default:
-            item.num = 0
+            item.num = "0"
         }
       })
-      console.log("this.list==",this.list);
+      this.playState = "play"
      }
    } catch (error) {
      console.log(error)
@@ -183,20 +227,6 @@ export default {
     getHosList();
     getProvinceCity();
     let _self = this;
-    //#ifdef MP-ALIPAY
-    uni.getSystemInfo({
-      success: function (res) {
-        if (res.pixelRatio > 1) {
-          //正常这里给2就行，如果pixelRatio=3性能会降低一点
-          //_self.pixelRatio =res.pixelRatio;
-          _self.pixelRatio = 2;
-        }
-      },
-    });
-    //#endif
-    this.cWidth = uni.upx2px(750);
-    this.cHeight = uni.upx2px(500);
-    this.getServerData();
   },
 
   onShow(){
@@ -205,8 +235,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/deep/ .u-type-warning-light-bg{
+  background: none;
+}
+.container{
+}
 .header {
-  width: 100%;
+  overflow: hidden;
+  width: 100vw;
   height: 280rpx;
   background: $my-main-color;
   .header-cont {
@@ -271,6 +307,9 @@ export default {
         font-weight: 600;
         opacity: 1;
       }
+    }
+    .chart{
+      // margin-top: -80rpx;
     }
   }
 }

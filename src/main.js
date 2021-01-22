@@ -3,9 +3,16 @@ import App from './App'
 import uView from "uview-ui";
 import store from "./store/index"
 import * as util from '@/utils/util';
+const eCharts = require('echarts')
 Vue.use(uView);
 Vue.config.productionTip = false
 Vue.prototype.$util = util;
+Vue.prototype.$eCharts = eCharts
+Vue.prototype.$goTree = function(params={}){
+    uni.navigateTo({
+      url:"/pages/public-page/select-division"+"?params="+JSON.stringify(params)
+  })
+}
 App.mpType = 'app'
 const app = new Vue({
   ...App,

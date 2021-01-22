@@ -12,6 +12,7 @@ let store = new vuex.Store({
         permissionList: [], // 权限列表(元数据)
         unitValue:{},   // 单位部门选择 列表
         treeData:[],    // 树状图默认省，市，区，医院，科室...
+        checkedNodes:{} //选择的树节点
     },
     mutations:{
         setAreaList(state,list){
@@ -31,6 +32,10 @@ let store = new vuex.Store({
         },
         setTreeData(state,list){
             state.treeData = list
+        },
+        setCheckedNodes(state,obj){
+            console.log("obj==>",obj);
+            state.checkedNodes = obj
         }
     },
     actions:{

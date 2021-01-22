@@ -92,6 +92,7 @@ class Ajax {
   const ajax = new Ajax({
     //   baseURL:"http://192.168.0.101:7001/backend"
       baseURL:"http://47.108.162.242:8080/backend"
+    //   baseURL:"http://192.168.0.101:7001/backend"
   })
   
   /**

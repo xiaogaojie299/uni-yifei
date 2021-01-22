@@ -26,15 +26,25 @@
 				}
 			}
 		},
+
 		{
-			"path": "pages/login/forgetPwd",
+			"path": "pages/public-page/select-division",
 			"style": {
-				"navigationBarTitleText": "忘记密码",
+				"navigationBarTitleText": "选择医院",
 				"navigationBarBackgroundColor":"#1539AF",
 				"navigationBarTextStyle":"white",
 				"app-plus":{
 					"titleSize":"36px"	
 				}
+			}
+		},
+		
+		{
+			"path": "pages/login/forgetPwd",
+			"style": {
+				"navigationBarTitleText": "忘记密码",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white"
 			}
 
 		},
@@ -507,7 +517,6 @@
 			
 		]
 	}
-
 ],
 	"preloadRule": {
         "pages/admin/index": {

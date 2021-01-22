@@ -477,6 +477,7 @@
 		width: 240rpx;
 		// overflow: auto;
 		height: auto;
+		text-align: left;
 		font-size: 28rpx
 	}
 	
