@@ -38,6 +38,17 @@
 				}
 			}
 		},
+		{
+			"path": "pages/public-page/select-divisions",
+			"style": {
+				"navigationBarTitleText": "选择医院",
+				"navigationBarBackgroundColor":"#1539AF",
+				"navigationBarTextStyle":"white",
+				"app-plus":{
+					"titleSize":"36px"	
+				}
+			}
+		},
 		
 		{
 			"path": "pages/login/forgetPwd",

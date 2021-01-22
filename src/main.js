@@ -13,6 +13,12 @@ Vue.prototype.$goTree = function(params={}){
       url:"/pages/public-page/select-division"+"?params="+JSON.stringify(params)
   })
 }
+Vue.prototype.$toTree = function(params = {}){
+  this.$store.commit('setCheckedNodes', params);
+  uni.navigateTo({
+      url: "/pages/public-page/select-divisions"
+  })
+}
 App.mpType = 'app'
 const app = new Vue({
   ...App,

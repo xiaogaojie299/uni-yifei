@@ -7,7 +7,7 @@
               <u-search placeholder="输入医废编号、操作人员查询" v-model="keyWord" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
-                <mw-select :options="options" @confirm="searchConfirm"/>
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
             </view>
         </view>
       </u-sticky>
@@ -20,9 +20,11 @@
 <script>
 import mwSelect from '@/compontens/mw-select';
 import traceCard from '@/compontens/trace-card';
-import sLoading from '@/compontens//s-loading';
+import sLoading from '@/compontens/s-loading';
 import { listHistoryMedicalTrace } from "@/utils/api.js";
+import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
+  mixins: [ mwSelectMixin ],
   components:{
     mwSelect, traceCard, sLoading
   },
@@ -30,8 +32,6 @@ export default {
     return {
         options: {
           cascade: true,
-          department: true,
-          subject: true,
           status: true,
           waste: true,
           timestamp: true
@@ -100,7 +100,6 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          departmentId: this.departmentId,
           status: this.status,
           wasteType: this.wasteType,
           startTime: this.startTime,
@@ -120,8 +119,6 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
-        // 科室ID
-        this.departmentId = e.subject;
         // 审核状态
         this.status = e.status;
         // 医废类型

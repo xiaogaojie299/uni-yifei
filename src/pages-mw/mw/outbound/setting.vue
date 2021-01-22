@@ -7,7 +7,7 @@
               <u-search placeholder="输入医废编号、车牌号、运输单位查询" v-model="keyWord" :show-action="false" @search="reload()" @blur="reload()"></u-search>
             </view>
             <view class="filter-tools">
-                <mw-select :options="options" @confirm="searchConfirm"/>
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
             </view>
         </view>
       </u-sticky>
@@ -25,7 +25,9 @@ import mwSelect from '@/compontens/mw-select';
 import outboundSettingCard from '@/compontens/outbound-setting-card';
 import sLoading from '@/compontens/s-loading';
 import { listTransitConfig } from "@/utils/api.js";
+import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
+  mixins: [ mwSelectMixin ],
   components:{
     mwSelect, outboundSettingCard, sLoading
   },
