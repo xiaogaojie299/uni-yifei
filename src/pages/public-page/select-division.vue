@@ -1,4 +1,5 @@
 <template>
+<!-- 选择科室,部门,组织 -->
 <view class="">
         <u-sticky>
     <view class="header">
@@ -19,10 +20,10 @@
             ref="tree"
             :isEdit="false"
             :treeData="treeData"
-            node-key="id"
             show-radio
+            :node-key="treeDataOpt.nodeKey"
+            :filter-node-method="treeDataOpt.filterNode"
             expand-on-click-node
-            :filter-node-method="filterNode"
             checkOnClickNode
             :highlight-current="true"
             :default-expanded-keys="expandKeys"
@@ -30,6 +31,7 @@
             @check="handleCheck"
             @radio-change="handleRadioChange"
             @node-click="handleNodeClick"
+            :checkOnlyLeaf="pageParams.checkOnlyLeaf"
           ></ly-tree>
 
           <!-- <ly-tree :tree-data="treeData"
@@ -67,19 +69,33 @@
         },
         props:{
             /* 树状图数据 默认科室 */
-            treeData:{
-                type:Array,
-                default:()=>{
-                    console.log(this);
-                   return JSON.parse(localStorage.getItem("treeData"))
-                }
-            },
+            
             isEdit:{
                 type:Boolean,
                 default:true
             },
-            expandKeys:[],          //默认展开的数
-            checkedKeys:[]          // 默认选中的节点
+        },
+        computed:{
+            treeData(){
+                let checkOnlyLeaf = this.pageParams.checkOnlyLeaf   // 判断树结构显示的数据
+                if(checkOnlyLeaf){
+                    this.treeDataOpt.nodeKey = "value";
+                    /* 
+                        this.treeDataOpt.props = function(){
+                            return {
+                            label: 'label', // 指把数据中的‘personName’当做label也就是节点名称
+                            children: 'children' // 指把数据中的‘childs’当做children当做子节点数据
+                        }
+                    }
+                    */
+                    
+                    return JSON.parse(localStorage.getItem("hospital"))
+
+                }else{
+                    this.treeDataOpt.nodeKey = "id";
+                    return JSON.parse(localStorage.getItem("treeData"))
+                }
+            },
         },
 		data() {
 			return {
@@ -96,85 +112,52 @@
                     }
                 },
                 isshow:2,
-                checkoutValue:{
+                checkoutValue:{ 
                     checkedKeys:[]
-                }                
+                },
+                expandKeys:[], //默认展开的节点  
+                checkedKeys:[],  // 默认选中的节点
+                pageParams : {}, // 上个页面传过来的参数 checkOnlyLeaf 属性默认只能选择最后一层
+                treeDataOpt:{
+                    nodeKey:"", // 树节点唯一的节点
+                    filterNode(value, data) {   // 查询
+                        if (!value) return true;
+                        return data.label.indexOf(value) !== -1;
+                    },
+                },
             };
 		},
-		
 		// 如果不需要不用到这些方法，需要删除相应代码，打印大量日志会造成性能损耗
-		onLoad() {
+		onLoad(options) {
+            this.pageParams = JSON.parse(options.params);
+            this.checkedNodes = 
 			this.$nextTick(() => {
 				// expand-current-node-parent配置表示展开当前节点的父节点
 				//this.$refs.tree.setCurrentKey(9);
 			});
         },
+        
         onShow(){
-            console.log("执行成功");
-             this.$store.commit('setUnitValue',{})
+            this.init()
         },
         created(){
-            /* 
-                // 第一种树状图两个接口 
-                if(this.isshow==2){
-                     listRegion().then(res=>{
-                        // this.data = res.result;
-                        this.data = JSON.stringify(res.result)
-                        this.data = res.result
-                        console.log(this.data,"测试数据");
-                        this.data1 = [{
-                            canDelete: false,
-                            childrenList:[{
-                                    canDelete: false,
-                                    childrenList:[{
-                                        canDelete: false,
-                                        departName: "泸州市",
-                                        id: 41,
-                                        isWarehouse: 0,
-                                        key: 41,
-                                        level: null,
-                                        orgType: 1,
-                                        parentId: 40,
-                                        treeCode: "0000170013"
-                                    }],
-                                    departName: "四川省",
-                                    id: 40,
-                                    isWarehouse: 0,
-                                    key: 40,
-                                    level: null,
-                                    orgType: 1,
-                                    parentId: -1,
-                                    treeCode: "000017"
-                                }
-                            ],
-                            departName: "平台",
-                            id: -1,
-                            isWarehouse: 0,
-                            key: -1,
-                            level: null,
-                            orgType: 1,
-                            parentId: -999,
-                            treeCode: "00"
-                        }]
-                        uni.setStorageSync("listRegion",JSON.stringify(res.result))
-                    })
-                }else{
-                    // 获取树状图接口 
-                    sysDepartmentTreeList().then(({result})=>{
-                        console.log("result==>",result);
-                        uni.setStorageSync("treeData",JSON.stringify(result))
-                        this.data = result;
-                    })
-                }
-             */
                 sysDepartmentTreeList().then(({result})=>{
                     uni.setStorageSync("treeData",JSON.stringify(result))
                 })
-
                 this.getTreeDalta()
-                  
         },
         methods:{
+            init() {
+                this.expandKeys = [];
+                this.checkedKeys= [];
+                if(JSON.stringify(this.pageParams) !== '{}'){   //判断用户之前已经选择好了的id，默认展开
+                setTimeout(()=> {
+                    this.expandKeys.push(this.pageParams.parentId);
+                    this.checkedKeys= [this.pageParams.value];
+                    console.log(this.checkedKeys);
+                }, 500);
+            }
+            },
             handleNodeClick(){
                 console.log("你好");
             },
@@ -185,10 +168,7 @@
             },
             handleRadioChange(obj) {
             },
-            filterNode(value, data) {   // 查询
-                if (!value) return true;
-                return data.label.indexOf(value) !== -1;
-            },
+           
             search(){
                 console.log(this.$refs.tree.filter);
                 this.$refs.tree.filter(this.name)
@@ -206,6 +186,24 @@
             },
             handleNodeExpand(obj) {
                 // console.log('handleNodeExpand', JSON.stringify(obj));
+            },
+            submit(){   //点击确定
+            let checkedNodes = this.checkoutValue.node;
+            console.log("checkedNodes",checkedNodes);
+            // checkedNodes:this.checkoutValue.checkedNodes[0]
+            // let pages = getCurrentPages();
+            // var prevPage = pages[pages.length - 2];  //上一个页面
+            // prevPage._data.checkedNodes = this.checkoutValue.checkedNodes[0];
+            let params = {
+                label:checkedNodes.label,
+                value:checkedNodes.data.value,
+                parentId:checkedNodes.parentId
+            }
+            let pages = getCurrentPages();
+            var prevPage = pages[pages.length - 2];  //上一个页面
+            prevPage._data.selectTree = params; // 将选择是值传到上一个页面
+            // this.$store.commit('setCheckedNodes',params);
+            uni.navigateBack();
             }
         }
 	};
@@ -267,7 +265,9 @@
             text-align: center;
         }
         .opcity{
-            opacity: 0.3;
+            // opacity: 0.3;
+            background: #b9c4e7 !important;
+            border: none !important;
         }
         .btn-group{
             position: fixed;
