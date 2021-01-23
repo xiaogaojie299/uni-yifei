@@ -17,7 +17,7 @@
         </view>
         <view class="header my-box h-100">
             <view class="label flex-center">手机号码</view>
-            <input type="text" v-model="form.phone" placeholder="请输入你的手机号码" value="" />
+            <input type="number" v-model="form.phone" placeholder="请输入你的手机号码" value="" />
             
         </view>
        <view class="header my-box h-100">
@@ -27,20 +27,20 @@
         </view>
         <view class="header my-box h-100">
             <view class="label flex-center">密码</view>
-            <input type="text" v-model="form.password" placeholder="请输入你的密码" value="" />
+            <input type="password" v-model="form.password" placeholder="请输入你的密码" value="" />
             
         </view>
         
         <!-- 选择按钮 -->
-        <!-- <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存{{isSubmit}}
+        <view v-if="!isSubmit" class="footer-btn flex-ver-center">
+            保 存
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            保 存{{isSubmit}}
-        </view> -->
-        <view @tap="submit" class="footer-btn flex-ver-center allow">
             保 存
-        </view> 
+        </view>
+        <!-- <view @tap="submit" class="footer-btn flex-ver-center allow">
+            保 存
+        </view>  -->
         <leftree :expandKeys="form.departmentId" :checkedKeys="form.checkedKeys" @checkoutValue="checkoutValue" ref="handleModel" />
          <!-- 角色弹框 --> 
         <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
@@ -96,15 +96,19 @@
         console.log(this.roleList);
     },
     computed:{
-            isSubmit(){
-                for (var k in this.form &&this.form.departmentId){
-                    if(!this.form[k]){
-                        return false
-                    }else{
-                        return true
-                    }
-                }
-            },
+            // isSubmit(){
+            //     for (var k in this.form &&this.form.departmentId){
+            //         if(!this.form[k]){
+            //             return false
+            //         }else{
+            //             return true
+            //         }
+            //     }
+            // },
+        isSubmit(){
+            let {account,phone} = this.form;
+            return account && phone
+        },
         orgType(){
             console.log(this.$store.state);
             if(this.$store.state.unitValue){
@@ -124,9 +128,8 @@
                     this.roleIndex = [index];
                 }
             })
-            console.log(obj);
             this.form.roleName= obj[0].label;
-            this.form.roleId= obj[0].value;
+            this.form.roleIdList= [obj[0].value];
             console.log(this.form);
         },
         openTree(){
@@ -164,6 +167,7 @@
         },
         submit(){
             try{
+            console.log("this.form==>",this.form);
             let params = this.form;
             delete params.childrenList;
             params.parentId = this.parent.id;
@@ -176,7 +180,7 @@
                     })
                     setTimeout(()=>{
                          uni.navigateTo({
-                        url:"./depart"
+                        url:"./user"
                     })
                     },1500)
                    
@@ -189,7 +193,16 @@
         }
     },
     onLoad(options){
-        this.form = JSON.parse(options.form)
+        this.form = JSON.parse(options.form);
+        // for (var k in this.form){
+        //     if(k == "roleIdSet"){
+        //         console.log(k);
+        //         k = "roleIdList"
+        //     }
+        // }
+        this.form.roleIdList = this.form['roleIdSet'] 
+        delete this.form.roleIdSet
+        console.log("this.form==",this.form);
         /* 
             canDelete: true
             departName: "测试123"

@@ -2,7 +2,7 @@
   <view>
     <view class="header">
       <!-- 下拉框 -->
-      <view class="dropdown">
+      <view class="dropdown" @click.stop="open">
         <view class="dropdown_hosp">
           <view @click="goTree" class="flex-ver-center select nowrap-hidden">
           <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> <u-icon name="arrow-down"></u-icon>
@@ -90,6 +90,8 @@ export default {
       selectIndex1:"",   //获取医院的下标
       selectIndex2:"",   //获取运输单位的下标
       selectIndex3:"",     //获取月份的下标
+      disTransport:null,
+      disMonth:null,
       timeStar:"",         //月份开始
       timerEnd:"",          //月份结束
       tableData:{},       //表格中的数据
@@ -114,6 +116,13 @@ export default {
       deep:true
   },
   methods: {
+    open(){
+      console.log(this.selectTree);
+      if(JSON.stringify(this.selectTree)=="{}"){
+        this.disTransport = true;
+        console.log("打不开");
+      }
+    },
     async init() {
       let { code, message, result } = await getMyHospitalCascadeList();
       try {
@@ -197,6 +206,12 @@ export default {
       this.selectIndex3=value;
       this.title3=this.options3[this.selectIndex3].label;
       this.timerType(value);
+      // if(!this.value2){
+      //   return uni.showToast({
+      //     "title":"请先选择运输单位",
+      //     "icon":"none"
+      //   })
+      // }
       // 选择月份调用获取table方法
       this.getTableList()
     },

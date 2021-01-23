@@ -21,7 +21,7 @@
 import mwSelect from '@/compontens/mw-select';
 import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens/s-loading';
-import { listHistoryMedicalTrace } from "@/utils/api.js";
+import { listHistoryMedicalTrace } from "@/utils/api.js"; 
 import mwSelectMixin from '@/mixins/mw-select.js';
 export default {
   mixins: [ mwSelectMixin ],
@@ -138,6 +138,7 @@ page {
 .container {
     .filter-box {
         background: #1539AF;
+        // background:red;
         height: 180rpx;
         width: 100%;
         .filter-search {

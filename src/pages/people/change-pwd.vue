@@ -75,7 +75,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   width: 100%;
   .content {
@@ -97,6 +97,8 @@ export default {
       .ipt {
           width: 100%;
           height: 100%;
+          border: none;
+          outline: none;
           padding-right:44rpx;
       }
     }

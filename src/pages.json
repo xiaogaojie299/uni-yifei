@@ -383,6 +383,7 @@
 					"navigationBarTitleText": "用户管理",
 					"navigationBarBackgroundColor":"#1539AF",
 					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true,
 					"app-plus":{
 						"titleSize":"36rpx"	
 					}
@@ -505,6 +506,7 @@
 					"navigationBarTitleText": "实时监控",
 					"navigationBarBackgroundColor":"#1539AF",
 					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true,
 					"app-plus":{
 						"titleSize":"36rpx"
 					}
@@ -523,7 +525,8 @@
 				"style": {
 					"navigationBarTitleText": "监控配置",
 					"navigationBarBackgroundColor":"#1539AF",
-					"navigationBarTextStyle":"white"
+					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true
 				}
 			},
 			{

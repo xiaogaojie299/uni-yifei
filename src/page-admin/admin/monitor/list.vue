@@ -1,20 +1,22 @@
 <template>
     <view class="container">
-        <!-- 选择监控 -->
-        <view class="header">
-            <view class="my-box">
-                <!-- 选择医院 -->
-                <view class="lable">
-                    <text>选择医院</text>
-                    <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectHos.label" type="text" disabled>
-                </view>
-                <view class="">
-                    <view @click="submit" class="btn flex-ver-center">
-                        查 询
-                    </view> 
+                <!-- 选择监控 -->
+        <u-sticky>
+            <view class="header">
+                <view class="my-box">
+                    <!-- 选择医院 -->
+                        <view class="lable">
+                            <text>选择医院</text>
+                            <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectTree.label" type="text" disabled>
+                        </view>
+                    <!-- <view class="">
+                        <view @click="submit" class="btn flex-ver-center">
+                            查 询
+                        </view> 
+                    </view> -->
                 </view>
             </view>
-        </view>
+        </u-sticky>
         <view class="main">
             <view class="hpt" v-for="(item,index) in monitorList" :key="index">
                 <!-- 横线 -->
@@ -60,7 +62,8 @@ export default {
             selectHos:{},        //选择的医院
             pageNo:1,
             cascadeShow:false,
-            cascadeIndex:[]
+            cascadeIndex:[],
+            selectTree:{}
         }
     },
     created(){
@@ -70,8 +73,15 @@ export default {
         this.pageNo++;
         this.search();
     },
+    onPullDownRefresh() {
+    this.reload();
+    this.search();
+  },
     watch:{
         selectHos(){
+        },
+        selectTree(){
+            this.search();
         },
         deep:true
     },
@@ -80,6 +90,10 @@ export default {
             this.areaList = JSON.parse(uni.getStorageSync("hospital"));
             this.selectHos = this.areaList[0];
             this.search()
+        },
+        reload(){
+            this.pageNo =1;
+            this.monitorList = [];
         },
         cascadeIndexCalc(e) {
             let cascadeIndex = [];
@@ -98,7 +112,10 @@ export default {
             this.cascadeIndexCalc(obj) 
         },
         handleHospitalShow(){
-            this.cascadeShow =true;
+            // this.cascadeShow =true;
+            let params = this.selectTree;
+            params.hospital = true;
+            this.$goTree(params);
         },
         selectRow(row){ //选择医院点击确定
             this.selectHos=row;
@@ -117,7 +134,7 @@ export default {
         },
         async search(){   // 查询监控列表数据
             try{
-                if(!this.selectHos.value){
+                if(!this.selectTree.value){
                     uni.showToast({
                         title:"请选择医院",
                         icon:"none"
@@ -126,7 +143,7 @@ export default {
                 }
                 
                 let params = {
-                    departmentId:this.selectHos.value,
+                    departmentId:this.selectTree.value,
                     pageNo:this.pageNo,
                     pageSize:10
                 }
@@ -139,6 +156,7 @@ export default {
                         icon:"none"
                     })
                 }
+                uni.stopPullDownRefresh();
             }catch(e){
                 console.log(e);
             }

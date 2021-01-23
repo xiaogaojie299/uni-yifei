@@ -1,25 +1,26 @@
 <template>
     <view class="container">
-        <view class="header">
-            <view class="header-cont my-box">
-                <!-- 顶部input -->
-                <view class="ipt-box">
-                    <!-- icon -->
-                    <img src="@/static/images/search.png" alt="" />
-                    <!-- input框 -->
-                    <input type="text" v-model="devIdno" placeholder="输入监控设备编号" />
-                </view>
-                <!-- 选择组织 -->
-                <view class="checkDrop-box flex-ver-center">
-                     <view @tap="handleHospitalShow" class="checkDrop">
-                        <input placeholder="选择组织" :value="selectHos.label" type="text" disabled />
-                        <img src="@/static/images/down_arrow.png" alt="">
+        <u-sticky>
+            <view class="header">
+                <view class="header-cont my-box">
+                    <!-- 顶部input -->
+                    <view class="ipt-box">
+                        <!-- icon -->
+                        <img src="@/static/images/search.png" alt="" />
+                        <!-- input框 -->
+                        <input type="text" @confirm="search()" confirm-type="search" v-model="devIdno" placeholder="输入监控设备编号" />
                     </view>
+                    <!-- 选择组织 -->
+                    <view class="checkDrop-box flex-ver-center">
+                        <view @tap="handleHospitalShow" class="checkDrop">
+                            <input placeholder="选择组织" :value="selectTree.label" type="text" disabled />
+                            <img src="@/static/images/down_arrow.png" alt="">
+                        </view>
+                    </view>
+                
                 </view>
-               
             </view>
-        </view>
-
+        </u-sticky>
         <!-- 中间主体列表 -->
         <view class="main">
             <view class="hspList" v-for="(item,index) in monitorList" :key="index">
@@ -37,7 +38,7 @@
                         <text class="label font-w-500">{{item.devIdno}}</text>
                     </view>
                     <view class="">
-                        <text class="label font-w-400">通道数1：</text>
+                        <text class="label font-w-400">通道数：</text>
                         <text class="label font-w-500">{{item.channelNum}}</text>
                     </view>
                     <view class="">
@@ -62,9 +63,9 @@
         <view @tap="goAdd" class="footer flex-ver-center">
             新增监控设备
         </view>
-
+            <u-toast ref="uToast" />
         <!-- 选择医院名称 -->
-        <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down>
+        <!-- <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down> -->
     </view>    
 </template>
 <script>
@@ -76,6 +77,7 @@ export default {
             monitorList:[],
             areaList:{},    //医院列表
             selectHos:{},        //选择的医院
+            selectTree:{},
             pageNo:1,
             devIdno:null,             // 监控设备编号
             isRemake:false      // 判断返回的监控列表是追加还是重新赋值
@@ -92,20 +94,37 @@ export default {
         this.isRemake = true;
         this.search();
     },
+    onPullDownRefresh() {
+       this.iptSearch()
+    },
     onShow(){
-        this.search()
+        // this.search()
+        // this.$plugs.pageTop()
     },
     watch:{
+        selectTree(){
+            this.search();
+        },
+        deep:true
     },
     methods:{
+        iptSearch(){
+            this.page = 1;
+            this.isRemake=false;
+            this.monitorList = [];
+            this.search()
+        },
         init(){
             this.areaList = JSON.parse(uni.getStorageSync("hospital"));
             this.selectHos = this.areaList[0];
-            this.search()
+            // this.search()
         },
         handleHospitalShow(){
-            this.childMethod=true;
-            this.$refs.childMethod.openShow()
+            let params = this.selectTree;
+            params.hospital = true;
+            this.$goTree(params);
+            // this.childMethod=true;
+            // this.$refs.childMethod.openShow()
         },
         selectRow(row){ //选择医院点击确定
             this.selectHos=row;
@@ -115,7 +134,7 @@ export default {
         },
          async search(){   // 查询监控列表数据
             try{
-                if(!this.selectHos.value){
+                if(!this.selectTree.value){
                     uni.showToast({
                         title:"请选择医院",
                         icon:"none"
@@ -124,7 +143,7 @@ export default {
                 }
                 
                 let params = {
-                    departmentId:this.selectHos.value,
+                    departmentId:this.selectTree.value,
                     devIdno:this.devIdno,
                     pageNo:this.pageNo,
                     pageSize:10
@@ -143,34 +162,67 @@ export default {
                         icon:"none"
                     })
                 }
+                this.$plugs.pageTop();
+                uni.stopPullDownRefresh();
             }catch(e){
                 console.log(e);
             }
         },
         async del(id){
+            
             this.isRemake = false;
-            this.monitorList=[];
             let params = {
                 id
             }
-            let {code,result,message} = await deleteMonitor(params);
-            if(code == 200){
-                uni.showToast({title:"删除设备成功",icon:"success"})
-                setTimeout(()=>{
-                    this.search();
-                },1000)
-            }else{
-                uni.showToast({title:message,icon:"none"})
-            }
+            let _this = this;
+            uni.showModal({
+                title: '提示',
+                content: '您确定要删除监控设备吗？',
+                success: function (res) {
+                    if (res.confirm) {
+                        // 点击删除
+                        deleteMonitor(params).then(resp => {
+                            if (resp.code == 200) {
+                                uni.showToast({
+                                    title: '删除成功',
+                                    icon: 'none'
+                                });
+                                setTimeout(()=>{
+                                    _this.monitorList=[];
+                                    _this.search();
+                                },1000)
+                            }else{
+                                uni.showToast({title:message,icon:"none"})
+                            }
+                        });
+                    }
+                }
+            });
+
+
+            
+            // let {code,result,message} = await deleteMonitor(params);
+            // if(code == 200){
+            //     uni.showToast({title:"删除设备成功",icon:"success"})
+            //     this.$refs.uToast.show({
+            //         title: "用户名不能为空",
+            //     });
+            //     setTimeout(()=>{
+            //         this.monitorList=[];
+            //         this.search();
+            //     },1000)
+            // }else{
+            //     uni.showToast({title:message,icon:"none"})
+            // }
         },
         goAdd(){ //跳转 设备增加页面
             uni.navigateTo({
-                url:"/pages/admin/monitor/redact"+"?type="+1    
+                url:"/page-admin/admin/monitor/redact"+"?type="+1    
             })
         },
         goDetail(item){ //跳转 设备编辑页面
             uni.navigateTo({
-                url:"/pages/admin/monitor/redact"+"?params="+JSON.stringify(item)+"&type=2"
+                url:"/page-admin/admin/monitor/redact"+"?params="+JSON.stringify(item)+"&type=2"
             })
         }
     },

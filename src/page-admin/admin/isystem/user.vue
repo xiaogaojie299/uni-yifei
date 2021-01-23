@@ -136,7 +136,7 @@ export default {
             devIdno:null,             // 监控设备编号
             moveID:null,
             cascadeIndex:"",
-            roleIndex:0,                 // 默认选择的角色值
+            roleIndex:[0],                 // 默认选择的角色值
             selectTree:{}               // 选择医院传过来的值
         }
     },
@@ -153,13 +153,16 @@ export default {
     },
     created(){
         this.sysRole();
-        this.init()
+        this.init();
     },
     onReachBottom : function(){ //上拉触底加载更多
         this.pageNo++;
         this.isRemake = false;
         this.getList();
     },
+    onPullDownRefresh() {
+    this.init();
+  },
     onShow(){
         this.deviceAgent();
     },
@@ -177,6 +180,7 @@ export default {
                     }else{
                         this.list =this.list.concat(result.records);
                     }
+                    uni.stopPullDownRefresh();
                 }
             }catch(e){
                 console.log(e);

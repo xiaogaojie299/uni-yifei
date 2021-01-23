@@ -2,22 +2,25 @@
     <view class="container">
         <view class="main my-box" v-for="(item,index) in list" :key="index">
             <view class="label"> <text class="font-w-500">{{item.title}}</text> </view>
-                <input
-                class="label"
-                @tap="handleHospitalShow(index)" 
+            <view class="" @tap="handleHospitalShow(index)">
+              <input
+                class="label ipt"
+                @tap="handleHospitalShow(index)"
                 :style="{paddingRight:index==0&&'22rpx'}" 
                 :type="item.type"
                 :disabled="index==0||false"
                 v-model = item.value 
                  />
                 <img v-if="item.isIcon" src="@/static/images/path.png" />        
+            </view>
+                
         </view>
         <!-- 选择按钮 -->
         <view v-if="isSubmit" class="footer-btn flex-ver-center">
-            完 成
+            {{btnText}}
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            完 成
+            {{btnText}}
         </view>
         <!-- 选择医院名称 -->
         <!-- <area-drop-down ref="childMethod" :defaultValue="defaultValue"></area-drop-down> -->
@@ -53,7 +56,7 @@ export default {
         },
         {
           title: "自动关闭时间(分钟)",
-          type: "umber",
+          type: "number",
           value: "",
         },
         {
@@ -68,7 +71,9 @@ export default {
       monitorParams:{},
       defaultValue:[0,0,0,0,0],
       show:false,
-      type:1        //1.编辑  2.新增
+      type:1,        //1.编辑  2.新增
+      btnText:"",
+      selectTree:{} // 选择的医院
     };
   },
   components: {
@@ -83,6 +88,9 @@ export default {
                 })
     　　　　},
     　　　　deep: true
+      },
+      selectTree(val){
+          this.list[0].value = val.label;
       }
     /*  
       list(val){
@@ -109,12 +117,13 @@ export default {
     */
    this.type = option.type;
     if(option.type==2){
+      this.btnText = "完 成"
             uni.setNavigationBarTitle({
                 title: '编辑监控设备'
             });
             this.monitorParams = JSON.parse(option.params);
-            this.selectHos.label = this.monitorParams.hospitalName;
-            this.selectHos.value = this.monitorParams.hospitalId;
+            this.selectTree.label = this.monitorParams.hospitalName;
+            this.selectTree.value = this.monitorParams.hospitalId;
             this.list[0].value = this.monitorParams.hospitalName;
             this.list[1].value = this.monitorParams.deviceName;
             this.list[2].value = this.monitorParams.devIdno;
@@ -122,6 +131,7 @@ export default {
             this.list[4].value = this.monitorParams.channelNum;
             // this.defaultValue =  this.monitorParams.departmentIdList;
     }else{
+      this.btnText = "新 增"
         uni.setNavigationBarTitle({
                 title: '新增监控设备'
         });
@@ -129,9 +139,13 @@ export default {
   },
   methods: {
     handleHospitalShow(index) {
+      console.log("编辑");
         if (index == 0) {
-            this.childMethod = true;
-          this.show = true;
+          let params = this.selectTree;
+          params.checkOnlyLeaf = true;
+          this.$goTree(params)
+          //   this.childMethod = true;
+          // this.show = true;
       }
     },
     selectRow(row) {
@@ -162,18 +176,18 @@ export default {
                 break;
             }
         });
-        params.hospitalId = this.selectHos.value;
+        params.hospitalId = this.selectTree.value;
         var { code, result, message } = await addMonitor(params);
       }else{
         //   编辑监控设备
-            this.monitorParams.hospitalName = this.selectHos.label;
-            this.monitorParams.hospitalId = this.selectHos.value;
+            this.monitorParams.hospitalName = this.selectTree.label;
+            this.monitorParams.hospitalId = this.selectTree.value;
             this.monitorParams.hospitalName=this.list[0].value; 
             this.monitorParams.deviceName =this.list[1].value;
             this.monitorParams.devIdno=this.list[2].value;
             this.monitorParams.autoCloseSecond=this.list[3].value;
             this.monitorParams.channelNum=this.list[4].value;
-           var { code, result, message } = await editMonitor(params);
+           var { code, result, message } = await editMonitor(this.monitorParams);
       }
       
       if (code == 200) {
@@ -183,7 +197,7 @@ export default {
         });
         setTimeout(() => {
           uni.navigateTo({
-              url:"/pages/admin/monitor/setting"
+              url:"/page-admin/admin/monitor/setting"
           });
         }, 1500);
       } else {
@@ -197,6 +211,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.ipt{
+  border:none;
+  outline: none;
+  background: #fff;
+   text-align: right;
+      width: 460rpx;
+      height: 80rpx;
+}
+input {
+     
+    }
 .allow{
     // background: $my-main-color;
     background: $my-main-color !important;
@@ -211,17 +236,12 @@ export default {
     position: relative;
     .label {
       max-width: 300rpx;
-    
     }
     text{
           font-size:28rpx;
             color: rgba(0, 0, 0, 1);
     }
-    input {
-      text-align: right;
-      width: 460rpx;
-      height: 100%;
-    }
+    
     img {
       position: absolute;
       top: 50%;

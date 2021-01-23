@@ -3,11 +3,13 @@ import App from './App'
 import uView from "uview-ui";
 import store from "./store/index"
 import * as util from '@/utils/util';
+import * as plugs from "@/utils/plugs.js"
 const eCharts = require('echarts')
 Vue.use(uView);
 Vue.config.productionTip = false
 Vue.prototype.$util = util;
-Vue.prototype.$eCharts = eCharts
+Vue.prototype.$plugs = plugs;
+Vue.prototype.$eCharts = eCharts;
 Vue.prototype.$goTree = function(params={}){
     uni.navigateTo({
       url:"/pages/public-page/select-division"+"?params="+JSON.stringify(params)
