@@ -27,55 +27,6 @@
           </view>
       </scroll-view>
 
-
-
-
-
-
-
-
-
-    <!-- <view class="ld">
-      <view class="left">
-        <view
-          v-for="(item, index) in kindlist"
-          :key="index"
-          @click="setid(index)"
-          :class="index === change ? 'active' : ''"
-          class="flex-ver-center menu-item"
-        >
-          {{ item.meta ? (item.meta.title || '') : '' }}
-        </view>
-      </view>
-      <view class="right">
-        <scroll-view
-          :scroll-y="true"
-          style="white-space: nowrap; height: 100vh;"
-          :scroll-into-view="clickId"
-          :scroll-with-animation="true"
-          @scroll="scroll"
-          class="sub-menu"
-        >
-          <view :class="{active: index2 === subMenuActive, 'menu-item': true}" v-for="(item2, index2) in kindlist[change].children" :key="index2" @tap="goUrl(item2.path, index2)">
-            {{ item2.meta ? (item2.meta.title || '') : '' }}
-          </view>
-        </scroll-view>
-      </view>
-
-      <view class="right">
-        <scroll-view
-          :scroll-y="true"
-          style="white-space: nowrap; height: 100vh;"
-          :scroll-with-animation="true"
-          class="sub-menu"
-          v-show="subMenuList.length > 0"
-        >
-          <view class="menu-item" v-for="(subMenu, subMenuIndex) in subMenuList" :key="subMenuIndex" @tap="jumpCustom(subMenu.route)">
-            {{ subMenu.name }}
-          </view>
-        </scroll-view>
-      </view>
-    </view> -->
   </view>
 </template>
 
@@ -114,6 +65,9 @@ export default {
   },
   onShow() {
     this.init();
+  },
+  created(){
+    this.getTreeData()
   },
   methods: {
     // init 初始化
@@ -171,7 +125,13 @@ export default {
 	goUrl(url, index) {
     // this.subMenuActive = -1;
     // this.subMenuList = [];
-
+    /* xgj 角色管理 三级目录 */
+    if (url == '/isystem/role') {
+        this.subMenuActive = index;
+        this.roleMenu();
+        return ;
+    }
+    /* -----------xgj 分割结束------------ */
     // 三级目录的特殊处理
     if (url == '/warning/setting') {
         this.subMenuActive = index;
@@ -200,10 +160,10 @@ export default {
 
     // emmmmm 这个错别单词真是让我脑壳痛
     url = url.replace(/wraning/g, 'warning');
+    console.log("jump=",prefix + url);
     uni.navigateTo({
       url: prefix + url
     })
-    console.log("跳转/",prefix + url);
   },
   warningSetting() {
     let menus = [
@@ -234,7 +194,24 @@ export default {
         route: route + '?type=' + typeId
       });
     }
-    console.log(this.subMenuList);
+    // console.log("this.subMenuList==>",this.subMenuList);
+  },
+  roleMenu() {    // 角色管理的三级菜单
+    let route = "/isystem/role"
+    let menus = [
+      {
+        name:"运营角色管理",
+        route:route+"/operation"
+      },{
+        name:"用户角色管理",
+        route:route+"/user"
+      },{
+        name:"新增角色",
+        route:route+"/add"
+      }
+    ];
+    this.subMenuList =menus;
+    console.log("this.subMenuList==>",this.subMenuList);
   },
     setid(i) {
       this.clickId = "po" + i;
@@ -279,6 +256,9 @@ export default {
           this.topList = arr;
         });
     },
+    getTreeData(){
+      this.$store.dispatch("getLeftTreeData")
+    }
   },
 };
 </script>

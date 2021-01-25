@@ -83,9 +83,10 @@ export default {
           if(url.includes("login")){
             //http://47.108.162.242:8080/
             // // http://47.108.162.242:8081/index.html#/
-            console.log(baseURL);
             // window.location.replace(baseURL + "index.html#/");
             window.location.replace("http://192.168.0.36:8082/#/pages/login/index");
+            // uni.clearStorageSync("userInfo");
+            uni.setStorageSync("userInfo",{})
             // window.history.replaceState({}, null, 'http://192.168.0.36:8082/#/pages/login/index');
             // uni.redirectTo({
             //   url:"../login/index"

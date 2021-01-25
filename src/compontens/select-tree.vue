@@ -71,7 +71,7 @@
                 type:Array,
                 default:()=>{
                     console.log(this);
-                   return JSON.parse(localStorage.getItem("treeData"))
+                   return JSON.parse(("treeData"))
                 }
             },
             isEdit:{

@@ -55,6 +55,13 @@ let store = new vuex.Store({
                 }
             })
         },
+        getTreeData(context){
+            getMyDepartmentTreeList().then(({code,result})=>{
+                if(code==200){
+                    context.commit('setTreeData', result);
+                }
+            })
+        },
         setPermissionList(context) {
             getMenu().then(resp => {
                 if (resp.code == 200) {
@@ -68,13 +75,6 @@ let store = new vuex.Store({
                     context.commit('setPermissionKeyList', keys);
                 }
             });
-        },
-        getTreeData(context){
-            getMyDepartmentTreeList().then(({code,result})=>{
-                if(code==200){
-                    context.commit('setTreeData', result);
-                }
-            })
         }
     },
     getters: {

@@ -83,7 +83,9 @@
                     return JSON.parse(localStorage.getItem("hospital"))
                 }else{
                     this.treeDataOpt.nodeKey = "id";
-                    return JSON.parse(localStorage.getItem("treeData"))
+                    console.log("打印成功");
+                    // return JSON.parse(localStorage.getItem("treeData"))
+                    return this.$store.state.leftTreeData
                 }
             },
         },
@@ -133,7 +135,7 @@
             sysDepartmentTreeList().then(({result})=>{
                 uni.setStorageSync("treeData", JSON.stringify(result))
             })
-            this.getTreeDalta()
+            // this.getTreeDalta()
         },
         methods:{
             init() {

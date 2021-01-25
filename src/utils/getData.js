@@ -8,7 +8,11 @@ const getTimer=(time)=>{
 }
 //时间戳转为年 月 日
 const getTimeType=(timer)=>{  //timer = 时间戳毫秒
-  timer = new Date(timer);
+  if(timer){
+    timer = new Date(timer);
+  }else{
+    timer = new Date();
+  }
   let month=timer.getMonth()+1<10?"0"+(timer.getMonth()+1):timer.getMonth()+1;
   let day=timer.getDate()<10?"0"+timer.getDate():timer.getDate();
     return timer.getFullYear()+"-"+month+"-"+day

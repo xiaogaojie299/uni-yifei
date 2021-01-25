@@ -99,11 +99,13 @@
 </template>
 <script>
 import { getMyHospitalCascadeList, getMyOfficeCascadeList, getWasteTypeList, listSelect } from '@/utils/api';
+import * as dataUtils from "@/utils/getData";
 import sSelect from './s-select';
 import sPicker from './s-picker';
 import sCheckbox from './s-checkbox';
 import SSelectMulti from './s-select-multi.vue';
 import { mapState } from 'vuex';
+
 export default {
     components: {
         sSelect, sPicker, sCheckbox,
@@ -409,11 +411,11 @@ export default {
             switch(this.dateIndex) {
                 case 0:
                     this.dateSelectParms = this.dateTimeParams;
-                    this.defaultTime = this.startTime;
+                    this.startTime?this.defaultTime = this.startTime:(this.defaultTime = dataUtils.getTimeType()+" 00:00:00");  // 默认显示开始时间 00:00:00
                     break;
                 case 1:
                     this.dateSelectParms = this.dateTimeParams;
-                    this.defaultTime = this.endTime;
+                    this.endTime?this.defaultTime = this.endTime:(this.defaultTime = dataUtils.getTimeType()+" 23:59:59");  // 结束时间 默认显示 23:59:59
                     break;
                 default:
                     this.dateSelectParms = this.dateParams;
@@ -438,6 +440,7 @@ export default {
                         }
                     }
                     str += ' ' + e.hour + ':' + e.minute + ':00';
+                    console.log("this.startTime",str);
                     this.startTime = str;
                 break;
                 case 1:

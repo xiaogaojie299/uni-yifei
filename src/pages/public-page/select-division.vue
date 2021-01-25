@@ -12,7 +12,7 @@
                     <input @confirm="search()" confirm-type="search" type="text" v-model="name" placeholder="请输入医院完整名称搜索" />
                 </view>
             </view>
-        </view>
+        </view> 
 		</u-sticky>
        <view class="content">
         <scroll-view scroll-y="true" style="height:calc(100vh - 200rpx)">
@@ -94,12 +94,11 @@
                         }
                     }
                     */
-                    
                     return JSON.parse(localStorage.getItem("hospital"))
-
                 }else{
                     this.treeDataOpt.nodeKey = "id";
-                    return JSON.parse(localStorage.getItem("treeData"))
+                    // return JSON.parse(localStorage.getItem("treeData"))
+                    return this.$store.state.leftTreeData
                 }
             },
         },

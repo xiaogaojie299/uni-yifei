@@ -82,13 +82,11 @@ export default {
     init(){
       try{
           if(this.$store.state.leftTreeData.length==0){
-      console.log("没有吗？");
       this.$store.dispatch('getLeftTreeData')
        getMyDepartmentTreeList().then(res=>{
         this.treeData = res.result;
       })
     }else{
-      console.log(this.$store.state);
       this.treeData = this.$store.state.leftTreeData;
     }
       }catch(e){

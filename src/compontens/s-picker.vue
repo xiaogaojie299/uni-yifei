@@ -306,16 +306,27 @@ export default {
 			// 如果用户有传递z-index值，优先使用
 			return this.zIndex ? this.zIndex : this.$u.zIndex.popup;
 		},
+		// timestamp() {
+		// 	let time = (this.params.year ? (this.year) : '') 
+		// 					+ (this.params.month ? ((this.params.year ? '-' : '') + this.month) : '') 
+		// 					+ (this.params.day ? ((this.params.month ? '-' : '') + this.day) : '') 
+		// 					+ ' ' 
+		// 					+ (this.params.hour ? this.hour : '') 
+		// 					+ (this.params.minute ? ((this.params.hour ? ':' : '') + this.minute) : '') 
+		// 					+ (this.params.second ? ((this.params.minute ? ':' : '') + this.second) : '');
+		// 	return time;
+		// },
 		timestamp() {
 			let time = (this.params.year ? (this.year) : '') 
-							+ (this.params.month ? ((this.params.year ? '-' : '') + this.month) : '') 
-							+ (this.params.day ? ((this.params.month ? '-' : '') + this.day) : '') 
+							+ (this.params.month ? ((this.params.year ? '-' : '') + this.filterNum(this.month)) : '') 
+							+ (this.params.day ? ((this.params.month ? '-' : '') + this.filterNum(this.day)) : '') 
 							+ ' ' 
-							+ (this.params.hour ? this.hour : '') 
-							+ (this.params.minute ? ((this.params.hour ? ':' : '') + this.minute) : '') 
-							+ (this.params.second ? ((this.params.minute ? ':' : '') + this.second) : '');
+							+ (this.params.hour ? this.filterNum(this.hour) : '') 
+							+ (this.params.minute ? ((this.params.hour ? ':' : '') + this.filterNum(this.minute)) : '') 
+							+ (this.params.second ? ((this.params.minute ? ':' : '') + this.filterNum(second)) : '');
 			return time;
-		}
+		},
+		
 	},
 	watch: {
 		propsChange() {
@@ -341,6 +352,9 @@ export default {
 		}
 	},
 	methods: {
+		filterNum(num){	// 时间格式 个位数前加0
+			return num>=10?num:`0${num}`
+		},
 		// 标识滑动开始，只有微信小程序才有这样的事件
 		pickstart() {
 			// #ifdef MP-WEIXIN

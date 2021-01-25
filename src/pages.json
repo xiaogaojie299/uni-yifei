@@ -91,7 +91,6 @@
 					"titleSize":"36rpx"	
 				}
 			}
-
 		},
 		{
 			"path": "pages/people/forget-pwd",
@@ -383,12 +382,40 @@
 					"navigationBarTitleText": "用户管理",
 					"navigationBarBackgroundColor":"#1539AF",
 					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"path": "admin/isystem/role/operation",
+				"style": {
+					"navigationBarTitleText": "运营角色管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"path": "admin/isystem/role/user",
+				"style": {
+					"navigationBarTitleText": "用户角色管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
 					"enablePullDownRefresh": true,
 					"app-plus":{
 						"titleSize":"36rpx"	
 					}
 				}
 			},
+			{
+				"path": "admin/isystem/role/add",
+				"style": {
+					"navigationBarTitleText": "新增角色管理",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white",
+					"enablePullDownRefresh": true
+				}
+			},
+			
 			{
 				"path": "admin/index",
 				"style": {
@@ -536,7 +563,6 @@
 					"navigationBarTextStyle":"white"
 				}
 			}
-			
 			
 		]
 	}

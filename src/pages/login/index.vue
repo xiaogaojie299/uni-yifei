@@ -166,7 +166,7 @@ export default {
       position: relative;
       img {
         width: 40rpx;
-        height: 38rpx;
+        height: 44rpx;
       }
       .eys {
         width: 40rpx;
