@@ -425,7 +425,11 @@ export function userBatch(data){
 }
 
 // 编辑用户
-// system/user/edit
 export function userEdit(data){
   return request.post("/system/user/edit",data)
+}
+/* 角色管理 */
+// 查询角色
+export function sysRoleList(data){
+  return request.get("/system/sysRole/list",data)
 }

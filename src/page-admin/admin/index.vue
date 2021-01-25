@@ -194,7 +194,6 @@ export default {
         route: route + '?type=' + typeId
       });
     }
-    // console.log("this.subMenuList==>",this.subMenuList);
   },
   roleMenu() {    // 角色管理的三级菜单
     let route = "/isystem/role"

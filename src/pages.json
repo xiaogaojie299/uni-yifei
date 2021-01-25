@@ -411,8 +411,15 @@
 				"style": {
 					"navigationBarTitleText": "新增角色管理",
 					"navigationBarBackgroundColor":"#1539AF",
-					"navigationBarTextStyle":"white",
-					"enablePullDownRefresh": true
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/role/edit",
+				"style": {
+					"navigationBarTitleText": "编辑",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
 				}
 			},
 			
