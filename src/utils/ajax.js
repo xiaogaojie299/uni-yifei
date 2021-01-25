@@ -1,4 +1,5 @@
 import { setCache, getCache } from '@/utils/util';
+import baseURL from "./BASE_URL"
 class Ajax {
     //定义baseURL
     constructor(parms) {
@@ -91,7 +92,7 @@ class Ajax {
   
   const ajax = new Ajax({
     //   baseURL:"http://192.168.0.101:7001/backend"
-      baseURL:"http://47.108.162.242:8080/backend"
+      baseURL:baseURL + "backend"
     //   baseURL:"http://192.168.0.101:7001/backend"
   })
   

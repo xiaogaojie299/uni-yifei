@@ -4,12 +4,29 @@
       <view class="header-content">
         <!-- 二维码图片 -->
         <view class="QRcode">
-          <img src="" alt="" />
+          <!-- <vue-qr
+              :size="191"
+              :margin="0"
+              :auto-color="true"
+              :dot-scale="1"
+              :text="userInfo.qrUrl" /> -->
+          <view v-if="userInfo.roleType== 4">
+              <vue-qr
+              :size="191"
+              :margin="0"
+              :auto-color="true"
+              :dot-scale="1"
+              :text="userInfo.qrUrl" />
+          </view>
+          <view v-else>
+            <img src="@/static/images/logo.png" alt="">
+          </view>
+          
         </view>
         <!-- 姓名 -->
-        <view class="name fon-s-36 mb-20 mt-20">张三</view>
+        <view class="name fon-s-36 mb-20 mt-20">{{userInfo.name}}</view>
         <!-- 绑定医院 -->
-        <view class="hospital font-s-28">成都市第一人民医院</view>
+        <view class="hospital font-s-28">{{userInfo.departmentName}}</view>
       </view>
     </view>
     <!-- 中间from -->
@@ -32,7 +49,8 @@
   </view>
 </template>
 <script>
-var echarts = require("echarts");
+import baseURL from "@/utils/BASE_URL"
+import vueQr from "vue-qr"
 export default {
   data() {
     return {
@@ -43,20 +61,41 @@ export default {
         },
         {
           title: "注销账号",
-        //   url:"forget-pwd"
+          url:"login/index"
         },
       ],
     };
   },
+  computed:{
+    userInfo(){
+      console.log(this.$store.state);
+      return JSON.parse(uni.getStorageSync("userInfo")); 
+    }
+  },
+  components:{
+    vueQr
+  },
   created(){
-    console.log(echarts);
   },
   methods:{
       goUrl(url){
           console.log("url=",url);
-          uni.navigateTo({
+          if(url.includes("login")){
+            //http://47.108.162.242:8080/
+            // // http://47.108.162.242:8081/index.html#/
+            console.log(baseURL);
+            // window.location.replace(baseURL + "index.html#/");
+            window.location.replace("http://192.168.0.36:8082/#/pages/login/index");
+            // window.history.replaceState({}, null, 'http://192.168.0.36:8082/#/pages/login/index');
+            // uni.redirectTo({
+            //   url:"../login/index"
+            // })
+          }else{
+            uni.navigateTo({
               url:"./"+url
           })
+          }
+          
       },
       test(){
         uni.navigateTo({
@@ -79,14 +118,15 @@ export default {
     .QRcode {
       width: 400rpx;
       height: 400rpx;
-      background: #d8d8d8;
+      // background: #d8d8d8;
+      background: #fff;
       box-shadow: 0px 4rpx 12rpx 0px rgba(0, 0, 0, 0.16);
       border-radius: 20rpx;
       padding: 18rpx;
       img {
         width: 100%;
         height: 100%;
-        border: 1rpx solid red;
+        // border: 1rpx solid red;
       }
     }
     .name,
