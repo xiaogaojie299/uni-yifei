@@ -15,6 +15,14 @@ class Ajax {
     post(url, data, type) {
         return this.ajax('POST', url, data, type)
     }
+    // post 请求
+    put(url, data, type) {
+        return this.ajax('PUT', url, data, type)
+    }
+    // 删除请求
+    delete(url,data,type){
+        return this.ajax('DELETE', url, data)
+    }
     /**
      * 
      * 公共请求方法

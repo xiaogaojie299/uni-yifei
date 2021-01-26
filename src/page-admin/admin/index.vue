@@ -67,7 +67,7 @@ export default {
     this.init();
   },
   created(){
-    this.getTreeData()
+    this.getStore()
   },
   methods: {
     // init 初始化
@@ -255,9 +255,12 @@ export default {
           this.topList = arr;
         });
     },
-    getTreeData(){
-      this.$store.dispatch("getLeftTreeData")
-    }
+    // getTreeData
+    getStore(){
+      this.$store.dispatch("getLeftTreeData");
+      // this.$store.dispatch("getRootTree")
+      uni.getStorageSync("rootTree");
+    },
   },
 };
 </script>

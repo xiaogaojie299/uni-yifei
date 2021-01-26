@@ -1,5 +1,6 @@
 <template lang="">
     <view class="container">
+        <u-sticky :enable="enable">
         <view class="header">
             <view class="header-cont my-box">
                 <!-- 顶部input -->
@@ -11,16 +12,17 @@
                 </view>
             </view>
         </view>
+        </u-sticky>
         <!-- 中间卡片 -->
         <view class="main">
             <view v-for="(it,i) in roleList" :key="i" class="main-card">
                 <view class="my-box">
                 <view class="title">角色名称：{{it.roleName}}</view>
                 <view class="btn-group">
-                    <u-button :hair-line="false">logo设置</u-button>
-                    <u-button :hair-line="false">权限配置</u-button>
+                    <u-button :hair-line="false" @click="setLogo(it)">logo设置</u-button>
+                    <u-button :hair-line="false" @click="goRoot(it)">权限配置</u-button>
                     <u-button :hair-line="false" @click="edit(it)">编辑</u-button>
-                    <u-button :hair-line="false">删除</u-button>
+                    <u-button :hair-line="false" @click="del(it.id)">删除</u-button>
                 </view>
                 </view>
             </view>
@@ -28,13 +30,20 @@
     </view>
 </template>
 <script>
-import {sysRoleList} from "@/utils/api.js"
+import {sysRoleList,delRole} from "@/utils/api.js"
+import mixin from "../role-mx"
 export default {
+    name:"roleIndex",
     data(){
         return {
+            enable:true,
             roleList:[],
             name:"", // 输入框搜索的值
         }
+    },
+     mixins:[mixin],
+    created(){
+        // this.getRoleList()
     },
     props:{
         type:{ // 1.运营角色  2.用户角色
@@ -42,18 +51,22 @@ export default {
             default:1
         }
     },
-    created(){
-        this.getRoleList();
-    },
+    
     onLoad(){
     },
     onShow(){
+        this.enable= true
+    },
+    onHide() {
+        this.enable= false
+    },
+    created(){
     },
     methods:{
         search(){   // input搜索
             this.getRoleList()
         },
-        //  获取权限列表
+        //  获取角色列表
         getRoleList(){
             let params = {
                 keyword:this.name,
@@ -70,7 +83,32 @@ export default {
             uni.navigateTo({
                 url:"/page-admin/admin/isystem/role/edit"+"?roleInfo="+JSON.stringify(roleInfo)
             })
-        }   
+        },
+        setLogo(roleInfo){  // LOGO设置
+            uni.navigateTo({
+                url:"/page-admin/admin/isystem/role/set-logo"+"?roleInfo="+JSON.stringify(roleInfo)
+            })
+        },
+        goRoot(roleInfo){ //  权限配置
+            uni.navigateTo({
+                url:"/page-admin/admin/isystem/role/set-root"+"?roleInfo="+JSON.stringify(roleInfo)
+            })
+        },
+        del(id){
+            console.log(id);
+            // let params = {
+            //     id
+            // }
+            delRole(id).then(res=>{
+                if(res.code==200){
+                    uni.showToast({
+                        "title":"删除成功",
+                        "icon":"none"
+                    })
+                    setTimeout(this.getRoleList,1000)
+                }
+            })
+        }
     }
 }
 </script>

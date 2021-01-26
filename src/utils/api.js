@@ -433,3 +433,27 @@ export function userEdit(data){
 export function sysRoleList(data){
   return request.get("/system/sysRole/list",data)
 }
+// 编辑角色信息
+export function editSysRole(data){
+  return request.put("/system/sysRole/edit",data)
+}
+// 修改角色logo
+export function uploadRoleLOGO(data){
+  return request.post("/system/sysRole/uploadLogo",data)
+}
+// 角色配置 sysRole/queryTreeList
+export function getRootTreeList(data){
+  return request.get("/system/sysRole/queryTreeList",data)
+}
+// 角色可用的权限 sysPermission/queryRolePermission
+export function getRolePermission(data){
+  return request.get("/system/sysPermission/queryRolePermission",data)
+}
+// 编辑角色可用的权限
+export function saveRolePermission(data){
+  return request.post("/system/sysPermission/saveRolePermission",data)
+}
+// 删除可用角色
+export function delRole(data){ //sysRole/delete
+  return request.delete("/system/sysRole/delete?id="+data)
+}

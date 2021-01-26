@@ -422,7 +422,22 @@
 					"navigationBarTextStyle":"white"
 				}
 			},
-			
+			{
+				"path": "admin/isystem/role/set-logo",
+				"style": {
+					"navigationBarTitleText": "logo设置",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
+			{
+				"path": "admin/isystem/role/set-root",
+				"style": {
+					"navigationBarTitleText": "权限配置",
+					"navigationBarBackgroundColor":"#1539AF",
+					"navigationBarTextStyle":"white"
+				}
+			},
 			{
 				"path": "admin/index",
 				"style": {

@@ -22,7 +22,8 @@
         <!-- <area-drop-down ref="childMethod" :defaultValue="defaultValue"></area-drop-down> -->
         <!-- <u-select v-model="show" mode="single-column" label-name="name" value-name="id" :list="firmList" @confirm="selectRow"></u-select> -->
        <!-- 角色弹框 -->
-        <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
+       <!-- :default-value="roleIndex" -->
+        <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" :default-value="roleIndex" value-name="id" :list="roleSelList" @confirm="roleBack"></s-select>
         <u-toast ref="uToast" />
     </view>
     
@@ -30,31 +31,31 @@
 </template>
 <script>
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down";
-import { addMonitor,editMonitor,addBatch } from "@/utils/api";
+import { addMonitor,editMonitor,addBatch,editSysRole } from "@/utils/api";
 import sSelect from '@/compontens/s-select';
+import mixins from "./role-mx"
 export default {
+    mixins:[mixins],
   data() {
     return {
       roleInfo:{},  // 角色列表
       roleShow:false,   // 控制picker 
-      roleIndex:[1],
-      roleName:"",
+      roleIndex:[0],
+      roleName:"",  // 角色分组
       roleId:"",
-      roleList:[
-        {
-          roleName:"运营管理",
+      selRoleType:"",
+      roleSelList:[ {
+          roleName:"运营角色",
           id:1
         },
         {
-          roleName:"用户管理",
+          roleName:"用户角色",
           id:2
-        }
-      ],
+        }],
       list: [
         {
           title: "角色分组",
           isIcon: true,
-          type: "",
           value: "",
           placeholder:"请选择厂商"
         },
@@ -86,11 +87,12 @@ export default {
   created() {
   },
   onLoad(option){
-      let roleInfo = JSON.parse(option.roleInfo);
+        let roleInfo = JSON.parse(option.roleInfo);
+        console.log(roleInfo);
         this.roleInfo = roleInfo;
-        this.roleIndex = [roleInfo.type];
-        console.log("this.roleIndex ",this.roleIndex );
-        console.log();
+        this.roleIndex = [roleInfo.type-1]; // 根据传过来的type来默认选中
+        this.list[1].value = roleInfo.roleName  // 角色名称
+        this.list[0].value = roleInfo.type==1?"运营角色":"用户角色"
     },
   methods: {
       handleRoleShow(index){
@@ -99,15 +101,36 @@ export default {
           };
       },
       roleBack(obj){  // 选择角色传过来的值
-            this.roleList.forEach((item,index)=>{
+            this.roleSelList.forEach((item,index)=>{
                 if(item.id == obj[0].value){
                     this.roleIndex = [index];
                 }
             })
-            this.roleName= obj[0].label;
-            this.roleId= obj[0].value;
-            console.log(this.roleName,this.roleId);
+            this.roleInfo.type = obj[0].value;
+            this.list[0].value= obj[0].label;
+            this.list[0].roleName= obj[0].value;
      },
+     submit(){
+         let params = this.roleInfo;
+         params.roleName = this.list[1].value;
+         editSysRole(params).then(({result,code})=>{
+             if(code == 200){
+                this.$refs.uToast.show({
+					title: '编辑成功',
+					type: 'success',
+                })
+                let pages = getCurrentPages(); // 当前页面
+                let beforePage = pages[pages.length - 2]; // 上一页
+                // console.log(beforePage);
+                beforePage.$vm.reFresh = Math.random()//触发上一页监听器
+             setTimeout(()=>{
+                 uni.navigateBack(
+                 )
+             },1500)
+             }
+        })
+         console.log(params);
+     }
   }
 };
 </script>
