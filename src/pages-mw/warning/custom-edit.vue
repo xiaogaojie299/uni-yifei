@@ -11,7 +11,7 @@
         <u-loading v-show="wasteLoading" slot="icon"/>
       </u-cell-item>
     </u-cell-group>
-    <u-field label="设置超时时长(天)" label-width="300" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" placeholder="填写时长(纯数字，不能有小数)" :clearable="false" @blur="numberCheck()"/>
+    <u-field label="设置超时时长(天)" label-width="300" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" placeholder="填写时长(纯数字，不能有小数)" :clearable="false" @click="timeoutShow = true" disabled/>
     <view class="warning-setting-custom-edit__button__container">
       <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
@@ -20,6 +20,7 @@
     <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" :default-ids="hospitalIds" @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
     <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :default-ids="departmentIds" :hospital-id="hospitalId" @loading="departmentLoading = true" @loaded="departmentLoading = false"/>
     <s-select title="医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
+    <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="timeoutShow" :dot-enabled="type >= 5"></u-keyboard>
   </view>
 </template>
 <script>
@@ -36,6 +37,7 @@ export default {
       hospitalShow: false, // 医院选择显示
       departmentShow: false, // 科室选择显示
       wasteShow: false,
+      timeoutShow: false,
 
       hospitalLoading: false,
       departmentLoading: false,
@@ -79,6 +81,21 @@ export default {
     this.load();
   },
   methods: {
+    // 按键被点击(点击退格键不会触发此事件)
+    valChange(val) {
+      // 将每次按键的值拼接到value变量中，注意+=写法
+      if (val == '.') {
+        if (this.defaultValue.indexOf('.') > -1) {
+          return ;
+        }
+      }
+      this.defaultValue += val;
+    },
+    // 退格键被点击
+    backspace() {
+      // 删除value的最后一个字符
+      if(this.defaultValue.length) this.defaultValue = this.defaultValue.substr(0, this.defaultValue.length - 1);
+    },
     indexCalc(e, tmpData) {
         let cascadeIndex = [];
         for (let i in e) {
@@ -170,7 +187,7 @@ export default {
           this.hospitalLabel = detail.customHospitalName;
           this.departmentId = detail.customOfficeId;
           this.departmentLabel = detail.customOfficeName;
-          this.defaultValue = detail.customValue;
+          this.defaultValue = '' + detail.customValue;
           this.hospitalIds = detail.hospitalIdList.slice(1) || [];
           this.departmentIds = detail.officeIdList ? (detail.officeIdList.length > 5 ? detail.officeIdList.slice(5) : []) : [];
           this.type = detail.type;
@@ -220,7 +237,6 @@ export default {
           });
           return ;
         }
-        this.submitLoading = true;
         let data = {
             customHospitalId: this.hospitalId,
             customValue: this.defaultValue,
@@ -251,6 +267,7 @@ export default {
             wasteType: this.waste,
           });
         }
+        this.submitLoading = true;
         if (!this.id) {
           addWarningConfigItem(data).then(resp => {
             if (resp.code == 200) {
@@ -279,6 +296,7 @@ export default {
                 icon: 'none'
               })
               setTimeout(function() {
+                uni.setStorageSync('willRefresh', 1);
                 uni.navigateBack();
               }, 800);
             }

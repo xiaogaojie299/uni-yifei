@@ -13,6 +13,7 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
+        <view style="height: 70rpx;line-height: 70rpx;width: 100%;text-align: center;" v-show="!loading && list.length == 0">没有更多数据了</view>
         <trace-card v-for="(item, index) in list" :key="index" :item="item" :options="traceOptions" mode="warning"/>
       </view>
   </view>

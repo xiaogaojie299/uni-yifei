@@ -397,7 +397,7 @@ export default {
         }
     },
     loadDetail(id) {
-      if (this.mode == 'checkout') {
+      if (this.mode == 'checkout' || this.mode == 'restore') {
         // 调的接口不一样
         getMedicalTraceRecord({id}).then(res => {
           if (res.code == 200) {

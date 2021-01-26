@@ -4,8 +4,8 @@
             暂无配置
         </view>
         <block v-else>
-            <u-field :label="labelList[type].label" label-width="300" input-align="right" type="digit" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()" v-if="type > 5"/>
-            <u-field :label="labelList[type].label" label-width="300" input-align="right" type="number" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @blur="numberCheck()" v-else/>
+            <u-field :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="valueShow = true" disabled v-if="type > 5"/>
+            <u-field :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="valueShow = true" disabled v-else/>
             <block v-if="type == 8 || type == 9">
                 <u-cell-group>
                     <u-cell-item title="设置类型值" @click="wasteShow = true" :arrow="true"  arrow-direction="right" :value="wasteLabel">
@@ -20,6 +20,7 @@
                 </view>
             </view>
         </block>
+        <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="valueShow" :dot-enabled="type >= 5"></u-keyboard>
     </view>
 </template>
 <script>
@@ -41,6 +42,8 @@ export default {
   },
   data() {
       return {
+          valueShow: false,
+
         type: '', // 配置的类型ID
         config: {}, // 配置信息
         defaultValue: '', // 默认配置数值
@@ -115,6 +118,21 @@ export default {
 
   },
   methods: {
+        // 按键被点击(点击退格键不会触发此事件)
+        valChange(val) {
+            if (val == '.') {
+                if (this.defaultValue.indexOf('.') > -1) {
+                return ;
+                }
+            }
+            // 将每次按键的值拼接到value变量中，注意+=写法
+            this.defaultValue += val;
+        },
+        // 退格键被点击
+        backspace() {
+            // 删除value的最后一个字符
+            if(this.defaultValue.length) this.defaultValue = this.defaultValue.substr(0, this.defaultValue.length - 1);
+        },
         // 这里不能用计步器，只能用个正则解决下了
       numberCheck() {
         // 某种情况下只允许输入整数,前5个类型支持整数
@@ -182,7 +200,7 @@ export default {
           }).then(resp => {
               if (resp.code == 200) {
                   // 设置默认值
-                  this.defaultValue = resp.result.defaultValue || 0;
+                  this.defaultValue = '' + (resp.result.defaultValue || 0);
                   // 计算医废类型，设置文本并设置为选中
                   if (resp.result.wasteTypes) {
                       this.wasteIds = resp.result.wasteTypes.split(',');
@@ -196,6 +214,14 @@ export default {
               return ;
           }
           // todo 无需校验是否选择了类型
+          if ((this.type == 8 || this.type == 9) && this.wasteIds == '') {
+                uni.showToast({
+                    title: '请选择类型',
+                    icon: 'none'
+                })
+              return ;
+          }
+
           // 开始提交
           this.submitLoading = true;
           editWarningConfigType({
@@ -208,7 +234,9 @@ export default {
                       title: '提交成功',
                       icon: 'none'
                   })
-                  uni.navigateBack();
+                  setTimeout(function() {
+                      uni.navigateBack();
+                  }, 1000);
               }
           }).finally(e => {
               this.submitLoading = false;

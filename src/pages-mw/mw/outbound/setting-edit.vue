@@ -97,7 +97,7 @@ export default {
         engineDriver: '运输人员',
         licensePlate: '车牌号',
         transitCompany: '运输单位',
-        waste: '医废类型',
+        waste: '准运类型',
       },
       submitLoading: false,
       detail: {}
@@ -131,7 +131,7 @@ export default {
         return ;
       } else {
         uni.setNavigationBarTitle({
-          title: '添加出库配置'
+          title: '新增出库配置'
         });
       }
     },

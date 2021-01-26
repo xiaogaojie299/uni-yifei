@@ -33,6 +33,12 @@ export default {
             fieldList: [
                 [
                     {
+                        key: 'area',
+                        label: '区域'
+                    }
+                ],
+                [
+                    {
                         key: 'hospitalName',
                         label: '医院'
                     }
@@ -61,12 +67,6 @@ export default {
                         label: '准运类型'
                     }
                 ],
-                [
-                    {
-                        key: 'area',
-                        label: '区域'
-                    }
-                ]
             ]
         }
     },

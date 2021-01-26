@@ -575,7 +575,7 @@
 	}
 ],
 	"preloadRule": {
-        "pages/admin/index": {
+        "pages-admin/admin/index": {
             "network": "all",
             "packages": ["pages-mw"]
         }
