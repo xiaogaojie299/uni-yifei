@@ -35,7 +35,6 @@ export default {
   methods: {
     //  获取权限列表
     reload() {
-        console.log(this.$refs.childMethod);
         this.$nextTick(()=>{
             this.$refs.childMethod.getRoleList();
         })

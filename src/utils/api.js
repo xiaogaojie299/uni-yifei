@@ -453,7 +453,11 @@ export function getRolePermission(data){
 export function saveRolePermission(data){
   return request.post("/system/sysPermission/saveRolePermission",data)
 }
-// 删除可用角色
+// 删除角色
 export function delRole(data){ //sysRole/delete
   return request.delete("/system/sysRole/delete?id="+data)
+}
+// 添加角色 sysRole/add
+export function addRole(data){
+  return request.post("/system/sysRole/add",data)
 }
