@@ -8,7 +8,7 @@
                 @tap="handleHospitalShow(index)"
                 :style="{paddingRight:index==0&&'22rpx'}" 
                 :type="item.type"
-                :disabled="index==0||false"
+                :disabled="type==2&&item.disabled"
                 v-model = item.value 
                  />
                 <img v-if="item.isIcon" src="@/static/images/path.png" />        
@@ -42,27 +42,32 @@ export default {
           isIcon: true,
           type: "",
           value: "",
+          disabled:false,
           placeholder:"选择医院"
         },
         {
           title: "设备名称",
           value: "",
-          placeholder:"输入设备名称"
+          placeholder:"输入设备名称",
+          disabled:true
         },
         {
           title: "设备监控编号",
           value: "",
-          placeholder:"输入设备监控编号"
+          placeholder:"输入设备监控编号",
+          disabled:false,
         },
         {
           title: "自动关闭时间(分钟)",
           type: "number",
           value: "",
+          disabled:false
         },
         {
           title: "通道数",
           type: "number",
           value: "",
+          disabled:true
         },
       ],
       areaList: [], //医院列表
@@ -116,8 +121,9 @@ export default {
         });
     */
    this.type = option.type;
+   console.log("option.type==>",option.type);
     if(option.type==2){
-      this.btnText = "完 成"
+      this.btnText = "提 交"
             uni.setNavigationBarTitle({
                 title: '编辑监控设备'
             });

@@ -23,9 +23,14 @@ export function checkValidateCode(data){
   let url="/system/user/checkValidateCode"
   return request.post(url,data)
 } 
-// 重置密码
-export function resetPassword(data){
+// 忘记密码
+export function updatePassword(data){
   let url = "/system/user/resetPassword";
+  return request.post(url,data)
+}
+// 修改密码
+export function changePwd(data){
+  let url = "/system/user/updatePassword";
   return request.post(url,data)
 }
 // 多选菜单
@@ -66,7 +71,7 @@ export function getLastSevenDaysStatisticsX(params){
 // 获取医院级联
 export function getMyHospitalCascadeList(){
   let data = {
-    slkey_cache_key: 'hospital:cascade:list',
+    // slkey_cache_key: 'hospital:cascade:list',
     slkey_cache_timeout: 3600
   };
   let url = "/system/sysDepartment/getMyHospitalCascadeList";

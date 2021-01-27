@@ -41,13 +41,13 @@
               >
                 <!-- 日期时间 -->
                 <view class="th my-border">
-                  <view class="qy-name">
+                  <view class="qy-name nowrap-hidden">
                     {{ item.name }}
                   </view>
                 </view>
                 <!-- 分隔单元格 -->
                 <view
-                  class="cell my-border"
+                  class="cell my-border nowrap-hidden"
                   v-for="(it, i) in item.data"
                   :key="i"
                 >
@@ -133,10 +133,10 @@ export default {
           background: $my-main-color;
         }
         .th {
-          width: 240rpx;
+          width: 400rpx;
           height: 100%;
           .qy-name {
-            width: 240rpx;
+            width: 400rpx;
             height: 100%;
             display: flex;
             align-items: center;
@@ -204,16 +204,15 @@ export default {
         .tbody {
           min-width: 100vw;
           height: 60rpx;
-
           font-size: 24rpx;
           font-family: PingFangSC-Medium, PingFang SC;
           font-weight: 500;
           color: #000000;
           .th {
-            width: 240rpx;
+            width: 400rpx;
             height: 60rpx;
             .qy-name {
-              width: 240rpx;
+              width: 400rpx;
               height: 60rpx;
               text-align: center;
               line-height: 60rpx;

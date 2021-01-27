@@ -285,9 +285,9 @@ export default {
         let monthDays=new Date(year,month,0).getDate(); //判断当前月有多少天
         this.timeStar=`${year}-${month}-01 00:00:00`;
         this.timeEnd=`${year}-${month}-${monthDays} 23:59:59`;
-        this.timeText =`${year}/${month}`;
+        this.timeText =`${year}-${month}`;
         this.defaultMonthTime=`${year}-${month}`;
-
+        console.log("this.defaultMonthTime==>",this.defaultMonthTime);
        }else if(e.month==undefined){    //按年查询
         this.timeStar=`${year}-01-01 00:00:00`;
         this.timeEnd=`${year}-12-31 23:59:59`;
@@ -365,6 +365,8 @@ export default {
           icon:"none"
         })
       }
+       this.tableData = {};       //表格中的数据
+      this.tableTitle =[];
       let params = {
         departmentId:this.selectTree.value,
         statisticalWayType:this.selectStatistical.value,
@@ -502,7 +504,6 @@ export default {
         display: flex;
         .th {
           width: 600rpx !important;
-          border: 1px solid red;
           height: 100%;
           display: flex;
           align-items: center;

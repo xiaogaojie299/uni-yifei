@@ -14,7 +14,6 @@
             :type="index==1&&isWatch?'text':'password'"
             :placeholder="item.placeholder"
              v-model="item.value"
-            :name="name"
           />
           <view style="height:100%;width:60rpx;" @tap="watchPwd">
             <img class="eys" v-if="index==1" :src="isWatch?require('@/static/images/iseys.png'):require('@/static/images/uneys.png')" alt="" />

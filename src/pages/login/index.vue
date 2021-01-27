@@ -23,7 +23,6 @@
               :type="item.type"
               :placeholder="item.placeholder"
               v-model="item.value"
-              :name="name"
             />
 
             <view style="height: 100%; width: 60rpx">
@@ -96,11 +95,9 @@ export default {
         password: uPwd,
       };
       let res = await login(params);
-      console.log(res);
       if (res.code == 200) {
         try {
           let result = res.result;
-          console.log("result=====>",result);
           uni.setStorageSync("token",result.token)
           uni.setStorageSync("userInfo", JSON.stringify(result));
           // 在这里捞一次用户权限数据，存入Storage和Vuex
@@ -118,9 +115,9 @@ export default {
           console.log(e);
         }
       } else {
-        this.$refs.uToast.show({
-          title: res.message,
-        });
+        // this.$refs.uToast.show({
+        //   title: res.message,
+        // });
       }
       // uni.switchTab({url:"../home/index"})
     },
@@ -180,6 +177,7 @@ export default {
         width: 100%;
         height: 100%;
         padding-right: 44rpx;
+        font-size:30rpx;
         border: 1px solid red;
         border: none;
         outline: none;
@@ -204,10 +202,10 @@ export default {
   }
   .btn {
     width: 396rpx;
-    height: 80rpx;
+    height: 90rpx;
     background: $my-main-color;
     border-radius: 40rpx;
-    font-size: 28rpx;
+    font-size: 38rpx;
     font-family: PingFang-SC-Medium, PingFang-SC;
     font-weight: 500;
     color: #ffffff;

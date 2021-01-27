@@ -27,7 +27,7 @@
           <!-- :title="options2[selectIndex2].label||'运输单位'" -->
           <u-dropdown-item
             v-model="value2"
-            :title="value2||'运输方式'"
+            :title="value2||'运输公司'"
             :options="options2"
             :disabled="!selectTree.label"
             @change="selectUnit"
@@ -120,7 +120,6 @@ export default {
       console.log(this.selectTree);
       if(JSON.stringify(this.selectTree)=="{}"){
         this.disTransport = true;
-        console.log("打不开");
       }
     },
     async init() {
@@ -149,10 +148,10 @@ export default {
       let params = {
         parentId: value,
       };
-      let { code, result, message } = await listSelect();
+      console.log("value==>",value)
+      let { code, result, message } = await listSelect(params);
       try {
         if (code == 200) {
-          console.log("result==>", result);
           this.options2 = result.map((item, index) => {
             item.label = item.transitCompany;
             item.value = item.transitCompany;
@@ -174,6 +173,8 @@ export default {
         endTime:this.timerEnd
       }
       */
+     this.tableData = [];
+     this.tableTitle=null;
      let {value,label} = this.selectTree;
       let params={
         departmentId:value, //医院区域ID

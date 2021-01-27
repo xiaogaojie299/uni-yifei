@@ -103,9 +103,14 @@ export default {
     },
     watch:{
         selectTree(){
-            this.search();
+            this.iptSearch();
         },
         deep:true
+    },
+    computed:{
+        userInfo(){
+            return JSON.parse(uni.getStorageSync("userInfo"));
+        }
     },
     methods:{
         iptSearch(){
@@ -115,10 +120,12 @@ export default {
             this.search()
         },
         init(){
-            this.areaList = JSON.parse(uni.getStorageSync("hospital"));
-            this.selectHos = this.areaList[0];
-            // this.search()
+             let {departmentIdList,departmentName} = this.userInfo;
+            this.selectTree.value = departmentIdList[departmentIdList.length -1];
+            this.selectTree.label = departmentName
+            this.search()
         },
+        
         handleHospitalShow(){
             let params = this.selectTree;
             params.hospital = true;

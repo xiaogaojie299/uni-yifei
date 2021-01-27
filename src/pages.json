@@ -461,7 +461,7 @@
 			{
 				"path": "admin/reports/depart/statistics",
 				"style": {
-					"navigationBarTitleText": "科室产废记录",
+					"navigationBarTitleText": "科室产废统计",
 					"navigationBarBackgroundColor":"#1539AF",
 					"navigationBarTextStyle":"white",
 					"app-plus":{

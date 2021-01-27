@@ -14,13 +14,14 @@
             :type="index==1&&isWatch?'text':'password'"
             :placeholder="item.placeholder"
              v-model="item.value"
-            :name="name"
           />
           <view style="height:100%;width:60rpx;" @tap="watchPwd">
             <img class="eys" v-if="index==1" :src="isWatch?require('@/static/images/iseys.png'):require('@/static/images/uneys.png')" alt="" />
           </view>
         </view>
-        <button form-type="submit" class="btn flex-dev-center">确定</button>
+        <view class="submit flex-dev-center">
+          <button form-type="submit" class="btn flex-dev-center">确定</button>
+        </view>
       </form>
       <!-- 提交按钮 -->
       <u-toast ref="uToast" />
@@ -28,19 +29,20 @@
   </view>
 </template>
 <script>
+import {changePwd} from "@/utils/api"
 export default {
   data() {
     return {
         isWatch:false,
-      list: [
-        { placeholder: "请输入原密码", value: "",name:"oldPwd",type:"password" },
-        {
-          placeholder: "新密码(需包含字母和数字)",
-          value: "",
-          name:"newPwd",
-          type:"password"
-        },
-      ],
+        list: [
+          { placeholder: "请输入原密码", value: "",name:"oldPwd",type:"password" },
+          {
+            placeholder: "新密码(需包含字母和数字)",
+            value: "",
+            name:"newPwd",
+            type:"password"
+          },
+        ],
     }
   },
   methods: {
@@ -64,12 +66,30 @@ export default {
                 })
                 return
       }
-      if(oldPwd!==newPwd){
-          this.$refs.uToast.show({
-              title:'请确保两次输入的密码相同'
-          })
-          return
+      // if(oldPwd!==newPwd){
+      //     this.$refs.uToast.show({
+      //         title:'请确保两次输入的密码相同'
+      //     })
+      //     return
+      // }
+      // updatePassword
+      console.log(newPwd,oldPwd);
+      let params = {
+        originPassword:oldPwd,
+        password:newPwd
       }
+      changePwd(params).then(res=>{
+        if(res.code==200){
+          this.$refs.uToast.show({
+              title:'修改密码成功',
+              type:"success"
+          })
+           console.log(); this.$plugs
+          setTimeout(()=>{
+            this.$plugs.goLogin()
+          },1000)
+        }
+      })
       var formdata = e.detail.value;
     },
   },
@@ -101,6 +121,11 @@ export default {
           outline: none;
           padding-right:44rpx;
       }
+    }
+    .submit{
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn {
       width: 396rpx;

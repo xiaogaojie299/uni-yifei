@@ -1,22 +1,32 @@
 <template>
     <view class="container">
                 <!-- 选择监控 -->
-        <u-sticky>
-            <view class="header">
-                <view class="my-box">
-                    <!-- 选择医院 -->
-                        <view class="lable">
-                            <text>选择医院</text>
-                            <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectTree.label" type="text" disabled>
+                <u-sticky>
+                    <view class="header">
+                        <view class="my-box">
+                            <!-- 选择医院 -->
+                                <view class="lable">
+                                    <text>选择医院</text>
+                                    <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectTree.label" type="text" disabled>
+                                </view>
+                            <!-- <view class="">
+                                <view @click="submit" class="btn flex-ver-center">
+                                    查 询
+                                </view> 
+                            </view> -->
                         </view>
-                    <!-- <view class="">
-                        <view @click="submit" class="btn flex-ver-center">
-                            查 询
-                        </view> 
-                    </view> -->
+                    </view>
+                </u-sticky>
+        <!-- <u-sticky>
+            <view class="header">
+                <view class="header-cont my-box">
+                    <view class="ipt-box">
+                        <img :src="require('@/static/images/search.png')" alt="" />
+                        <input @confirm="search()" confirm-type="search" type="text" v-model="name" placeholder="请输入医院完整名称搜索" />
+                    </view>
                 </view>
             </view>
-        </u-sticky>
+        </u-sticky> -->
         <view class="main">
             <view class="hpt" v-for="(item,index) in monitorList" :key="index">
                 <!-- 横线 -->
@@ -81,14 +91,21 @@ export default {
         selectHos(){
         },
         selectTree(){
-            this.search();
+            // this.search();
+            this.submit()
         },
         deep:true
     },
+    computed:{
+        userInfo(){
+            return JSON.parse(uni.getStorageSync("userInfo"));
+        }
+    },
     methods:{
         init(){
-            this.areaList = JSON.parse(uni.getStorageSync("hospital"));
-            this.selectHos = this.areaList[0];
+            let {departmentIdList,departmentName} = this.userInfo;
+            this.selectTree.value = departmentIdList[departmentIdList.length -1];
+            this.selectTree.label = departmentName
             this.search()
         },
         reload(){
@@ -108,7 +125,6 @@ export default {
             this.cascadeIndex = cascadeIndex;
         },
         cascadeCallback(obj){
-        console.log(obj);
             this.cascadeIndexCalc(obj) 
         },
         handleHospitalShow(){

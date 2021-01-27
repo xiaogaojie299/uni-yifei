@@ -32,6 +32,7 @@
 
 <script>
 import { getMenu } from "@/utils/api";
+import routes from "./allRouter"
 export default {
   data() {
     return {
@@ -114,14 +115,42 @@ export default {
               route: "1"
             }
           ]
-            result.menu[5].children=this.sysMenus;
-            console.log(result.menu);
-				  this.kindlist=result.menu;
+            // result.menu[5].children=this.sysMenus;
+				  // this.kindlist=result.menu;
+          this.kindlist = this.routerIntercept(result.menu);
+          this.setSubMenu();
         }
       } catch (e) {
         console.log(e);
       }
   },
+  /*  路由拦截，  因为现在的路由是根据接口来的，但是有的路由 h5暂未开发所以需要我们前端自己拦截  */
+    routerIntercept(routeArr){  // 系统管理模块一级目录
+      let tempArr = [];
+      let newRoute = [];
+      routes.map((item,idnex)=>{
+          routeArr.forEach((v,k)=>{
+            if(item.title.includes(v.meta.title)){   // 如果我们前端创的路由表，不包含从后端返回来的路由表，移除操作
+              newRoute.push(v);
+            }
+          })
+      })
+      return newRoute
+    },
+   setSubMenu(){  // 判断前端创的路由是否包含二级目录是否
+     let subMenu = [];
+     routes.map(item=>{
+       subMenu = subMenu.concat(item.children)
+     })
+     let tempArr = [];
+     let newRoute = [];
+     this.kindlist.forEach((item,index)=>{
+         item.children = item.children.filter((v,k)=>{
+           return subMenu.includes(v.meta.title)
+         })
+     })
+   },
+  /* 路由拦截>>>>>>end */
 	goUrl(url, index) {
     // this.subMenuActive = -1;
     // this.subMenuList = [];
@@ -160,7 +189,6 @@ export default {
 
     // emmmmm 这个错别单词真是让我脑壳痛
     url = url.replace(/wraning/g, 'warning');
-    console.log("jump=",prefix + url);
     uni.navigateTo({
       url: prefix + url
     })

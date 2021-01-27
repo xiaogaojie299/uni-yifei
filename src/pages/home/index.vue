@@ -93,7 +93,7 @@ import ChartColumn from "./cmps/ChartColumn"
 import monthChart from "./cmps/monthChart"
 
 import * as utilDate from "@/utils/getData"
-import { getMenu,getIndex,getTodayRankList,getLastSevenDaysStatistics,getLastSevenDaysStatisticsX } from "@/utils/api.js";
+import { getMenu,getIndex,getTodayRankList,getLastSevenDaysStatistics,getLastSevenDaysStatisticsX,listWarningRecord } from "@/utils/api.js";
 import {getAreaList,getHosList,getProvinceCity} from "@/utils/menuList.js"
 var _self;
 var canvaColumn = null;
@@ -193,7 +193,11 @@ export default {
     },
       // 获取出入库记录
   async init(){
-   let res =await getIndex();
+    // 获取预警时间详情
+   let warResp = await listWarningRecord({pageNo:1,pageSize:6})
+   console.log("warResp=",warResp);
+   let warnTotal = warResp.result.total;
+   let res =await getIndex(); // 
    try {
      if(res.code==200){
       //  res.result
@@ -201,7 +205,7 @@ export default {
       let { startTime, endTime } = utilDate.getToday();
       let timeParams = 'startTime=' + startTime + '&endTime=' + endTime;
       this.list.forEach((item,index)=>{
-        switch (index){
+        switch (index){ 
           case 0:
             item.num = String(todayCollect);    // 今日收集
             item.url = '/pages-mw/mw/collect?' + timeParams
@@ -212,10 +216,11 @@ export default {
             break;
           case 2:
              item.num= String(todayCheckout);     // 今日出库
-             item.url = '/pages-mw/mw/checkout?' + timeParams
+            //  item.url = '/pages-mw/mw/checkout?' + timeParams
+            item.url = '/pages-mw/mw/outbound?' + timeParams
              break
           case 3:
-             item.num = 0;   // 未处理预警
+             item.num = String(warnTotal);   // 未处理预警
              item.url = '/pages-mw/warning/info?warningStatus=1'
              break
           case 4: 
@@ -235,14 +240,13 @@ export default {
    } catch (error) {
      console.log(error)
    }
-   console.log("res==>",res);
   },
   },
   async onLoad(option) {
-    getAreaList();
+    console.log("首页打印成功");
+    // getAreaList();
     getHosList();
-    getProvinceCity();
-    let _self = this;
+    // getProvinceCity();
   },
 
   onShow(){
