@@ -22,7 +22,9 @@
                     <u-button :hair-line="false" @click="setLogo(it)">logo设置</u-button>
                     <u-button :hair-line="false" @click="goRoot(it)">权限配置</u-button>
                     <u-button :hair-line="false" @click="edit(it)">编辑</u-button>
-                    <u-button :hair-line="false" @click="del(it.id)">删除</u-button>
+                    <!-- delFlag -->
+                    <u-button :hair-line="false" v-if="it.delFlag ==1" style="border:1px solid #1539AF;color:#1539AF;" @click="del(it.id)">删除</u-button>
+                    <u-button :hair-line="false" style="border:1px solid #ebebeb;color:#ebebeb;" v-else>删除</u-button>
                 </view>
                 </view>
             </view>
@@ -95,35 +97,50 @@ export default {
             })
         },
         del(id){
-            console.log(id);
             // let params = {
             //     id
             // }
-            delRole(id).then(res=>{
-                if(res.code==200){
-                    uni.showToast({
-                        "title":"删除成功",
-                        "icon":"none"
-                    })
-                    setTimeout(this.getRoleList,1000)
+            let _this = this;
+            uni.showModal({
+                title: '提示',
+                content: '您确定要删除吗？删除后数据将无法恢复。',
+                success: function (res) {
+                    if (res.confirm) {
+                        // 点击删除
+                        delRole(id).then(res=>{
+                                if(res.code==200){
+                                    uni.showToast({
+                                        "title":"删除成功",
+                                        "icon":"none"
+                                    })
+                                    setTimeout(this.getRoleList,1000)
+                                }
+                            })
+                        }
                 }
-            })
+            });
+            
         }
     }
 }
 </script>
 <style lang="scss" scoped>
+.allow-del{
+    color:1px solid $my-main-color;
+    color:1px solid $my-main-color;
+}
 /deep/ .u-btn{
     width: 160rpx;
     height: 56rpx;
     background: #FFFFFF;
     border-radius: 30px;
-    opacity: 0.2;
-    border: 1px solid #000000;
+    // border: 1px solid #ebebeb;
+    // color: #ebebeb;
+    border: 1px solid $my-main-color;
+    color: $my-main-color;
     font-size: 24rpx;
     font-family: PingFang-SC-Medium, PingFang-SC;
     font-weight: 500;
-    color: #000000;
 }
 .container{
     min-height: 100vh;
