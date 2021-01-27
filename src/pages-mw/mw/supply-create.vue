@@ -19,15 +19,15 @@
       </u-cell-item>
       <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
         <u-field
-          type="digit"
 			    placeholder="支持小数"
           v-model="weight"
           slot="right-icon"
           :clearable="false"
+          disabled
           :border-bottom="false"
           input-align="right"
           :field-style="{padding: 0}"
-          @input="weightCheck()"
+          @click="weightShow = true"
         >
         </u-field>
       </u-cell-item>
@@ -57,6 +57,7 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
+    <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="weightShow"></u-keyboard>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
     <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"  @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
@@ -89,6 +90,7 @@ export default {
   },
   data() {
     return {
+      weightShow: false,
       hospitalShow: false, // 医院选择显示
       departmentShow: false, // 科室选择显示
       dateShow: false, // 时间选择
@@ -191,6 +193,22 @@ export default {
     this.loadWasteType();
   },
   methods: {
+    // 按键被点击(点击退格键不会触发此事件)
+    valChange(val) {
+      if (val == '.') {
+          if (this.defaultValue.indexOf('.') > -1) {
+          return ;
+          }
+      }
+      // 将每次按键的值拼接到value变量中，注意+=写法
+      this.weight += val;
+    },
+    // 退格键被点击
+    backspace() {
+      // 删除value的最后一个字符
+      if(this.weight.length) this.weight = this.weight.substr(0, this.weight.length - 1);
+    },
+      
     // 时间回调事件
     dateCallback(e) {
       this.dateTime = e.year + '-' + e.month + '-' + e.day + ' ' + e.hour + ':' + e.minute + ':00';

@@ -46,7 +46,7 @@
                         <view :class="{tag: true, active: warningType == item.k}" :key="index" v-for="(item, index) in warningTypeList" @click="selectWarningType(index)">{{item.v}}</view>
                     </view>
                 </view>
-                <view class="tools-field" v-if="options.trans">
+                <view class="tools-field" v-if="options.trans && cascadeType === 2">
                     <view class="tools-field-name">
                         运输单位
                     </view>
@@ -261,7 +261,7 @@ export default {
 
             // 运输单位
             transList: [],
-
+            cascadeType: 0,
             cascadeId: '', // 选中的医院ID
             wasteId: '', // 选中的类型ID
             status: '', // 入库状态
@@ -292,6 +292,7 @@ export default {
         },
         checkedNodes: function(n) {
             this.cascadeData = n;
+            this.cascadeType = n.type;
             this.cascadeId = n.value;
             if (this.options.trans) {
                 this.loadTransList();
@@ -356,7 +357,7 @@ export default {
         loadWasteType() {
             getWasteTypeList().then(resp => {
                 if (resp.code == 200) {
-                    this.wasteList = resp.result;
+                    this.wasteList = [...resp.result, {id: '', itemText: '全部'}];
                 }
             }).catch(err => {}).finally(e => {
 
@@ -476,6 +477,7 @@ export default {
     position: relative;
     &-container {
         width: 100%;
+        padding: 0 5%;
         justify-content: space-around;
     }
     .mw-select-item {
@@ -488,14 +490,15 @@ export default {
         color: #fff;
         display: flex;
         font-size: 24rpx;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
+        flex: 1;
         .name {
             @include text-overflow;
         }
         &.group {
-            min-width: 240rpx;
-            max-width: 48%;
+            // min-width: 240rpx;
+            // max-width: 80%;
         }
     }
 }

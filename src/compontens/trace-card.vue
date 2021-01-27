@@ -167,10 +167,10 @@ export default {
                 '', '#FFB42B', '#000', '#000', '#000'
             ],
             warningStatusMap: [
-                '', '未处理', '处理中', '已通过', '驳回'
+                '', '未处理', '处理中', '通过', '驳回'
             ],
             warningStatusColorMap: [
-                '', '#FFB42B', '#FFB42B', '#000000', '#FFB42B'
+                '', 'rgb(250, 173, 20)', 'rgb(21, 57, 174)', 'rgb(82, 196, 26)', 'rgb(245, 34, 45)'
             ],
             detailFields: {},
             detailRecord: {
@@ -435,11 +435,11 @@ export default {
                     [
                         {
                             key: 'storeTime',
-                            label: '入库人员'
+                            label: '入库时间'
                         },
                         {
                             key: 'storeUser',
-                            label: '入库时间'
+                            label: '入库人员'
                         },
                     ]
                 ]
