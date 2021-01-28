@@ -16,7 +16,7 @@ Vue.prototype.$goTree = function(params={}){
   })
 }
 Vue.prototype.$toTree = function(params = {}){
-  this.$store.commit('setCheckedNodes', params);
+  this.$store.commit('setCheckedParams', params);
   uni.navigateTo({
       url: "/pages/public-page/select-divisions"
   })

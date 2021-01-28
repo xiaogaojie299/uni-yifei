@@ -6,7 +6,7 @@
                 placeholder="请选择医院"
                 v-model="hospitalLabel"
                 disabled
-                @click="hospitalShow = true"
+                @click="showCascade()"
             >
                 <!-- <view class="button-search" slot="right" @click="reload()">查询</view> -->
             </u-field>
@@ -36,15 +36,29 @@
         <view class="button-container">
             <view class="button" @click="add()">新增</view>
         </view>
-        <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"/>
     </view>
 </template>
 <script>
 import HospitalSelect from '@/compontens/hospital-select.vue';
 import { listWarningConfigItem, removeWarningConfigItem } from '@/utils/api';
+import { mapState } from 'vuex';
 export default {
   components:{
       HospitalSelect
+  },
+  computed: {
+      ...mapState([
+          'checkedNodes'
+      ])
+  },
+  watch: {
+      checkedNodes: function(n) {
+          console.log(n);
+          this.hospitalLabel = n.label;
+          this.hospitalId = n.value;
+          this.cascadeData = n;
+          this.reload();
+      }
   },
   onLoad(option) {
       this.type = option.type;
@@ -76,11 +90,15 @@ export default {
         hospitalIndex: [], // 已选中的医院索引
         hospitalLabel: '', // 医院选择结果的文本
         hospitalId: '', // 医院ID
+        cascadeData: {},
       }
   },
-  watch: {
-  },
   methods: {
+        showCascade() {
+            this.$toTree(Object.assign(this.cascadeData, {
+                checkOnlyLeaf: true
+            }));
+        },
       reload() {
         this.pageNo = 1;
         this.pageSize = 10;
@@ -191,7 +209,7 @@ page {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            /deep/ .u-icon {
+            ::v-deep .u-icon {
 
             }
         }
@@ -223,14 +241,14 @@ page {
         @include flex-center;
     }
 }
-/deep/ .u-field {
+::v-deep .u-field {
     background: #fff;
     height: 100rpx;
     display: flex;
     align-items: center;
     width: 100%;
 }
-/deep/ .u-field-inner {
+::v-deep .u-field-inner {
     width: 100%;
 }
 </style>

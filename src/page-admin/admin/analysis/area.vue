@@ -375,13 +375,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/deep/ .u-dropdown__menu {
+::v-deep .u-dropdown__menu {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20rpx;
 }
-/deep/ .u-dropdown__menu__item {
+::v-deep .u-dropdown__menu__item {
   display: flex;
   color: #fff;
   width: 220rpx !important;
@@ -389,26 +389,26 @@ export default {
   background: #5b74c7;
   border-radius: 22rpx;
 }
-/deep/ .u-dropdown__menu__item:nth-child(2) {
+::v-deep .u-dropdown__menu__item:nth-child(2) {
   margin: 0 20rpx;
 }
-/deep/ .u-dropdown__menu__item > view {
+::v-deep .u-dropdown__menu__item > view {
   padding: 0 16rpx;
   width: 220rpx !important;
   display: flex;
   justify-content: space-between;
 }
-/deep/ .u-icon__icon {
+::v-deep .u-icon__icon {
   color: #fff !important;
 }
-/deep/ .u-dropdown__menu__item__text,
+::v-deep .u-dropdown__menu__item__text,
 .u-icon__icon {
   overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
   color: #fff !important;
 }
-/deep/ .u-dropdown-item__options{
+::v-deep .u-dropdown-item__options{
   height: 500rpx !important;
 }
 .header {

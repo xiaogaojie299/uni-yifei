@@ -2,13 +2,12 @@
   <view class="supply-create">
     <u-cell-group>
       <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')">
-        <u-loading v-show="hospitalLoading" slot="icon"/>
+      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showCascade()">
       </u-cell-item>
-      <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="setShow('departmentShow')">
+      <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="showDepartment()">
         <u-loading v-show="officeCascadeLoading" slot="icon"/>
       </u-cell-item>
-      <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="setShow('officeUserShow')">
+      <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="showDepartmentUser()">
         <u-loading v-show="officeUserLoading" slot="icon"/>
       </u-cell-item>
       <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')">
@@ -60,8 +59,6 @@
     <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="weightShow"></u-keyboard>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex"  @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
-    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :hospital-id="hospitalId"  @loading="officeCascadeLoading = true" @loaded="officeCascadeLoading = false"/>
     <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
     <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId', 'officeUserList', 'createUserIndex')" :default-value="createUserIndex"></s-select>
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
@@ -76,9 +73,17 @@ import sPicker from '@/compontens/s-picker';
 import sCheckbox from '@/compontens/s-checkbox';
 import hospitalSelect from '@/compontens/hospital-select';
 import { listSelect, getMyHospitalCascadeList, getMyOfficeCascadeList, getMyOfficeUserList, getWasteTypeList, addSupplementMedicalTrace, getMyWarehouseOfficeList } from "@/utils/api.js";
+import { mapState } from 'vuex';
 export default {
   components:{
     sSelect, sPicker, sCheckbox, hospitalSelect
+  },
+  computed: {
+    ...mapState([
+      'checkedNodes',
+      'checkedDepartment',
+      'checkedDepartmentUser'
+    ])
   },
   watch: {
     waste(n, o) {
@@ -86,10 +91,29 @@ export default {
     },
     departmentId(n, o) {
       this.waste && this.loadTransportList();
+    },
+    checkedNodes: function(n) {
+        this.hospitalLabel = n.label;
+        this.hospitalId = n.value;
+        this.cascadeData = n;
+    },
+    checkedDepartment: function(n) {
+        this.departmentLabel = n.label;
+        this.departmentId = n.value;
+        this.departmentData = n;
+    },
+    checkedDepartmentUser: function(n) {
+        this.officeUserId = n.value;
+        this.officeUserLabel = n.label;
+        this.departmentUserData = n;
     }
   },
   data() {
     return {
+      departmentData: {},
+      cascadeData: {},
+      departmentUserData: {},
+
       weightShow: false,
       hospitalShow: false, // 医院选择显示
       departmentShow: false, // 科室选择显示
@@ -193,6 +217,38 @@ export default {
     this.loadWasteType();
   },
   methods: {
+    showCascade() {
+        this.$toTree(Object.assign(this.cascadeData, {
+          checkOnlyLeaf: true,
+          onlyHospital: true
+        }));
+    },
+    showDepartment() {
+        if (!this.hospitalId) {
+          uni.showToast({
+            title: '请先选择医院',
+            icon: 'none'
+          });
+          return ;
+        }
+        this.$toTree(Object.assign(this.departmentData, {
+          checkOnlyLeaf: true,
+          hospitalId: this.hospitalId
+        }));
+    },
+    showDepartmentUser() {
+        if (!this.departmentId) {
+          uni.showToast({
+            title: '请先选择科室',
+            icon: 'none'
+          });
+          return ;
+        }
+        this.$toTree(Object.assign(this.departmentUserData, {
+          checkOnlyLeaf: true,
+          departmentId: this.departmentId
+        }));
+    },
     // 按键被点击(点击退格键不会触发此事件)
     valChange(val) {
       if (val == '.') {
@@ -351,13 +407,7 @@ export default {
     },
     setShow(key) {
       // 如果是展示科室列表，应先选择医院
-      if (key == 'departmentShow' && !this.hospitalId) {
-        uni.showToast({
-          title: '请先选择医院',
-          icon: 'none'
-        });
-        return ;
-      } else if ((key == 'warehouseShow' || key == 'officeUserShow' || key == 'createUserShow' || key == 'transportShow') && !this.departmentId) {
+      if ((key == 'warehouseShow' || key == 'officeUserShow' || key == 'createUserShow' || key == 'transportShow') && !this.departmentId) {
         uni.showToast({
           title: '请先选择科室',
           icon: 'none'

@@ -9,7 +9,7 @@
                     <!-- icon -->
                     <img :src="require('@/static/images/search.png')" alt="" />
                     <!-- input框 -->
-                    <input @confirm="search()" confirm-type="search" type="text" v-model="name" placeholder="请输入完整名称搜索" />
+                    <input @confirm="search()" confirm-type="search" type="text" v-model="name" placeholder="请输入医院完整名称搜索" />
                 </view>
             </view>
         </view>
@@ -49,7 +49,7 @@
 
 <script>
     /* 选择树状图 */
-    import {listRegionChildren ,listRegion, sysDepartmentTreeList, getMyDepartmentTreeList, getMyOfficeCascadeList, getMyOfficeUserList, getMyHospitalCascadeList} from '@/utils/api' 
+    import {listRegionChildren ,listRegion, sysDepartmentTreeList, getMyDepartmentTreeList} from '@/utils/api' 
     import LyTree from '@/compontens/tree/ly-tree/ly-tree.vue'
 	export default {
 		components: {
@@ -64,21 +64,17 @@
             },
         },
         computed:{
-            // treeData() {
-            //     let checkOnlyLeaf = this.pageParams.checkOnlyLeaf   // 判断树结构显示的数据
-            //     let hospital = this.pageParams.hospitalId;                // 选择医院 也可选择科室
-            //     let list = JSON.parse(localStorage.getItem("hospital"));
-            //     if (hospital) {
-            //         list = this.defaultData;
-            //     }
-            //     if (checkOnlyLeaf) {
-            //         this.treeDataOpt.nodeKey = "value";
-            //         return list;
-            //     } else {
-            //         this.treeDataOpt.nodeKey = "id";
-            //         return this.$store.state.leftTreeData
-            //     }
-            // },
+            treeData(){
+                let checkOnlyLeaf = this.pageParams.checkOnlyLeaf   // 判断树结构显示的数据
+                if(checkOnlyLeaf){
+                    this.treeDataOpt.nodeKey = "value";
+                    return JSON.parse(localStorage.getItem("hospital"))
+                }else{
+                    this.treeDataOpt.nodeKey = "id";
+                    // return JSON.parse(localStorage.getItem("treeData"))
+                    return this.$store.state.leftTreeData
+                }
+            },
         },
 		data() {
 			return {
@@ -94,7 +90,6 @@
                         children: 'childrenList' // 指把数据中的‘childs’当做children当做子节点数据
                     }
                 },
-                treeData: [],
                 isshow:2,
                 checkoutValue:{ 
                     checkedKeys:[]
@@ -113,58 +108,21 @@
 		},
 		// 如果不需要不用到这些方法，需要删除相应代码，打印大量日志会造成性能损耗
 		onLoad(options) {
-            this.pageParams = this.$store.state.checkedParams;
-            console.log(this.pageParams);
-
-            this.treeDataOpt.nodeKey = this.pageParams.checkOnlyLeaf ? "value" : 'id';
-            // 设置TreeData
-            if (this.pageParams.hospitalId) {
-                uni.setNavigationBarTitle({
-                    title: '选择科室'
-                });
-                getMyOfficeCascadeList({
-                    parentId: this.pageParams.hospitalId
-                }).then(({code,result})=>{
-                    this.treeData = result;
-                })
-            } else if (this.pageParams.departmentId) {
-                uni.setNavigationBarTitle({
-                    title: '选择科室人员'
-                });
-                getMyOfficeUserList({
-                    officeId: this.pageParams.departmentId
-                }).then(resp => {
-                    if (resp.code == 200) {
-                        this.treeData = resp.result.map(item => {
-                            return {
-                                label: item.name,
-                                value: item.id
-                            }
-                        });
-                    }
-                });
-            } else {
-                if (this.pageParams.onlyHospital) {
-                    getMyHospitalCascadeList().then(({result}) => {
-                        this.treeData = result;
-                    });
-                } else {
-                    sysDepartmentTreeList().then(({result})=>{
-                        // uni.setStorageSync("treeData", JSON.stringify(result))
-                        this.treeData = result;
-                    })
-                }
-            }
-
-
+            this.pageParams = this.$store.state.checkedNodes;
+            this.checkedNodes = 
 			this.$nextTick(() => {
+				// expand-current-node-parent配置表示展开当前节点的父节点
+				//this.$refs.tree.setCurrentKey(9);
 			});
         },
         onShow(){
-            console.log('onShow');
             this.init()
         },
-        created() {
+        created(){
+            sysDepartmentTreeList().then(({result})=>{
+                uni.setStorageSync("treeData", JSON.stringify(result))
+            })
+            // this.getTreeDalta()
         },
         methods:{
             init() {
@@ -197,9 +155,7 @@
                 })
             },
             getTreeDalta(data){
-                getMyDepartmentTreeList({
-                    parentId: this.pageParams.hospitalId
-                }).then(({code,result})=>{
+                getMyDepartmentTreeList().then(({code,result})=>{
                     this.defaultData = result;
                 })
             },
@@ -208,30 +164,13 @@
             },
             submit(){   //点击确定
                 let checkedNodes = this.checkoutValue.node;
-                if (this.pageParams.hospitalId) {
-                    let params = {
-                        label: checkedNodes.data.label,
-                        value: checkedNodes.data.value,
-                        type: checkedNodes.data.orgType
-                    }
-                    this.$store.commit('setCheckedDepartment', params);
-                } else if (this.pageParams.departmentId) {
-                    console.log(checkedNodes);
-                    let params = {
-                        label: checkedNodes.data.label,
-                        value: checkedNodes.data.value
-                    }
-                    this.$store.commit('setCheckedDepartmentUser', params);
-                } else {
-                    console.log('showYou ?');
-                    let params = {
-                        label: checkedNodes.data.label,
-                        value: checkedNodes.data.value,
-                        type: checkedNodes.data.orgType,
-                        parentId: checkedNodes.parentId
-                    }
-                    this.$store.commit('setCheckedNodes', params);
+                let params = {
+                    label: checkedNodes.label,
+                    value: checkedNodes.data.value,
+                    type: checkedNodes.data.orgType,
+                    parentId: checkedNodes.parentId
                 }
+                this.$store.commit('setCheckedNodes', params);
                 uni.navigateBack();
             }
         }

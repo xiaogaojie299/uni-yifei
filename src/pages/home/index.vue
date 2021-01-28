@@ -255,7 +255,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/deep/ .u-type-warning-light-bg{
+::v-deep .u-type-warning-light-bg{
   background: none;
 }
 .container{

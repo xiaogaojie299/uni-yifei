@@ -1,8 +1,7 @@
 <template>
   <view class="supply-create">
     <u-cell-group>
-      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="setShow('hospitalShow')">
-        <u-loading v-show="hospitalLoading" slot="icon"/>
+      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showCascade()">
       </u-cell-item>
       <u-cell-item :title="formLabel.engineDriver" :arrow="false" hover-class="none">
         <u-field
@@ -52,9 +51,6 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndexList" :default-ids="hospitalIds" @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
-
-    <!-- <s-select mode="mutil-column-auto" title="选择医院" v-model="hospitalShow" :list="hospitalList" @confirm="hospitalCallback" :default-value="hospitalIndexList"></s-select> -->
     <s-select-multi multi title="选择医废类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteCheckedIndexList"/>
   </view>
 </template>
@@ -65,6 +61,7 @@ import sPicker from '@/compontens/s-picker';
 import sCheckbox from '@/compontens/s-checkbox';
 import hospitalSelect from '@/compontens/hospital-select';
 import { getMyHospitalCascadeList, getWasteTypeList, editTransitConfig, addTransitConfig } from "@/utils/api.js";
+import { mapState } from 'vuex';
 export default {
   components:{
     sSelect, sPicker, sCheckbox, sSelectMulti, hospitalSelect
@@ -100,14 +97,32 @@ export default {
         waste: '准运类型',
       },
       submitLoading: false,
-      detail: {}
+      detail: {},
+      cascadeData: {}
     };
   },
   onLoad(option) {
     this.loadWasteType();
     this.loadDetail();
   },
+  computed: {
+      ...mapState([
+          'checkedNodes'
+      ])
+  },
+  watch: {
+      checkedNodes: function(n) {
+          this.hospitalLabel = n.label;
+          this.hospitalId = n.value;
+          this.cascadeData = n;
+      }
+  },
   methods: {
+    showCascade() {
+        this.$toTree(Object.assign(this.cascadeData, {
+          checkOnlyLeaf: true
+        }));
+    },
     // 检查是否修改还是添加
     loadDetail() {
       let detail = uni.getStorageSync('cache:outbound:detail');
@@ -161,14 +176,6 @@ export default {
       }).catch(err => {}).finally(e => {
         this.wasteLoading = false;
       });
-    },
-    // 医院选择回调事件
-    hospitalCallback(e) {
-      if (e.e.length > 0) {
-          let hospital = e.e[e.e.length - 1];
-          this.hospitalLabel = hospital.label;
-          this.hospitalId = hospital.value;
-      }
     },
     wasteCallback(e) {
       let _this = this;

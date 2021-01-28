@@ -310,17 +310,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/deep/ .u-cell_title {
+::v-deep .u-cell_title {
   font-weight: 500;
   font-size: 32rpx;
 }
-/deep/ .u-label-text {
+::v-deep .u-label-text {
   font-weight: 500;
   font-size: 32rpx;
   color: #606266;
   // width: 300rpx;
 }
-/deep/ .u-cell__value {
+::v-deep .u-cell__value {
   font-weight: 500;
   font-size: 32rpx;
 }

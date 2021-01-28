@@ -23,17 +23,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    /deep/ .u-subsection{
+    ::v-deep .u-subsection{
         height: 56rpx !important;
         background: #5B74C7 !important;
         border-radius: 28rpx !important;
     }
-    /deep/ .u-item-text{
+    ::v-deep .u-item-text{
         font-size: 28rpx;
         font-family: PingFang-SC-Medium, PingFang-SC;
         font-weight: 500;
     }
-    /deep/ .u-item-bg{
+    ::v-deep .u-item-bg{
         width: 226rpx !important;
     height: 44rpx !important;
     background: #FFFFFF !important;

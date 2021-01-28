@@ -110,7 +110,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    /deep/ .u-btn{
+    ::v-deep .u-btn{
         width: 160rpx;
         height: 56rpx;
         background: #FFFFFF;

@@ -13,7 +13,10 @@ let store = new vuex.Store({
         treeData:[],    // 树状图默认省，市，区，医院，科室...
         leftTreeData:[],    // 用户管路 left-tree组件中的数数据。。。。。。。。。。。
         checkedNodes:{}, //选择的树节点
-        rootTree:[]         // 权限树状图
+        rootTree:[],         // 权限树状图
+        checkedDepartment: {}, // 选中的科室列表
+        checkedParams: {}, // 选中的默认配置数据
+        checkedDepartmentUser: {}, // 选中的科室人员列表
     },
     mutations:{
         setAreaList(state,list){
@@ -39,6 +42,15 @@ let store = new vuex.Store({
         },
         setCheckedNodes(state,obj){
             state.checkedNodes = obj
+        },
+        setCheckedDepartment(state, obj) {
+            state.checkedDepartment = obj;
+        },
+        setCheckedParams(state, obj) {
+            state.checkedParams = obj;
+        },
+        setCheckedDepartmentUser(state, obj) {
+            state.checkedDepartmentUser = obj;
         },
         setRootTree(state,list){
             // 可持续缓存失败了。 我也不知道为什么

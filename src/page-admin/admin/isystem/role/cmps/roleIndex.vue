@@ -129,7 +129,7 @@ export default {
     color:1px solid $my-main-color;
     color:1px solid $my-main-color;
 }
-/deep/ .u-btn{
+::v-deep .u-btn{
     width: 160rpx;
     height: 56rpx;
     background: #FFFFFF;
