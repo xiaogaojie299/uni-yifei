@@ -116,7 +116,7 @@
             this.pageParams = this.$store.state.checkedParams;
             console.log(this.pageParams);
 
-            this.treeDataOpt.nodeKey = this.pageParams.checkOnlyLeaf ? "value" : 'id';
+            this.treeDataOpt.nodeKey = 'value'; //this.pageParams.checkOnlyLeaf ? "value" : 'id';
             // 设置TreeData
             if (this.pageParams.hospitalId) {
                 uni.setNavigationBarTitle({

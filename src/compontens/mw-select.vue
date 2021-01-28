@@ -275,6 +275,14 @@ export default {
         }
     },
     mounted() {
+        // 设置默认医院
+        let { departmentIdList, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
+        this.cascadeId = departmentIdList[departmentIdList.length -1];
+        let cascadeLabel = departmentName
+        this.cascadeData = {
+            value: this.cascadeId,
+            label: cascadeLabel
+        };
         this.setDefaultValue();
         this.loadWasteType();
     },
@@ -320,7 +328,10 @@ export default {
             // }
         },
         showCascade() {
-            this.$toTree(Object.assign(this.cascadeData, {}));
+            this.$toTree(Object.assign(this.cascadeData, {
+                onlyHospital: true,
+                // checkOnlyLeaf: true
+            }));
         },
         reset() {
             this.cascadeId = '';

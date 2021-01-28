@@ -1,56 +1,58 @@
 <template>
   <view class="supply-create">
-    <u-cell-group>
-      <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showCascade()">
-      </u-cell-item>
-      <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="showDepartment()">
-        <u-loading v-show="officeCascadeLoading" slot="icon"/>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="showDepartmentUser()">
-        <u-loading v-show="officeUserLoading" slot="icon"/>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')">
-        <u-loading v-show="wasteLoading" slot="icon"/>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.createUserId" :arrow="true"  arrow-direction="right" :value="createUserLabel" @click="setShow('createUserShow')">
-        <u-loading v-show="officeUserLoading" slot="icon"/>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
-        <u-field
-			    placeholder="支持小数"
-          v-model="weight"
-          slot="right-icon"
-          :clearable="false"
-          disabled
-          :border-bottom="false"
-          input-align="right"
-          :field-style="{padding: 0}"
-          @click="weightShow = true"
-        >
-        </u-field>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.desc" :arrow="false" hover-class="none">
-        <u-field
-			    placeholder="不超过50个字符"
-          slot="right-icon"
-          v-model="desc"
-          :clearable="false"
-          :border-bottom="false"
-          input-align="right"
-          :field-style="{padding: 0}"
-          :maxlength="50"
-        >
-        </u-field>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.status" :arrow="true"  arrow-direction="right" :value="statusLabel" @click="setShow('statusShow')"></u-cell-item>
-      <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status >= 2">
-        <u-loading v-show="warehouseLoading" slot="icon"/>
-      </u-cell-item>
-      <u-cell-item :title="formLabel.transport" :arrow="true"  arrow-direction="right" :value="transportLabel" @click="setShow('transportShow')" v-show="status == 3">
-        <u-loading v-show="transportLoading" slot="icon"/>
-      </u-cell-item>
-    </u-cell-group>
+    <view class="supply-create__content">
+      <u-cell-group>
+        <u-cell-item :title="formLabel.dateTime" :arrow="true" arrow-direction="right" :value="dateTime" @click="setShow('dateShow')"></u-cell-item>
+        <u-cell-item :title="formLabel.hospitalId" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showCascade()">
+        </u-cell-item>
+        <u-cell-item :title="formLabel.departmentId" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="showDepartment()">
+          <u-loading v-show="officeCascadeLoading" slot="icon"/>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.officeUserId" :arrow="true"  arrow-direction="right" :value="officeUserLabel" @click="showDepartmentUser()">
+          <u-loading v-show="officeUserLoading" slot="icon"/>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.waste" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="setShow('wasteShow')">
+          <u-loading v-show="wasteLoading" slot="icon"/>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.createUserId" :arrow="true"  arrow-direction="right" :value="createUserLabel" @click="showCreateUser()">
+          <u-loading v-show="officeUserLoading" slot="icon"/>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.weight" :arrow="false" hover-class="none">
+          <u-field
+            placeholder="支持小数"
+            v-model="weight"
+            slot="right-icon"
+            :clearable="false"
+            disabled
+            :border-bottom="false"
+            input-align="right"
+            :field-style="{padding: 0}"
+            @click="weightShow = true"
+          >
+          </u-field>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.desc" :arrow="false" hover-class="none">
+          <u-field
+            placeholder="不超过50个字符"
+            slot="right-icon"
+            v-model="desc"
+            :clearable="false"
+            :border-bottom="false"
+            input-align="right"
+            :field-style="{padding: 0}"
+            :maxlength="50"
+          >
+          </u-field>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.status" :arrow="true"  arrow-direction="right" :value="statusLabel" @click="setShow('statusShow')"></u-cell-item>
+        <u-cell-item :title="formLabel.warehouse" :arrow="true"  arrow-direction="right" :value="warehouseLabel" @click="setShow('warehouseShow')" v-show="status >= 2">
+          <u-loading v-show="warehouseLoading" slot="icon"/>
+        </u-cell-item>
+        <u-cell-item :title="formLabel.transport" :arrow="true"  arrow-direction="right" :value="transportLabel" @click="setShow('transportShow')" v-show="status == 3">
+          <u-loading v-show="transportLoading" slot="icon"/>
+        </u-cell-item>
+      </u-cell-group>
+    </view>
     <view class="supply-create__button__container">
       <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
@@ -59,8 +61,6 @@
     <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="weightShow"></u-keyboard>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
-    <s-select title="选择科室人员" v-model="officeUserShow" :list="officeUserList" @confirm="selectCallback($event, 'officeUserLabel', 'officeUserId', 'officeUserList', 'officeUserIndex')" :default-value="officeUserIndex"></s-select>
-    <s-select title="选择收集人员" v-model="createUserShow" :list="officeUserList" @confirm="selectCallback($event, 'createUserLabel', 'createUserId', 'officeUserList', 'createUserIndex')" :default-value="createUserIndex"></s-select>
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
     <s-select title="选择暂存间" v-model="warehouseShow" :list="warehouseList" @confirm="selectCallback($event, 'warehouseLabel', 'warehouse', 'warehouseList', 'warehouseIndex')" :default-value="warehouseIndex"></s-select>
     <s-select title="选择状态" v-model="statusShow" :list="statusList" @confirm="selectCallback($event, 'statusLabel', 'status', 'statusList', 'statusIndex')" :default-value="statusIndex"></s-select>
@@ -101,11 +101,19 @@ export default {
         this.departmentLabel = n.label;
         this.departmentId = n.value;
         this.departmentData = n;
+        // 加载暂存间，提前加载，防止网络卡顿
+        this.loadWarehouseOfficeList(this.departmentId);
     },
     checkedDepartmentUser: function(n) {
-        this.officeUserId = n.value;
-        this.officeUserLabel = n.label;
-        this.departmentUserData = n;
+        if (this.isSelectDepartmentUser) {
+          this.officeUserId = n.value;
+          this.officeUserLabel = n.label;
+          this.departmentUserData = n;
+        } else {
+          this.createUserId = n.value;
+          this.createUserLabel = n.label;
+          this.createUserData = n;
+        }
     }
   },
   data() {
@@ -113,6 +121,8 @@ export default {
       departmentData: {},
       cascadeData: {},
       departmentUserData: {},
+      createUserData: {},
+      isSelectDepartmentUser: true, // true 科室人员 false 收集人员
 
       weightShow: false,
       hospitalShow: false, // 医院选择显示
@@ -249,6 +259,20 @@ export default {
           departmentId: this.departmentId
         }));
     },
+    showCreateUser() {
+        this.isSelectDepartmentUser = false;
+        if (!this.departmentId) {
+          uni.showToast({
+            title: '请先选择科室',
+            icon: 'none'
+          });
+          return ;
+        }
+        this.$toTree(Object.assign(this.createUserData, {
+          checkOnlyLeaf: true,
+          departmentId: this.departmentId
+        }));
+    },
     // 按键被点击(点击退格键不会触发此事件)
     valChange(val) {
       if (val == '.') {
@@ -322,41 +346,6 @@ export default {
         }
         return cascadeIndex;
     },
-    // 科室选择的回调事件
-    departmentCallback(e) {
-      e = e.e;
-      let department = e[e.length - 1];
-      if (department.value != this.departmentId) {
-        // 如果不一致，需要清除
-        this.resetOfficeCascade();
-        this.resetWarehouse();
-      }
-      this.departmentLabel = department.label;
-      this.departmentId = department.value;
-
-      // 加载科室人员
-      this.loadOfficeUserList(department.value);
-      // 加载暂存间，提前加载，防止网络卡顿
-      this.loadWarehouseOfficeList(department.value);
-    },
-    // 获取科室人员列表
-    loadOfficeUserList(officeId) {
-      this.officeUserLoading = true;
-      getMyOfficeUserList({
-            officeId
-      }).then(resp => {
-        if (resp.code == 200) {
-          this.officeUserList = resp.result.map(item => {
-            return {
-              label: item.name,
-              value: item.id
-            }
-          });
-        }
-      }).catch(err => {}).finally(e => {
-        this.officeUserLoading = false;
-      });
-    },
     // 清空科室选择
     resetWarehouse() {
       this.warehouse = '';
@@ -407,7 +396,7 @@ export default {
     },
     setShow(key) {
       // 如果是展示科室列表，应先选择医院
-      if ((key == 'warehouseShow' || key == 'officeUserShow' || key == 'createUserShow' || key == 'transportShow') && !this.departmentId) {
+      if ((key == 'warehouseShow' || key == 'transportShow') && !this.departmentId) {
         uni.showToast({
           title: '请先选择科室',
           icon: 'none'
@@ -496,6 +485,9 @@ export default {
 .supply-create {
   .u-field {
     padding: 0rpx !important;
+  }
+  &__content {
+    padding-bottom: 120rpx;
   }
   &__button__container {
       position: fixed;
