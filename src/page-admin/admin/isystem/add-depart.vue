@@ -16,18 +16,25 @@
             <input @tap="goOrgType" class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType.name" />
             <img src="@/static/images/path.png" />
         </view>
+        <view v-if="orgType.value==4" class="header my-box h-100">
+            <view class="label flex-center">是否暂存间</view>
+            <input @tap="isWarehouse" class="pr-30" type="text" placeholder="是否需要暂存间" disabled :value="wareHouse.label" />
+            <img src="@/static/images/path.png" />
+        </view>
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存
+            提 交
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            保 存
+            提 交
         </view>
         <leftree @checkoutValue="checkoutValue" ref="handleModel" />
+         <s-select mode="mutil-column-auto" title="选择暂存间" v-model="houseShow" :default-value="houseIndex" :list="houselist" @confirm="roleBack"></s-select>
     </view>
 </template>
 <script>
-import {getParent,sysDepartmentEdit} from "@/utils/api"
+import {getParent,sysDepartmentEdit,addDepartment} from "@/utils/api"
+import sSelect from '@/compontens/s-select';
 import leftree from "./cmps/left-tree"
 import {actions} from "vuex"
 export default {
@@ -37,9 +44,13 @@ export default {
                 label:"",
                 id:null
             },
+            houselist:[{label:"是",value:1},{label:"否",value:0}],
+            houseIndex:[0],
+            houseShow:false,
             name:"",    //组织名称
             listRegion:[],           // 上个页面获取的树数据
             node:null,            // 父组件传过来的值
+            wareHouse:{label:"否",value:1}
         }
     },
     provide() {
@@ -48,8 +59,9 @@ export default {
   },
     components:{
         leftree,
+        sSelect
     },
-    computed:{
+    computed:{ 
         isSubmit(){
             return this.parent.label && this.name && this.orgType.name
         },
@@ -64,18 +76,18 @@ export default {
         }
     },
     methods:{
-        openTree(){
+        openTree(){ 
             this.$refs.handleModel.openModel()
         },
         checkoutValue(node){
             this.node = node.data;
             this.parent.label = node.data.label;
             this.parent.id = node.data.id;
+            console.log("node",this.node);
         },
         goOrgType(){    //跳转到组织类型
             try{
-            console.log(this.node);
-                
+            console.log(this.node.orgType);
                if(this.node.id){
                     uni.navigateTo({
                         url:"./org-type"+"?orgType="+this.node.orgType
@@ -97,16 +109,24 @@ export default {
             }
            
         },
+        isWarehouse(){
+            console.log("是否需要暂存间");
+            this.houseShow =true
+        },
+        roleBack(obj){
+                this.wareHouse = obj[0]
+        },
+
         submit(){
-            let params = this.node;
-            delete params.childrenList;
+            let params = {};
             params.parentId = this.parent.id;
             params.departName = this.name;
-            console.log("params",params);
-            sysDepartmentEdit(params).then(res=>{
+            params.orgType = this.orgType.value;
+            params.orgType==4 && (params.isWarehouse = this.wareHouse.value);
+            addDepartment(params).then(res=>{
                 if(res.code==200){
                     uni.showToast({
-                        title:"编辑成功",
+                        title:"提交成功",
                         icon:"none"
                     })
                     setTimeout(()=>{

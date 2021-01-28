@@ -194,8 +194,7 @@ export default {
       // 获取出入库记录
   async init(){
     // 获取预警时间详情
-   let warResp = await listWarningRecord({pageNo:1,pageSize:6})
-   console.log("warResp=",warResp);
+   let warResp = await listWarningRecord({pageNo:1,pageSize:6,status: 1})
    let warnTotal = warResp.result.total;
    let res =await getIndex(); // 
    try {

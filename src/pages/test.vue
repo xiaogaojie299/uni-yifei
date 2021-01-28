@@ -3,10 +3,13 @@
         <!-- <div id="main" style="width: 600px;height:400px;"></div> -->
         <view class="">
             <!-- <select-tree :isEdit="isEdit"></select-tree> -->
-            <my-calendar> </my-calendar>
+            <!-- <my-calendar> </my-calendar> -->
         </view>
         <view class="">
             <u-button @tap="goTest()">测试{{checkedNodes}}{{timeStar}}</u-button>
+        </view>
+        <view class="">
+            <u-picker mode="time" @confirm="confirm" v-model="show" :default-time="defaulTime" :params="{year: true,month: true,}"></u-picker>
         </view>
         <!-- <view class="">
             <u-button @tap="goTree()">测试{{checkedNodes}}</u-button>
@@ -23,8 +26,10 @@ export default {
     mixins:[mixins],
     data(){
         return {
+            show:true,
             isEdit:false,
-            checkedNodes:{}
+            checkedNodes:{},
+            defaulTime:"2020-2-10"
         }
     },
     created(){
@@ -39,8 +44,13 @@ export default {
     methods:{
         goTest(){
             console.log('测试');
-        this.handleOpen();
-
+                this.handleOpen();
+                this.show=true;
+        },
+        confirm(e){
+            let {year,month,day} = e;
+            this.defaulTime = `${year}-${month}`;
+            console.log(this.defaulTime);
         },
         goTree(){
             this.$goTree()

@@ -91,7 +91,7 @@
                 </view>
             </view>
             
-        </view>
+        </view> 
         
         <view @tap="goAdd" class="footer flex-ver-center">
             新增用户
@@ -153,7 +153,8 @@ export default {
     },
     created(){
         this.sysRole();
-        this.init();
+        // this.init();
+        console.log("onCreated加载成功");
     },
     onReachBottom : function(){ //上拉触底加载更多
         this.pageNo++;
@@ -161,10 +162,12 @@ export default {
         this.getList();
     },
     onPullDownRefresh() {
-    this.init();
+    // this.init();
+    this.cascadeCallback()
   },
     onShow(){
-        this.deviceAgent();
+        console.log("onShow加载成功");
+        this.cascadeCallback();
     },
     methods:{
         async init(){
@@ -390,6 +393,7 @@ export default {
                 this.name || delete params.keyword;
                 console.log("params",params);
                 let {code,result,message} = await userList(params);
+                uni.stopPullDownRefresh();
                 if(code == 200){
                     if(this.isRemake){
                         this.list = result.records;

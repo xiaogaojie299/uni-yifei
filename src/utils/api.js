@@ -4,8 +4,11 @@ import request from "./ajax";
 */
 // 获取 省，市，区，科室，门诊(树状图默认数据)
 export function getMyDepartmentTreeList(){
-  return request.get('/system/sysDepartment/getMyDepartmentTreeList');
+  return request.get('/system/sysDepartment/getMyDepartmentTreeList'); 
 }
+
+/* 获取所有的树状图模块 */
+ 
 
 /* 登录模块 */
 // 用户登录 
@@ -406,6 +409,14 @@ export function getParent(data){
 export function sysDepartmentEdit(data){
   return request.post("/system/sysDepartment/edit",data)
 }
+// 删除组织
+export function sysDepartmentDelete(data){
+  return request.post("/system/sysDepartment/delete",data)
+}
+// system/sysDepartment/add
+export function addDepartment(data){
+  return request.post("/system/sysDepartment/add",data)
+}
 // 获取单位名称
 export function unitData(){
   return request.get("/system/sysDict/getDepartmentTypeList")
@@ -427,6 +438,10 @@ export function userDel(data){
 // 禁用用户
 export function userBatch(data){
   return request.post("/system/user/frozenBatch",data)
+}
+// 添加用户
+export function userAdd(data){
+  return request.post("/system/user/add",data)
 }
 
 // 编辑用户

@@ -11,11 +11,12 @@
                 </view>
             </view>
         </view>
-        <view>
+        <view class="main">
                 <ly-tree v-if="isshow==2" ref="tree"
                     :treeData="data"
                     :props = props
                     node-key="id"
+                    @delDep="delDep"
                     :isInjectParentInNode="true"
                     :expand-on-click-node="false"
                     highlight-current
@@ -27,6 +28,7 @@
                 </ly-tree>
                 <ly-tree v-else ref="tree"
                     :treeData="data"
+                    :isInjectParentInNode="true"
                     node-key="id"
                     :expand-on-click-node="false"
                     children="children" 
@@ -85,7 +87,12 @@
              this.$store.commit('setUnitValue',{})
         },
         created(){
-            // this.data = JSON.parse(uni.getStorageSync("hospital"));
+            this.init()
+                
+        },
+        methods:{
+            init(){
+                // this.data = JSON.parse(uni.getStorageSync("hospital"));
                 // 第一种树状图两个接口 
                 if(this.isshow==2){
                      listRegion().then(res=>{
@@ -137,14 +144,13 @@
                         this.data = result;
                     })
                 }
-                   sysDepartmentTreeList().then(({result})=>{
-                        console.log("result==>",result);
-                        uni.setStorageSync("treeData",JSON.stringify(result))
-                        // this.data = result;
-                    })
-                  
-        },
-        methods:{
+                
+                // sysDepartmentTreeList().then(({result})=>{
+                //     console.log("result==>",result);
+                //     uni.setStorageSync("treeData",JSON.stringify(result))
+                //     // this.data = result;
+                // })
+            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.departName.indexOf(value) !== -1;
@@ -158,13 +164,17 @@
                     url:"./add-depart"
                 })
             },
+            delDep(){
+                console.log("depart 删除成功");
+                this.init()
+            },
             // uni-app中emit触发的方法只能接受一个参数，所以会回传一个对象，打印对象即可见到其中的内容
             async handleNodeClick(obj) {
                 if(this.isshow ==2){
-                    console.log("打印成功");
                      //获取接口数据写法（此方法调用两个接口）
+                     console.log(obj.data.orgType);
                     if (!obj.expanded) return; // 如果是关闭就返回
-                            console.log(obj);
+                            if(obj.data.orgType==4){return}
                             if (obj.data.childrenList && obj.data.childrenList.length > 0) return; // 如果已经有数据就返回
                             let params = {
                                 parentId:obj.key
@@ -172,7 +182,6 @@
                             let {result} = await listRegionChildren(params)
                             this.$nextTick(() => {
                                 // this.$refs.tree.append(result[0],obj.value)
-                                console.log(obj.key);
                                 this.$refs.tree.updateKeyChildren(obj.key,result);
                             })
                     
@@ -254,4 +263,7 @@
             }
             
         }
+    .main{
+        padding-bottom: 100rpx;
+    }
 </style>

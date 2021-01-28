@@ -3,31 +3,7 @@
     <u-popup mode="right" width="550" v-model="show">
       <view class="content">
         <scroll-view scroll-y="true" style="height:calc(100vh - 100rpx)">
-          <ly-tree
-            ref="tree"
-            :isEdit="false"
-            :treeData="treeData"
-            node-key="id"
-            show-radio
-            expand-on-click-node
-            :filter-node-method="filterNode"
-            checkOnClickNode
-            :highlight-current="true"
-            :default-expanded-keys="expandKeys"
-            :default-checked-keys="checkedKeys"
-            @check="handleCheck"
-            @radio-change="handleRadioChange"
-            @node-click="handleNodeClick"
-          ></ly-tree>
-
-          <!-- <ly-tree :tree-data="treeData"
-                        :isEdit="false" 
-                        ref="tree" 
-                        node-key="id" 
-                        show-radio 
-                        checkOnClickNode
-                        @node-click="handleNodeClick" 
-                    /> -->
+          
         </scroll-view>
           <!-- <u-button @click="show = false;">{{checkValue.label}}</u-button> -->
           <view class="btn-group">
@@ -48,8 +24,7 @@
 
 <script>
 import lyTree from "@/compontens/tree/ly-tree/ly-tree.vue";
-import {getMyDepartmentTreeList,sysDepartmentTreeList} from '@/utils/api' 
-
+import {getMyDepartmentTreeList} from '@/utils/api' 
 export default {
   data() {
     return {
@@ -74,37 +49,25 @@ export default {
   components: {
     lyTree,
   },
-  computed:{
-    
-  },
-  props:{
-      isRoleTree:{
-        type:Boolean,
-        default:false
-      }, 
-  },
   watch:{
   },
   onShow(){
+    this.init()
   },
   methods: {
     init(){
       try{
-        if(this.isRoleTree){
-          this.treeData =JSON.parse(uni.getStorageSync("treeData"));
-        }else{
-           sysDepartmentTreeList().then(({code,result})=>{
-                if(code==200){
-                  this.treeData = result
-                }
-            })
-                // this.$store.dispatch('getLeftTreeData');
-                // this.treeData = this.$store.state.leftTreeData;
-                // this.treeData =JSON.parse(uni.getStorageSync("leftTreeData"));
-          }
-        }catch(e){
-          console.log(e);
-          //TODO handle the exception
+          if(this.$store.state.leftTreeData.length==0){
+      this.$store.dispatch('getLeftTreeData')
+       getMyDepartmentTreeList().then(res=>{
+        this.treeData = res.result;
+      })
+    }else{
+      this.treeData = this.$store.state.leftTreeData;
+    }
+      }catch(e){
+        console.log(e);
+        //TODO handle the exception
       }
       
     },
@@ -122,6 +85,7 @@ export default {
       openModel(params={}) {
         this.show = true;
         this.init()
+        console.log(params);
         if(params.departmentId){
           setTimeout(()=> {
              this.expandKeys = [params.departmentId];
@@ -155,7 +119,7 @@ export default {
   },
   created() {
     // this.treeData = JSON.parse(uni.getStorageSync("treeData"));
-    // this.init()
+    
    
     // setTimeout(()=>{
     //     this.expandKeys.push("42");

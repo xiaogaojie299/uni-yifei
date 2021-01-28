@@ -21,8 +21,9 @@
                 </view>
 			</u-radio>
 		</u-radio-group>
+
 	</view>
-    <u-picker v-model="show" :default-selector="[index]" @confirm="confirm" title="单位部门" :range="unitList" range-key="itemText" mode="selector"></u-picker>
+        <u-picker v-model="show" :default-selector="[index]" @confirm="confirm" title="单位部门" :range="unitList" range-key="itemText" mode="selector"></u-picker>
     </view>
 </template>
 <script>
@@ -53,7 +54,8 @@ export default {
                         name: '科室',
                         disabled: false,
                         orgType:4
-                    }
+                    },
+                    
             ],
             value:"",           // 单选框中的 value
             unitList:[],        // 弹出框数据
@@ -144,14 +146,14 @@ export default {
            console.log(res.result);
            this.unitList = res.result;
        })
-       this.orgType = options.orgType;
+       this.orgType = options.orgType; 
+       console.log("options.orgType=",options.orgType);
        this.list.forEach(((item,idnex)=>{
            if(options.orgType==1 || options.orgType==1){
                 this.list[0].disabled = true;
                    this.list[1].disabled = true
-           }else if(options.orgType==3){
+           }else if(options.orgType==3 ||options.orgType==2){
                this.list[2].disabled = true;
-           }else{
                 this.list[3].disabled = true;
            }
        }))

@@ -24,7 +24,7 @@
                     </view>
                   </view>
               </view>
-          </view>
+          </view> 
       </view>
     </view>
 </template>
@@ -56,6 +56,7 @@ export default {
         }
     },
     mounted() {
+        this.paginate();
     },
     onPullDownRefresh() {
         this.reload();

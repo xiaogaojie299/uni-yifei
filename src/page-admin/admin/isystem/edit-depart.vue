@@ -18,10 +18,10 @@
         </view>
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存
+            提 交
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            保 存
+            提 交
         </view>
         <leftree @checkoutValue="checkoutValue" ref="handleModel" />
     </view>
@@ -60,11 +60,13 @@ export default {
             this.$refs.handleModel.openModel()
         },
         checkoutValue(node){
+            console.log(node);
             this.parent.label = node.data.label;
             this.parent.id = node.data.id;
         },
         submit(){
             let params = this.node;
+            console.log(params);
             delete params.childrenList;
             params.parentId = this.parent.id;
             params.departName = this.name;
@@ -72,7 +74,7 @@ export default {
             sysDepartmentEdit(params).then(res=>{
                 if(res.code==200){
                     uni.showToast({
-                        title:"编辑成功",
+                        title:"提交成功",
                         icon:"none"
                     })
                     setTimeout(()=>{
@@ -101,8 +103,9 @@ export default {
             treeCode: "0000170002"
         */
         let node = JSON.parse(options.node);
-        this.parent.label = node.parent.label;
-        this.parent.id = node.parentId;
+        console.log("node",node.data.parent);
+        this.parent.label = node.parentlabel || node.parent.label;
+        this.parent.id = node.parent.key
         
         this.node = node.data;
         this.name = node.label;
@@ -122,8 +125,8 @@ export default {
         let params = {
             id: node.parentId
         }
-        getParent(params).then(res=>{
-        })
+        // getParent(params).then(res=>{
+        // })
     }
 }
 </script>

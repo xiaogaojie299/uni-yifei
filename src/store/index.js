@@ -1,6 +1,6 @@
 import vuex from 'vuex';
 import Vue from 'vue';
-import {getMenu, getThreeAreaCascadeList, getMyDepartmentTreeList,getRootTreeList } from "../utils/api";
+import {getMenu, getThreeAreaCascadeList, getMyDepartmentTreeList,getRootTreeList,sysDepartmentTreeList } from "../utils/api";
 import createPersistedState from 'vuex-persistedstate'; // vuex数据状态state持久化存储
 
 Vue.use(vuex);
@@ -13,7 +13,8 @@ let store = new vuex.Store({
         treeData:[],    // 树状图默认省，市，区，医院，科室...
         leftTreeData:[],    // 用户管路 left-tree组件中的数数据。。。。。。。。。。。
         checkedNodes:{}, //选择的树节点
-        rootTree:[]         // 权限树状图
+        rootTree:[],         // 权限树状图
+        roleTree:[]         // 角色树状图
     },
     mutations:{
         setAreaList(state,list){
@@ -35,7 +36,8 @@ let store = new vuex.Store({
             state.treeData = list
         },
         setLeftTreeData(state,list){
-            state.leftTreeData = list
+            state.leftTreeData = list;
+            uni.setStorageSync("leftTreeData",JSON.stringify(list));
         },
         setCheckedNodes(state,obj){
             state.checkedNodes = obj
@@ -44,7 +46,12 @@ let store = new vuex.Store({
             // 可持续缓存失败了。 我也不知道为什么
             state.rootTree = list;
             uni.setStorageSync('rootTree',list);
-        }
+        },
+        setRoleTree(state,list){
+            // 可持续缓存失败了。 我也不知道为什么
+            state.roleTree = list;
+            uni.setStorageSync('roleTree',list);
+        },
     },
     actions:{
         async getAreaList(context){
@@ -54,7 +61,7 @@ let store = new vuex.Store({
             }
         },
         async getLeftTreeData(context){
-            getMyDepartmentTreeList().then(({code,result})=>{
+            sysDepartmentTreeList().then(({code,result})=>{
                 if(code==200){
                     context.commit('setLeftTreeData', result);
                 }
@@ -71,6 +78,13 @@ let store = new vuex.Store({
             getRootTreeList().then(res=>{
                 if(res.code==200){
                     context.commit('setRootTree', res.result);
+                }
+            }) 
+        },
+        getRoleTree(context){
+            getRootTreeList().then(res=>{
+                if(res.code==200){
+                    context.commit('setRoleTree', res.result);
                 }
             })
         },
@@ -108,4 +122,5 @@ let store = new vuex.Store({
         ],
     }
 })
+
 export default store
