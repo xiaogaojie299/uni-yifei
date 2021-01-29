@@ -436,12 +436,12 @@ export default {
                     ],
                     [
                         {
-                            key: 'storeTime',
-                            label: '入库时间'
-                        },
-                        {
                             key: 'storeUser',
                             label: '入库人员'
+                        },
+                        {
+                            key: 'storeTime',
+                            label: '入库时间'
                         },
                     ]
                 ]

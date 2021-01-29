@@ -120,7 +120,8 @@ export default {
   methods: {
     showCascade() {
         this.$toTree(Object.assign(this.cascadeData, {
-          checkOnlyLeaf: true
+          checkOnlyLeaf: true,
+          onlyHospital: true
         }));
     },
     // 检查是否修改还是添加

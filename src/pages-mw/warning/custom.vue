@@ -1,16 +1,12 @@
 <template>
     <view class="warning-custom">
-        <u-sticky>
-            <u-field
-                label="选择医院"
-                placeholder="请选择医院"
-                v-model="hospitalLabel"
-                disabled
-                @click="showCascade()"
-            >
-                <!-- <view class="button-search" slot="right" @click="reload()">查询</view> -->
-            </u-field>
-        </u-sticky>
+      <u-sticky>
+        <view class="filter-box">
+            <view class="filter-tools">
+                <mw-select :default-value="mwSelectDefaultValue" :options="options" @confirm="searchConfirm"/>
+            </view>
+        </view>
+      </u-sticky>
         <view class="warning-custom__container">
             <view class="warning-custom__box" v-for="(item, index) in list" :key="index">
                 <view class="warning-custom__box__data">
@@ -39,46 +35,27 @@
     </view>
 </template>
 <script>
-import HospitalSelect from '@/compontens/hospital-select.vue';
 import { listWarningConfigItem, removeWarningConfigItem } from '@/utils/api';
-import { mapState } from 'vuex';
+import mwSelectMixin from '@/mixins/mw-select.js';
+import mwSelect from '@/compontens/mw-select';
 export default {
+  mixins: [ mwSelectMixin ],
   components:{
-      HospitalSelect
+      mwSelect
   },
   computed: {
-      ...mapState([
-          'checkedNodes'
-      ]),
       disabled() {
           return !this.$util.checkPermission('warning:setting:type' + this.type);
-      }
-  },
-  watch: {
-      checkedNodes: function(n) {
-          if (n.value) {
-            this.hospitalLabel = n.label;
-            this.hospitalId = n.value;
-            this.cascadeData = n;
-            this.reload();
-          }
       }
   },
   onLoad(option) {
         // 设置默认医院
         let { departmentIdList, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
         this.hospitalId = departmentIdList[departmentIdList.length -1];
-        this.hospitalLabel = departmentName
-        this.cascadeData = {
-            value: this.hospitalId,
-            label: this.hospitalLabel
-        };
-        console.log(this.$data);
       this.type = option.type;
       this.reload();
   },
   onShow() {
-      this.$store.commit('setCheckedNodes', {});
       if(uni.getStorageSync('willRefresh')) {
           this.reload(); 
           uni.removeStorageSync('willRefresh');
@@ -99,6 +76,9 @@ export default {
         list: [],
         total: 0,
         pages: 0,
+        options: {
+          cascade: true,
+        },
 
         hospitalShow: false, // 医院选择显示
         hospitalIndex: [], // 已选中的医院索引
@@ -108,11 +88,16 @@ export default {
       }
   },
   methods: {
-        showCascade() {
-            this.$toTree(Object.assign(this.cascadeData, {
-                checkOnlyLeaf: true
-            }));
-        },
+      searchConfirm(e) {
+        // 医院ID
+        this.hospitalId = e.cascade;
+        this.reload();
+      },
+      showCascade() {
+        this.$toTree(Object.assign(this.cascadeData, {
+            checkOnlyLeaf: true
+        }));
+      },
       reload() {
         this.pageNo = 1;
         this.pageSize = 10;
@@ -142,7 +127,6 @@ export default {
               pageSize: this.pagesize,
               departmentId: this.hospitalId
           }).then(resp => {
-              console.log(resp);
             if (resp.code == 200) {
               this.list = [...this.list, ...resp.result.records];
               this.total = resp.result.total;
@@ -196,7 +180,18 @@ page {
     background: #F3F5F7;
     min-height: 100vh;
 }
+.warning-custom {
+    .filter-box {
+        background: #1539AF;
+        height: 100rpx;
+        width: 100%;
+        .filter-tools {
+
+        }
+    }
+}
 .warning-custom__container {
+
     margin-bottom: 100rpx;
     .warning-custom__box {
         margin-top: 20rpx;

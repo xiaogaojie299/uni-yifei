@@ -6,7 +6,6 @@
             </view>
             <view class="mw-select-item group" @click="dateClick(2)" v-if="options.timestampSelect || false">
                 <text class="name">{{timestampSelectValue || '查询时间'}}</text>
-                <u-icon :name="!dateShow ? 'arrow-down': 'arrow-up'"></u-icon>
             </view>
         </view>
         <view class="mw-more" v-if="(options.waste || false) || (options.status || false) || (options.timestamp || false) || (options.warningType || false)|| (options.warningStatus || false)">
