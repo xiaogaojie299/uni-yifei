@@ -91,7 +91,8 @@ export default {
     init(){
       try{
         if(this.isRoleTree){
-          this.treeData =JSON.parse(uni.getStorageSync("treeData"));
+          this.treeData = this.$store.state.treeData
+          // this.treeData =JSON.parse(uni.getStorageSync("add:treeData"));
         }else{
            sysDepartmentTreeList().then(({code,result})=>{
                 if(code==200){

@@ -33,10 +33,10 @@
         
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存
+            提 交
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            保 存 
+            提 交 
         </view>
         <leftree :isRoleTree="true" @checkoutValue="checkoutValue" ref="handleModel" />
          <!-- 角色弹框 -->
@@ -45,7 +45,7 @@
 </template>
 <script> 
 import {getParent,sysDepartmentEdit,userAdd} from "@/utils/api"
-import sSelect from '@/compontens/s-select';
+import sSelect from '@/compontens/s-select'; 
 import leftree from "./cmps/left-tree"
 import {actions} from "vuex"
 export default {
@@ -176,10 +176,10 @@ export default {
                         icon:"none"
                     })
                     setTimeout(()=>{
-                    //      uni.navigateTo({
-                    //         url:"./depart"
-                    // })
-                    uni.navigateBack()
+                    uni.navigateTo({
+                        url:"./user"
+                    })
+                    // uni.navigateBack()
                     },1500)
                    
                 }

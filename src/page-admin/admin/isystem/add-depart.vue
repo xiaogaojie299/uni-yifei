@@ -29,6 +29,7 @@
             提 交
         </view>
         <leftree @checkoutValue="checkoutValue" ref="handleModel" />
+        <left-type ref="handleModelOrg"/>
          <s-select mode="mutil-column-auto" title="选择暂存间" v-model="houseShow" :default-value="houseIndex" :list="houselist" @confirm="roleBack"></s-select>
     </view>
 </template>
@@ -36,6 +37,7 @@
 import {getParent,sysDepartmentEdit,addDepartment} from "@/utils/api"
 import sSelect from '@/compontens/s-select';
 import leftree from "./cmps/left-tree"
+import leftType from "./cmps/left-type"
 import {actions} from "vuex"
 export default {
     data(){
@@ -59,14 +61,14 @@ export default {
   },
     components:{
         leftree,
-        sSelect
+        sSelect,
+        leftType
     },
     computed:{ 
         isSubmit(){
             return this.parent.label && this.name && this.orgType.name
         },
         orgType(){
-            console.log(this.$store.state);
             if(this.$store.state.unitValue){
                 // return  JSON.parse(uni.getStorageSync("unitValue"));
                 return this.$store.state.unitValue
@@ -74,6 +76,10 @@ export default {
                 return {}
             }
         }
+    },
+    created(){
+        this.$store.commit("setUnitValue",{})
+        // uni.setStorageSync("unitValue",{})
     },
     methods:{
         openTree(){ 
@@ -87,26 +93,24 @@ export default {
         },
         goOrgType(){    //跳转到组织类型
             try{
-            console.log(this.node.orgType);
                if(this.node.id){
-                    uni.navigateTo({
-                        url:"./org-type"+"?orgType="+this.node.orgType
-                        // url:"/page-admin/admin/isystem/org-type"+"?orgType="+this.node.orgType
+                   this.$refs.handleModelOrg.openModelOrg(this.node.orgType)
+                    // uni.navigateTo({
+                    //     url:"./org-type"+"?orgType="+this.node.orgType
+                    // })
+                }else{
+                    // uni.showToast({
+                    //     title:"请先选择你的的父级组织",
+                    //     icon:"none"
+                    // })
+                }
+                }catch(e){
+                    console.log(e);
+                    uni.showToast({
+                        title:"请先选择父级组织",
+                        icon:"none"
                     })
-               }else{
-                   uni.showToast({
-                       title:"请先选择你的的父级组织",
-                       icon:"none"
-                   })
-               }
-            }catch(e){
-                //TODO handle the exception
-                console.log(e);
-                uni.showToast({
-                       title:"请先选择父级组织",
-                       icon:"none"
-                   })
-            }
+                }
            
         },
         isWarehouse(){

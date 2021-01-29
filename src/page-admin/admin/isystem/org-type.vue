@@ -62,12 +62,18 @@ export default {
             show:false,      // 弹出框的显示和隐藏
             index:0,        //弹出框选择的index下标
             iptValue:"",         // input 框中显示的值
-            orgType:null        // 判断新增用户选择的父节点 1,2,3,4
+           // orgType:null        // 判断新增用户选择的父节点 1,2,3,4
         }
     },
     provide() {
         return {
         };
+  },
+  props:{
+      orgType:{
+          type:Number|String,
+          default:null
+      }
   },
     components:{
         leftree,
@@ -76,6 +82,18 @@ export default {
         isSubmit(){
             return this.parent.label && this.name
         }
+    },
+    created(){
+        console.log("加载成功",this.orgType);
+        this.list.forEach(((item,idnex)=>{
+           if(this.orgType==1 || this.orgType==1){
+                this.list[0].disabled = true;
+                   this.list[1].disabled = true
+           }else if(this.orgType==3 ||this.orgType==2){
+               this.list[2].disabled = true;
+                this.list[3].disabled = true;
+           }
+       }))
     },
     methods:{
         openSelect(){
@@ -142,21 +160,13 @@ export default {
         getParent(params).then(res=>{
         })
         */
-       unitData().then(res=>{
-           console.log(res.result);
-           this.unitList = res.result;
-       })
-       this.orgType = options.orgType; 
-       console.log("options.orgType=",options.orgType);
-       this.list.forEach(((item,idnex)=>{
-           if(options.orgType==1 || options.orgType==1){
-                this.list[0].disabled = true;
-                   this.list[1].disabled = true
-           }else if(options.orgType==3 ||options.orgType==2){
-               this.list[2].disabled = true;
-                this.list[3].disabled = true;
-           }
-       }))
+    //    unitData().then(res=>{
+    //        console.log(res.result);
+    //        this.unitList = res.result;
+    //    })
+    //    this.orgType = options.orgType; 
+       console.log("options.orgType=",this.orgType);
+       
     }
 }
 </script>

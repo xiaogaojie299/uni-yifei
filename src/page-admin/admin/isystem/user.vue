@@ -147,7 +147,11 @@ export default {
         },
         deep:true
     },
-    
+    computed:{
+        userInfo(){
+            return JSON.parse(uni.getStorageSync("userInfo"))
+        }
+    },
     components:{
         sSelect,
         hSelect
@@ -206,8 +210,13 @@ export default {
             })
         },
         sysRole(){  // 获取角色列表
+        let {roleType} = this.userInfo;
+        // console.log(roleType);
             let params = {
-                type:-1
+                type:roleType,
+                type:2,
+                pageNo:1,
+                pageSize:1000
             }
             sysRole(params).then(res=>{
                 this.roleList = res.result

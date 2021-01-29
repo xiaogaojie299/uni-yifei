@@ -47,7 +47,7 @@
 				]" />
 			</view>
 			
-				
+				 
 				<!-- <img 
 					:src="node.expanded?require('@/static/images/minus.png'):require('@/static/images/add.png')"
 					style="height:40rpx;width:40rpx;"
@@ -59,11 +59,12 @@
 						}, 
 						'ly-tree-node__expand-icon',
 						'pr-10' 
-					]" /> -->
+					]" /> --> 
 
 			<view v-if="isEdit" class="operation">
 				<!-- <text @click.stop="editNode(node)">编辑</text> -->
-				<u-button @click.stop="editNode(node)" style="color:#1539AF;border:1px solid #1539AF;" :hair-line="false">编辑</u-button>
+				<u-button v-if="userInfo.departmentName==node.data.departName" style="border:1px solid RGBA(105, 105, 105, 1);color:RGBA(105, 105, 105, 1)" :hair-line="false">编辑</u-button>
+				<u-button v-else @click.stop="editNode(node)" style="color:#1539AF;border:1px solid #1539AF;" :hair-line="false">编辑</u-button>
 				<u-button :hair-line="false" style="border:1px solid RGBA(105, 105, 105, 1);color:RGBA(105, 105, 105, 1);margin-left:20rpx;" @click.stop="placeholder(node)" v-if="!node.data.canDelete" class="allow-del">删除</u-button>
 				<u-button style="color:red;border:1px solid red;margin-left:20rpx;" :hair-line="false" v-else @click.stop="delNode(node)" class="no-del">删除</u-button>
 				<!-- <text @click.stop="delNode(node)" v-if="node.data.canDelete" class="allow-del">删除</text>
@@ -197,6 +198,9 @@
 				}
 				
 				return this.showRadio;
+			},
+			userInfo(){
+				return JSON.parse(uni.getStorageSync("userInfo"))
 			}
 		},
 		
@@ -216,11 +220,18 @@
 		},
 		 
 		methods: {
-			editNode(node){
-				console.log(node);
-				uni.navigateTo({
-					url:"/page-admin/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
+			editNode(){
+				let node = this.node;
+				
+				uni.showLoading({
+					title: '加载中',
+					mask: false
 				})
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"/page-admin/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
+					})
+				},1000)
 				console.log("跳转编辑页面");
 			},
 			delNode(node){

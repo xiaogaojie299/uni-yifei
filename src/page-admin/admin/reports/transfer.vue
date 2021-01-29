@@ -17,7 +17,7 @@
           <view @tap="selTime" class="flex-ver-center select nowrap-hidden">
             <text class="nowrap-hidden">{{timeText||"请选择时间"}}</text> <u-icon name="arrow-down"></u-icon>
           </view>
-        </view>
+        </view> 
       </view>
     </view>
     <view class="main" v-if="tableTitle.length>0">
@@ -35,7 +35,7 @@
       <no-data v-else></no-data>
     </view>
     <!-- 选择运输公司 -->
-    <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="transitCompany" :default-value="selectIndex2" value-name="id" :list="options2" @confirm="roleBack"></s-select>
+    <s-select mode="mutil-column-auto" title="运输公司" v-model="roleShow" label-name="transitCompany" :default-value="selectIndex2" value-name="id" :list="options2" @confirm="roleBack"></s-select>
     <!-- 选择年月 -->
      <s-picker v-model="timerShow" mode="time" @confirm="confirmTimer" :params="{year: true,month: true,day: false,}" :default-time="defaultMonthTime"></s-picker>
     <view class="footer"> </view> 
@@ -365,6 +365,7 @@ export default {
 }
 .main {
   .main-title {
+    text-align: center;
     height: 40rpx;
     font-size: 28rpx;
     font-family: PingFangSC-Medium, PingFang SC;

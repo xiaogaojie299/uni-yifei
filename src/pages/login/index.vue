@@ -75,8 +75,7 @@ export default {
   },
   async onLoad(option) {
     let res = await getMenu();
-    this.$store.dispatch("getTreeData")
-    console.log("res", res);
+    this.$store.dispatch("getTreeData");
   },
   methods: {
     async submit() {
@@ -104,7 +103,7 @@ export default {
         try {
           let result = res.result;
           uni.setStorageSync("token",result.token)
-          uni.setStorageSync("userInfo", JSON.stringify(result));
+          this.$store.commit('setUserInfo', result)
           // 在这里捞一次用户权限数据，存入Storage和Vuex
           this.$store.dispatch('setPermissionList');
           this.$refs.uToast.show({
