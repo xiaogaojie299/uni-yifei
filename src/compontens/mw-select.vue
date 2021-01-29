@@ -506,7 +506,7 @@ export default {
         flex: 1;
         .name {
             @include text-overflow;
-        }
+        } 
         &.group {
             // min-width: 240rpx;
             // max-width: 80%;

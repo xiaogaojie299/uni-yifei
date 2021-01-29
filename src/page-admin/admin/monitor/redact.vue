@@ -224,6 +224,7 @@ export default {
    text-align: right;
       width: 460rpx;
       height: 80rpx;
+      font-size: 28rpx;
 }
 input {
      

@@ -14,7 +14,7 @@
                     <view class="checkDrop-box flex-ver-center">
                         <view @tap="handleHospitalShow" class="checkDrop">
                             <input placeholder="选择组织" :value="selectTree.label" type="text" disabled />
-                            <img src="@/static/images/down_arrow.png" alt="">
+                            <!-- <img src="@/static/images/down_arrow.png" alt=""> -->
                         </view>
                     </view>
                 
@@ -293,17 +293,18 @@ export default {
             .checkDrop-box{
                 height: 100rpx;
                 .checkDrop{
-                width: 460rpx;
                 position: relative;
                 input{
-                    width: 460rpx;
-                    height: 44rpx;
+                    width: 550rpx;
+                    height: 54rpx;
                     line-height: 44rpx;
                     background: RGBA(91, 116, 199, 1);
                     padding-right: 64rpx;
                     padding-left: 16rpx;
-                    border-radius: 22rpx;
+                    border-radius: 30rpx;
                     color: #FFFFFF;
+                     font-size: 24rpx;
+                    text-align:center;
                 }
                 img{
                     position: absolute;

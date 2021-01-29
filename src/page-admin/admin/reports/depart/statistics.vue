@@ -5,23 +5,28 @@
       </view>
       <!-- 下拉框 -->
       <view class="header-item my-box">
-        <view class="hospitalName pl-10 nowrap-hidden" @tap="handleHospitalShow">
+        <view class="hospitalName nowrap-hidden" @tap="handleHospitalShow">
           {{ selectTree.label||"请选择医院"}}
         </view>
-        <view class="hospitalName pl-10 nowrap-hidden" @tap="handleStatisticalShow">
+        <view class="hospitalName nowrap-hidden" @tap="handleStatisticalShow">
           {{ selectStatistical.label||"统计方式"}}
         </view>
         <!-- <view v-if="selectStatistical.value!=3" class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
           {{ timeText||"统计时间"}}
         </view> -->
-        <view v-if="selectStatistical.value==1" class="hospitalName pl-10 nowrap-hidden" @tap="handle_time">
+        <view v-if="selectStatistical.value==1" class="hospitalName nowrap-hidden" @tap="handle_time">
           {{ timeText||"统计时间"}}
+          <!-- <text class="day__time" v-if="timeText">
+            <text>{{timeText.split(" ")[0]}}</text>
+            <text>{{timeText.split(" ")[1]}}</text>
+          </text>
+          <text v-else>统计时间</text> -->
         </view>
-        <view v-else-if="selectStatistical.value==3" class="hospitalName pl-10 nowrap-hidden" @tap="handleQuarterShow">
+        <view v-else-if="selectStatistical.value==3" class="hospitalName nowrap-hidden" @tap="handleQuarterShow">
           <!-- {{quarterYear.value?quarterYear.value+'年'+selectQuarter.label:"统计时2"}} -->
           {{timeText ||"统计时间" }}
         </view>
-        <view v-else class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
+        <view v-else class="hospitalName nowrap-hidden" @tap="handleTimerShow">
           {{ timeText||"统计时间"}}
         </view>
       </view>
@@ -205,7 +210,7 @@ export default {
   },
   methods: {
     change(e){
-        this.timeText = e.startDate + "" + e.endDate;
+        this.timeText = e.startDate + " " + e.endDate;
         this.timeStar=`${e.startDate} 00:00:00`;
         this.timeEnd=`${e.endDate} 23:59:59`;
         this.getTableList() //获取数据
@@ -464,12 +469,20 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-size:22rpx;
      .hospitalName{
     width:220rpx;
     height: 44rpx;
+    line-height: 44rpx;
+    text-align: center;
     background: #5b74c7;
     border-radius: 20rpx;
     color: #fff;
+    .day__time{
+      border: 1px solid red;
+      display: flex;
+      flex-direction: column;
+    }
   }
   }
  

@@ -552,6 +552,7 @@
 			{
 				"path": "admin/monitor/list",
 				"style": {
+					"backgroundColor": "#357357",
 					"navigationBarTitleText": "实时监控",
 					"navigationBarBackgroundColor":"#1539AF",
 					"navigationBarTextStyle":"white",
@@ -630,7 +631,8 @@
 		"usingComponents": {
 			"ly-tree-node": "/compontens/tree/ly-tree/ly-tree-node",
 			"select-tree":"/compontens/select-tree",
-			"my-calendar":"/compontens/my-calendar"
+			"my-calendar":"/compontens/my-calendar",
+			"no-data":"/compontens/no-data"
 		}
 	}
 }

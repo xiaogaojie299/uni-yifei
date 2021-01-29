@@ -5,41 +5,19 @@
       <view class="dropdown" @click.stop="open">
         <view class="dropdown_hosp">
           <view @click="goTree" class="flex-ver-center select nowrap-hidden">
-          <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> <u-icon name="arrow-down"></u-icon>
+            <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> <u-icon name="arrow-down"></u-icon>
           </view>
         </view>
-        <u-dropdown height="100" duration="0">
-            <!-- @change="selectArea" -->
-            <!-- :title="options1[selectIndex1]||'选择医院'" -->
-          <!-- <u-dropdown-item
-          v-show="true"
-            disabled
-            v-model="value1"
-            :title="title1||'请选择医院'"
-            :options="options1"
-            @change="selectArea"
-          ></u-dropdown-item> -->
-
-           <u-dropdown-item
-            disabled
-          ></u-dropdown-item>
-
-          <!-- :title="options2[selectIndex2].label||'运输单位'" -->
-          <u-dropdown-item
-            v-model="value2"
-            :title="value2||'运输公司'"
-            :options="options2"
-            :disabled="!selectTree.label"
-            @change="selectUnit"
-          ></u-dropdown-item>
-          <!-- :disabled="!value2" -->
-          <u-dropdown-item
-            v-model="value3"
-            :title="title3||'选择月份'"
-            @change="selectMonth"
-            :options="options3"
-          ></u-dropdown-item>
-        </u-dropdown>
+        <view class="dropdown_hosp">
+          <view @click="selectArea" class="flex-ver-center select nowrap-hidden">
+            <text class="nowrap-hidden">{{selectCmp.label||"运输公司"}}</text> <u-icon name="arrow-down"></u-icon>
+          </view>
+        </view>
+        <view class="dropdown_hosp">
+          <view @tap="selTime" class="flex-ver-center select nowrap-hidden">
+            <text class="nowrap-hidden">{{timeText||"请选择时间"}}</text> <u-icon name="arrow-down"></u-icon>
+          </view>
+        </view>
       </view>
     </view>
     <view class="main" v-if="tableTitle.length>0">
@@ -53,47 +31,45 @@
         </view>
       </view>
       <!-- table表格 -->
-      <transfer-table :tableData="tableData"></transfer-table>
+      <transfer-table v-if="tableData.length>0" :tableData="tableData"></transfer-table>
+      <no-data v-else></no-data>
     </view>
-    <view class="footer"> </view>
+    <!-- 选择运输公司 -->
+    <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="transitCompany" :default-value="selectIndex2" value-name="id" :list="options2" @confirm="roleBack"></s-select>
+    <!-- 选择年月 -->
+     <s-picker v-model="timerShow" mode="time" @confirm="confirmTimer" :params="{year: true,month: true,day: false,}" :default-time="defaultMonthTime"></s-picker>
+    <view class="footer"> </view> 
   </view>
 </template>
 <script>
 import { getMyHospitalCascadeList, listSelect,getTransformList } from "@/utils/api.js";
 import {getTimeType} from "@/utils/getData.js"
 import transferTable from "./tableCmps/transfer-table"
+import sSelect from '@/compontens/s-select';
+import sPicker from '@/compontens/s-picker';
 export default {
   data() {
     return {
+      roleShow:false,   // 运输单位弹起框
+      timerShow:false,  // 时间选择器弹出
+      defaultMonthTime:"", // 默认显示的时间
+      selectCmp:{},     // 选择的运输公司u
       value1: "",      // 选择医院值
       value2: "",      // 选择运输单位值
       value3: "",     // 选择月份值
       options1: [],   // 医院列表
       options2: [],   //运输列表
-      options3:[
-        {realValue:0, value:0,label:"一月",},
-        {realValue:1, value:1,label:"二月"},
-        {realValue:2, value:2,label:"三月"},
-        {realValue:3, value:3,label:"四月"},
-        {realValue:4, value:4,label:"五月"},
-        {realValue:5, value:5,label:"六月"},
-        {realValue:6, value:6,label:"七月"},
-        {realValue:7, value:7,label:"八月"},
-        {realValue:8, value:8,label:"九月"},
-        {realValue:9, value:9,label:"十月"},
-        {realValue:10, value:10,label:"十一月"},
-        {realValue:11, value:11,label:"十二月"},
-      ],    //月份列表
       title1:"",      //选中的菜单标题1
       title2:"",      //选中的菜单标题2
       title3:"",      //选中的菜单标题3
       selectIndex1:"",   //获取医院的下标
-      selectIndex2:"",   //获取运输单位的下标
+      selectIndex2:[0],   //获取运输单位的下标
       selectIndex3:"",     //获取月份的下标
       disTransport:null,
       disMonth:null,
       timeStar:"",         //月份开始
       timerEnd:"",          //月份结束
+      timeText:"",
       tableData:{},       //表格中的数据
       tableTitle:[],
       selectTree:{},    // 选中的科室
@@ -106,21 +82,64 @@ export default {
     }
   },
   components:{
-    transferTable
+    transferTable,sSelect,sPicker
   },
   watch:{
     selectTree(){
         console.log("监听成功");
         this.watchMethod();
+        this.reload()
     },
       deep:true
   },
   methods: {
     open(){
-      console.log(this.selectTree);
       if(JSON.stringify(this.selectTree)=="{}"){
         this.disTransport = true;
       }
+    },
+    reload(){// 初始化数据
+      this.options2 = [];
+      this.selectCmp = {};
+      this.selectIndex2 =[];
+      this.defaultMonthTime = "";
+      this.timeStar = "";         //月份开始
+      this.timerEnd = "";          //月份结束
+      this.timeText="";
+    },
+    roleBack(obj){  // 运输单位选择确定
+       // this.selectIndex1=value;
+      // this.title1=this.options1[this.selectIndex1].label;
+      // this.$refs.uDropdown()
+      // this.title1=this.options1[value].label
+      this.options2.forEach((item,index)=>{
+          if(item.id == obj[0].value){
+              this.selectIndex2 = [index];
+          }
+      })
+      this.timeDisab = false;
+      this.selectCmp = obj[0];
+    },
+    selTime(){
+      if(!this.selectCmp.value){
+       return uni.showToast({
+          title:"请选择运输公司",
+          icon:"none"
+        })
+      }
+      this.timerShow = true;
+    },
+    confirmTimer(obj){ //选择时间确定
+      console.log(obj);
+      //  this.selectTime=obj;
+       let {year,month} = obj;
+       let monthDays=new Date(year,month,0).getDate(); //判断当前月有多少天
+        this.timeStar=`${year}-${month}-01 00:00:00`;
+        this.timeEnd=`${year}-${month}-${monthDays} 23:59:59`;
+        console.log(this.timeEnd);
+        this.timeText =`${year}-${month}`;
+        this.defaultMonthTime=`${year}-${month}-10`;
+        this.getTableList()
     },
     async init() {
       let { code, message, result } = await getMyHospitalCascadeList();
@@ -165,6 +184,24 @@ export default {
     },
     // 获取表单数据
     async getTableList(){
+      if(!this.selectTree.value){
+       return uni.showToast({
+          title:"请选择医院",
+          icon:"none"
+        })
+      }
+      if(!this.selectCmp.value){
+       return uni.showToast({
+          title:"请选择运输公司",
+          icon:"none"
+        })
+      }
+      if(!this.timeStar){
+       return uni.showToast({
+          title:"请选择时间",
+          icon:"none"
+        })
+      }
       /* 
       let params={
         departmentId:this.options1[this.value1].realValue, //医院区域ID
@@ -178,9 +215,9 @@ export default {
      let {value,label} = this.selectTree;
       let params={
         departmentId:value, //医院区域ID
-        transitCompany:"处置中心", //运输处置中心
+        transitCompany:this.selectCmp.value, //运输处置中心
         startTime:this.timeStar,
-        endTime:this.timerEnd
+        endTime:this.timeEnd
       }
       try {
         let {code,result,message} = await getTransformList(params);
@@ -192,13 +229,27 @@ export default {
       }
     },
     selectArea(value) {
+      if(!this.selectTree.value){
+        uni.showToast({
+          title:"请先选择医院",
+          icon:"none"
+        })
+        return 
+      }
+      if(this.options2.length==0){
+        uni.showToast({
+          title:"暂无运输公司",
+          icon:"none"
+        })
+        return 
+      }
       //选择区域
-      this.selectIndex1=value;
-      this.title1=this.options1[this.selectIndex1].label;
+      this.roleShow = true;
+      // this.selectIndex1=value;
+      // this.title1=this.options1[this.selectIndex1].label;
       // this.$refs.uDropdown()
       // this.title1=this.options1[value].label
-      
-      this.watchMethod();
+      // this.watchMethod();
     },
     selectUnit(value){
       this.selectIndex2=value;
@@ -228,10 +279,10 @@ export default {
     var monthEndDate = (new Date(nowYear, nowMonth+1, 1));
     var timeStar=Date.parse(monthStartDate);//s
     var timeEnd=(Date.parse(monthEndDate)-1000);//s
-    console.log(getTimeType(timeStar))
+    // console.log(getTimeType(timeEnd))
     this.timeStar=getTimeType(timeStar)+" 00:00:00";
     this.timerEnd=getTimeType(timeEnd)+" 23:59:59";
-    }
+    } 
   },
   onShow() {
     this.init();
@@ -277,9 +328,7 @@ export default {
 }
 .dropdown{
   display: flex;
-  position: relative;
   .dropdown_hosp{
-    position: absolute;
     padding-left: 10rpx;
     height: 100rpx;
     display: flex;
@@ -297,6 +346,7 @@ export default {
     height: 44rpx;
     border-radius: 12px;
     background: #5b74c7;
+    font-size:22rpx;
     text{
       width: 200rpx;
     }

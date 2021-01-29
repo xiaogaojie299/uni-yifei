@@ -56,7 +56,7 @@ export default {
         }
     },
     mounted() {
-        this.paginate();
+        // this.reload();
     },
     onPullDownRefresh() {
         this.reload();

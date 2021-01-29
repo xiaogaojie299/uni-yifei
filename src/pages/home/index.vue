@@ -6,13 +6,13 @@
           <img class="" :src="item.imgUrl" alt="" />
           <view class="" style="width:100rpx;">
             <view v-if="index==3" class="font-s-28">
-              <span v-if="item.num.length<6">{{item.num+'条'}}</span>
-              <u-notice-bar v-else color="white" :play-state="playState" :speed="50" :volume-icon="false" :list="[item.num+'条']"></u-notice-bar>
+              <span v-if="item.num.length<5">{{item.num+'条'}}</span>
+              <u-notice-bar v-else color="white" :play-state="playState" :speed="20" :volume-icon="false" :list="[item.num+'条']"></u-notice-bar>
             </view>
             <view v-else class="font-s-28">
               <!-- {{item.num || 0}}kg -->
               <span v-if="item.num.length<6">{{item.num+'kg'}}</span>
-              <u-notice-bar v-else :autoplay="false" color="white" :play-state="playState" :speed="50" :volume-icon="false" :list="[item.num+'kg']"></u-notice-bar>
+              <u-notice-bar v-else :autoplay="false" color="white" :play-state="playState" :speed="20" :volume-icon="false" :list="[item.num+'kg']"></u-notice-bar>
             </view>
             <view class="font-s-24 nowrap">{{item.title}}</view>
           </view>

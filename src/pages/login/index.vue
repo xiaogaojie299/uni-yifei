@@ -42,7 +42,7 @@
     <!-- 底部 -->
     <view class="footer flex-ver-center">
       <!-- 微信icon -->
-      <img src="@/static/images/wechat.png" alt="" />
+      <!-- <img src="@/static/images/wechat.png" alt="" /> -->
     </view>
   </view>
 </template>

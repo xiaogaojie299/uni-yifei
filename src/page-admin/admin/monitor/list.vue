@@ -6,27 +6,12 @@
                         <view class="my-box">
                             <!-- 选择医院 -->
                                 <view class="lable">
-                                    <text>选择医院</text>
+                                    <!-- <text>选择医院</text> -->
                                     <input @click="handleHospitalShow" placheolder="请选择医院" :value="selectTree.label" type="text" disabled>
                                 </view>
-                            <!-- <view class="">
-                                <view @click="submit" class="btn flex-ver-center">
-                                    查 询
-                                </view> 
-                            </view> -->
                         </view>
                     </view>
                 </u-sticky>
-        <!-- <u-sticky>
-            <view class="header">
-                <view class="header-cont my-box">
-                    <view class="ipt-box">
-                        <img :src="require('@/static/images/search.png')" alt="" />
-                        <input @confirm="search()" confirm-type="search" type="text" v-model="name" placeholder="请输入医院完整名称搜索" />
-                    </view>
-                </view>
-            </view>
-        </u-sticky> -->
         <view class="main">
             <view class="hpt" v-for="(item,index) in monitorList" :key="index">
                 <!-- 横线 -->
@@ -56,13 +41,14 @@
         <!-- <area-drop-down ref="childMethod" :list="areaList" @selectRow="selectRow"></area-drop-down> -->
         <!-- <mw-select></mw-select> -->
         <s-select mode="mutil-column-auto" title="选择组织" v-model="cascadeShow" :list="areaList" @confirm="cascadeCallback" :default-value="cascadeIndex"></s-select>
+        <!-- <view style="height: 70rpx;line-height: 70rpx;width: 100%;text-align: center;" v-show="monitorList.length == 0">暂无数据</view> -->
+        <no-data v-if="monitorList.length == 0"></no-data>
     </view>
 </template>
 <script>
 // import mwSelect from '@/compontens/mw-select/mw-select';
 import {monitoringList} from "@/utils/api"
 import areaDropDown from "@/compontens/my-drop-down/area-drop-down"
-
 import sSelect from '@/compontens/hospital-select';
 export default {
     data(){
@@ -185,6 +171,30 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+page{
+    background: RGBA(243, 245, 247, 1);
+}
+.mw-select-item {
+        background: rgba(82, 75, 75, 0.3);
+        border-radius: 30rpx;
+        margin: 0 10rpx;
+        min-width: 160rpx;
+        height: 54rpx;
+        padding: 2rpx 30rpx;
+        color: #fff;
+        display: flex;
+        font-size: 24rpx;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        .name {
+            @include text-overflow;
+        } 
+        &.group {
+            // min-width: 240rpx;
+            // max-width: 80%;
+        }
+    }
 .btn{
     width: 160rpx;
     height: 56rpx;
@@ -207,13 +217,13 @@ export default {
         // position: fixed;
         top: 0;
         left: 0;
-        background: RGBA(243, 245, 247, 1);
+        // background: RGBA(243, 245, 247, 1);
         width: 100%;
-        min-height: 100vh;
+        // min-height:100vh;
         .header{
             width: 100%;
             height: 100rpx;
-            background:#fff;
+            background:$my-main-color;
             .my-box{
                 height: 100rpx;
                 display: flex;
@@ -221,6 +231,7 @@ export default {
                 align-items: center;
             }
             .lable{
+                margin:0 auto;
                 display: flex;
                 height: 100%;
                 align-items: center;
@@ -231,9 +242,19 @@ export default {
                     color: #000000;
                 }
                 & input{
-                    padding-left:44rpx;
-                    height: 100%;
-                    width: 400rpx;
+                     width: 550rpx;
+                    height: 54rpx;
+                    line-height: 44rpx;
+                    background: RGBA(91, 116, 199, 1);
+                    padding-right: 64rpx;
+                    padding-left: 16rpx;
+                    border-radius: 30rpx;
+                    color: #FFFFFF;
+                    font-size: 24rpx;
+                    text-align:center;
+                    // padding-left:44rpx;
+                    // height: 100%;
+                    // width: 400rpx;
                 }
                 
             }

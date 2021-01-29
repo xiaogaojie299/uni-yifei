@@ -167,7 +167,6 @@ export default {
         this.warningSetting();
         return ;
     }
-    console.log("url",url);
 
     // 做了分包，路由有变动，routeMap和prefixMap的索引一一对应
     let routeMap = [
