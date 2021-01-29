@@ -402,7 +402,7 @@
 </script>
 
 <style lang="scss" scoped>
-/deep/ .u-btn{
+::v-deep .u-btn{
 			width: 120rpx;
 			height: 56rpx;
 			z-index:0;

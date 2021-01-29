@@ -329,7 +329,7 @@ export default {
         },
         showCascade() {
             this.$toTree(Object.assign(this.cascadeData, {
-                onlyHospital: true,
+                onlyHospital: !this.options.department,
                 // checkOnlyLeaf: true
             }));
         },
@@ -343,7 +343,6 @@ export default {
             this.warningStatus = '';
             this.auditStatus = '';
             this.cascadeLabel = '选择组织';
-            this.transList = [];
             this.trans = '';
         },
         confirm() {

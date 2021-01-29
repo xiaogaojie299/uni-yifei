@@ -34,7 +34,6 @@ export default {
         options: {
           cascade: true,
           department: true,
-          subject: true,
           status: false,
           waste: true,
           timestamp: true,
