@@ -33,8 +33,6 @@ export default {
     return {
         options: {
           cascade: true,
-          department: true,
-          subject: true,
           status: false,
           waste: true,
           timestamp: true

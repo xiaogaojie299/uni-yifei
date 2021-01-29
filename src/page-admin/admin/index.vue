@@ -210,9 +210,9 @@ export default {
     for (let i in menus) {
       // 先校验有无权限
       let typeId = parseInt(i) + 1;
-      if (!this.$util.checkPermission('warning:setting:type' + typeId)) {
-        continue;
-      }
+      // if (!this.$util.checkPermission('warning:setting:type' + typeId)) {
+      //   continue;
+      // }
 
       let route = '/warning/setting';
       if (typeId == 1 || typeId == 4) {

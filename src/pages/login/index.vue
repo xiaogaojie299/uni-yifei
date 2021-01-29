@@ -56,14 +56,16 @@ export default {
       list: [
         {
           placeholder: "请输入用户名",
-          value: "17708110425",
+          // value: "17708110425",
+          value: '15892310721',
           name: "oldPwd",
           type: "text",
           imgUrl: require("@/static/images/userIcon.png")
         },
         {
           placeholder: "请输入密码",
-          value: "17708110425",
+          // value: "17708110425",
+          value: '123456',
           name: "newPwd",
           type: "password",
           imgUrl: require("@/static/images/upwd.png")

@@ -1,11 +1,9 @@
 <template>
   <view class="warning-setting-custom-edit">
     <u-cell-group>
-      <u-cell-item title="医院" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showHospital">
-        <u-loading v-show="hospitalLoading" slot="icon"/>
+      <u-cell-item title="医院" :arrow="true"  arrow-direction="right" :value="hospitalLabel" @click="showHospital()">
       </u-cell-item>
-      <u-cell-item title="科室" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="showDepartment" v-if="type == 1">
-        <u-loading v-show="departmentLoading" slot="icon"/>
+      <u-cell-item title="科室" :arrow="true"  arrow-direction="right" :value="departmentLabel" @click="showDepartment()" v-if="type == 1">
       </u-cell-item>
       <u-cell-item title="类型" :arrow="true"  arrow-direction="right" :value="wasteLabel" @click="showWaste" v-if="type == 4">
         <u-loading v-show="wasteLoading" slot="icon"/>
@@ -17,8 +15,6 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <hospital-select title="选择医院" v-model="hospitalShow" @confirm="hospitalCallback" :default-value="hospitalIndex" :default-ids="hospitalIds" @loading="hospitalLoading = true" @loaded="hospitalLoading = false"/>
-    <hospital-select title="选择科室" v-model="departmentShow" @confirm="departmentCallback" :default-value="departmentIndex" :default-ids="departmentIds" :hospital-id="hospitalId" @loading="departmentLoading = true" @loaded="departmentLoading = false"/>
     <s-select title="医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
     <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="timeoutShow" :dot-enabled="type >= 5"></u-keyboard>
   </view>
@@ -28,12 +24,38 @@ import { addWarningConfigItem, editWarningConfigItem, getWasteTypeList } from "@
 import HospitalSelect from '@/compontens/hospital-select';
 import sField from '@/compontens/s-field';
 import sSelect from '@/compontens/s-select';
+import { mapState } from 'vuex';
 export default {
   components:{
     HospitalSelect, sField, sSelect
   },
+  computed: {
+    ...mapState([
+      'checkedNodes',
+      'checkedDepartment',
+    ])
+  },
+  watch: {
+    checkedNodes: function(n) {
+        if (n.value != this.hospitalId) {
+          this.resetDepartment();
+        }
+        this.hospitalLabel = n.label;
+        this.hospitalId = n.value;
+        this.cascadeData = n;
+    },
+    checkedDepartment: function(n) {
+        this.departmentLabel = n.label;
+        this.departmentId = n.value;
+        this.departmentData = n;
+    },
+  },
   data() {
     return {
+
+      cascadeData: {},
+      departmentData: {},
+
       hospitalShow: false, // 医院选择显示
       departmentShow: false, // 科室选择显示
       wasteShow: false,
@@ -134,15 +156,12 @@ export default {
         });;
       },
       showHospital() {
-        if (this.disabled) {
-          return ;
-        }
-        this.hospitalShow = true;
+        this.$toTree(Object.assign(this.cascadeData, {
+          checkOnlyLeaf: true,
+          onlyHospital: true
+        }));
       },
       showDepartment() {
-        if (this.disabled) {
-          return ;
-        }
         if (!this.hospitalId) {
           uni.showToast({
             title: '请先选择医院',
@@ -150,7 +169,11 @@ export default {
           })
           return ;
         }
-        this.departmentShow = true;
+        this.$toTree(Object.assign(this.departmentData, {
+          checkOnlyLeaf: true,
+          hospitalId: this.hospitalId
+        }));
+
       },
       showWaste() {
         console.log(this.disabled);
@@ -185,8 +208,16 @@ export default {
           this.detail = detail;
           this.hospitalId = detail.customHospitalId;
           this.hospitalLabel = detail.customHospitalName;
+          this.cascadeData = {
+            label: detail.customHospitalName,
+            value: detail.customHospitalId
+          };
           this.departmentId = detail.customOfficeId;
           this.departmentLabel = detail.customOfficeName;
+          this.departmentData = {
+            label: detail.customOfficeName,
+            value: detail.customOfficeId
+          };
           this.defaultValue = '' + detail.customValue;
           this.hospitalIds = detail.hospitalIdList.slice(1) || [];
           this.departmentIds = detail.officeIdList ? (detail.officeIdList.length > 5 ? detail.officeIdList.slice(5) : []) : [];
@@ -204,21 +235,6 @@ export default {
           });
         }
         this.loadWasteType();
-      },
-      departmentCallback(e) {
-          if (e.e.length > 0) {
-              let department = e.e[e.e.length - 1];
-              this.departmentLabel = department.label;
-              this.departmentId = department.value;
-          }
-      },
-      hospitalCallback(e) {
-          if (e.e.length > 0) {
-              let hospital = e.e[e.e.length - 1];
-              this.hospitalLabel = hospital.label;
-              this.hospitalId = hospital.value;
-              this.resetDepartment();
-          }
       },
       resetDepartment() {
         this.departmentId = '';

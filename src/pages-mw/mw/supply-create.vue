@@ -93,11 +93,20 @@ export default {
       this.waste && this.loadTransportList();
     },
     checkedNodes: function(n) {
+        if (n.value != this.hospitalId) {
+          this.resetDepartment();
+          this.resetOfficeCascade();
+          this.resetWarehouse();
+        }
         this.hospitalLabel = n.label;
         this.hospitalId = n.value;
         this.cascadeData = n;
     },
     checkedDepartment: function(n) {
+        if (n.value != this.departmentId) {
+          this.resetOfficeCascade();
+          this.resetWarehouse();
+        }
         this.departmentLabel = n.label;
         this.departmentId = n.value;
         this.departmentData = n;
@@ -308,19 +317,6 @@ export default {
       }).catch(err => {}).finally(e => {
         this.wasteLoading = false;
       });;
-    },
-    // 医院选择回调事件
-    hospitalCallback(e) {
-      e = e.e;
-      let hospital = e[e.length - 1];
-      if (hospital.value != this.hospitalId) {
-        // 如果不一致，需要清除
-        this.resetDepartment();
-        this.resetOfficeCascade();
-        this.resetWarehouse();
-      }
-      this.hospitalLabel = hospital.label;
-      this.hospitalId = hospital.value;
     },
     // 清空科室选择
     resetDepartment() {

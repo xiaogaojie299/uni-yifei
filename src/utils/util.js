@@ -3,6 +3,7 @@ import store from '@/store';
 export function checkPermission(key) {
     // 暂时用Storage, 后期优化
     let permissionKeyList = uni.getStorageSync('cache:user:permission:key:list');
+    console.log(permissionKeyList);
     return permissionKeyList.findIndex(i => i == key) > -1;
 }
 

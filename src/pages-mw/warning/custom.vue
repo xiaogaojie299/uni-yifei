@@ -49,22 +49,36 @@ export default {
   computed: {
       ...mapState([
           'checkedNodes'
-      ])
+      ]),
+      disabled() {
+          return !this.$util.checkPermission('warning:setting:type' + this.type);
+      }
   },
   watch: {
       checkedNodes: function(n) {
-          console.log(n);
-          this.hospitalLabel = n.label;
-          this.hospitalId = n.value;
-          this.cascadeData = n;
-          this.reload();
+          if (n.value) {
+            this.hospitalLabel = n.label;
+            this.hospitalId = n.value;
+            this.cascadeData = n;
+            this.reload();
+          }
       }
   },
   onLoad(option) {
+        // 设置默认医院
+        let { departmentIdList, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
+        this.hospitalId = departmentIdList[departmentIdList.length -1];
+        this.hospitalLabel = departmentName
+        this.cascadeData = {
+            value: this.hospitalId,
+            label: this.hospitalLabel
+        };
+        console.log(this.$data);
       this.type = option.type;
       this.reload();
   },
   onShow() {
+      this.$store.commit('setCheckedNodes', {});
       if(uni.getStorageSync('willRefresh')) {
           this.reload(); 
           uni.removeStorageSync('willRefresh');
@@ -138,14 +152,6 @@ export default {
             this.loading = false;
             uni.stopPullDownRefresh();
           });
-      },
-      hospitalCallback(e) {
-          if (e.e.length > 0) {
-              let hospital = e.e[e.e.length - 1];
-              this.hospitalLabel = hospital.label;
-              this.hospitalId = hospital.value;
-              this.reload();
-          }
       },
       edit(item) {
           // 存到本地，因为没有单独的接口拿数据哦

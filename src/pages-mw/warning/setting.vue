@@ -4,18 +4,18 @@
             暂无配置
         </view>
         <block v-else>
-            <u-field :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="valueShow = true" disabled v-if="type > 5"/>
-            <u-field :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="valueShow = true" disabled v-else/>
+            <u-field :disabled="disabled" :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="showKeyboard" disabled v-if="type > 5"/>
+            <u-field :disabled="disabled" :label="labelList[type].label" label-width="300" input-align="right" v-model="defaultValue" :border-bottom="true" :placeholder="labelList[type].placeholder" :clearable="false" @click="showKeyboard" disabled v-else/>
             <block v-if="type == 8 || type == 9">
                 <u-cell-group>
-                    <u-cell-item title="设置类型值" @click="wasteShow = true" :arrow="true"  arrow-direction="right" :value="wasteLabel">
+                    <u-cell-item :disabled="disabled" title="设置类型值" @click="" :arrow="true"  arrow-direction="right" :value="wasteLabel">
                         <u-loading v-show="wasteLoading" slot="icon"/>
                     </u-cell-item>
                 </u-cell-group>
                 <s-select-multi title="选择类型" v-model="wasteShow" :d-list="wasteList" @confirm="wasteCallback" :checked-list="wasteIndex" multi></s-select-multi>
             </block>
             <view class="warning-setting__button__container">
-                <view :class="{button: true, 'button__disabled': submitLoading}" @click="submit()">
+                <view :class="{button: true, 'button__disabled': submitLoading || disabled}" @click="submit()" :disabled="disabled">
                     <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
                 </view>
             </view>
@@ -30,6 +30,11 @@ import { detailWarningConfigType, getWasteTypeList, editWarningConfigType } from
 export default {
   components:{
       sField, sSelectMulti
+  },
+  computed: {
+      disabled() {
+          return !this.$util.checkPermission('warning:setting:type' + this.type);
+      }
   },
   onLoad(option) {
       this.type = option.type;
@@ -118,15 +123,28 @@ export default {
 
   },
   methods: {
+        showWaste() {
+            if (this.disabled) return ;
+            this.wasteShow = true
+        },
+        showKeyboard() {
+            if (this.disabled) return ;
+            this.valueShow = true;
+        },
         // 按键被点击(点击退格键不会触发此事件)
         valChange(val) {
+            if (this.disabled) return ;
             if (val == '.') {
                 if (this.defaultValue.indexOf('.') > -1) {
                 return ;
                 }
             }
             // 将每次按键的值拼接到value变量中，注意+=写法
-            this.defaultValue += val;
+            if (this.defaultValue == '0') {
+                this.defaultValue = '' + val;
+            } else {
+                this.defaultValue += val;
+            }
         },
         // 退格键被点击
         backspace() {
@@ -209,9 +227,13 @@ export default {
           });
       },
       submit() {
-          // 再次校验数字
-          if (!this.numberCheck()) {
-              return ;
+          if (this.disabled) return ;
+          let checkFlag = false;
+          if (this.type < 6 || this.defaultValue != '') {
+            // 再次校验数字
+            if (!this.numberCheck()) {
+                return ;
+            }
           }
           // todo 无需校验是否选择了类型
           if ((this.type == 8 || this.type == 9) && this.wasteIds == '') {
@@ -221,11 +243,10 @@ export default {
                 })
               return ;
           }
-
           // 开始提交
           this.submitLoading = true;
           editWarningConfigType({
-              defaultValue: this.defaultValue,
+              defaultValue: +this.defaultValue,
               type: this.type,
               wasteTypes: this.wasteIds.join(',')
           }).then(resp => {
