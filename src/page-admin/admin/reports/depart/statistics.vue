@@ -420,6 +420,12 @@ export default {
   onShow() {
     this.init();
   },
+  onBackPress(e){ // 左侧自定义导航
+            uni.switchTab({
+                url:"/page-admin/admin/index"
+            })
+        return true
+  },
 };
 </script>
 <style lang="scss" scoped>

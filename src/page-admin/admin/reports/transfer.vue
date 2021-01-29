@@ -92,6 +92,12 @@ export default {
     },
       deep:true
   },
+  onBackPress(e){ // 左侧自定义导航
+            uni.switchTab({
+                url:"../index"
+            })
+        return true
+    },
   methods: {
     open(){
       if(JSON.stringify(this.selectTree)=="{}"){

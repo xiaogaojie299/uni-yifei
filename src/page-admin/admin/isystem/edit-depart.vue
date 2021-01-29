@@ -78,9 +78,12 @@ export default {
                         icon:"none"
                     })
                     setTimeout(()=>{
-                         uni.navigateTo({
-                        url:"./depart"
-                    })
+                        uni.redirectTo({
+                            url:"./depart"
+                        })
+                        //  uni.navigateTo({
+                        //     url:"./depart"
+                        // })
                     },1500)
                    
                 }

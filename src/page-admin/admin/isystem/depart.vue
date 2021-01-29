@@ -82,8 +82,16 @@
 				//this.$refs.tree.setCurrentKey(9);
 			});
         },
+        onBackPress(e){
+            console.log("返回");
+            let pages = getCurrentPages();
+            let prevPage = pages[pages.length - 3]; //上一个页面
+            uni.switchTab({
+                url:"../index"
+            })
+                return true
+            },
         onShow(){
-            console.log("执行成功");
              this.$store.commit('setUnitValue',{})
         },
         created(){
@@ -177,7 +185,7 @@
                             if(obj.data.orgType==4){return}
                             if (obj.data.childrenList && obj.data.childrenList.length > 0) return; // 如果已经有数据就返回
                             let params = {
-                                parentId:obj.key
+                                parentId:obj.key 
                             }
                             let {result} = await listRegionChildren(params)
                             this.$nextTick(() => {

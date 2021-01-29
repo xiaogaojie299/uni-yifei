@@ -147,9 +147,16 @@ export default {
         },
         deep:true
     },
+    
     components:{
         sSelect,
         hSelect
+    },
+    onBackPress(e){
+            uni.switchTab({
+                url:"../index"
+            })
+        return true
     },
     created(){
         this.sysRole();
