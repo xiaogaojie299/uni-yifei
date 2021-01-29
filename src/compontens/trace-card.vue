@@ -415,11 +415,13 @@ export default {
                         {
                             key: 'hospitalName',
                             label: '医院'
-                        },
+                        }
+                    ],
+                    [
                         {
                             key: 'departmentName',
                             label: '科室'
-                        },
+                        }
                     ],
                     [
                         {
@@ -799,8 +801,12 @@ export default {
                     font-weight: 500;
                 }
             }
+            &__field:last-child:first-child {
+                white-space: nowrap;
+                width: 100%;
+                max-width: 100%;
+            }
             &__field:nth-child(1) {
-                // white-space:nowrap;;
                 max-width: 420rpx;
             }
             &__field:nth-child(2) {
