@@ -800,8 +800,8 @@ export default {
                 }
             }
             &__field:nth-child(1) {
-                white-space:nowrap;;
-                max-width: 400rpx;
+                // white-space:nowrap;;
+                max-width: 420rpx;
             }
             &__field:nth-child(2) {
                 text-align: right;
