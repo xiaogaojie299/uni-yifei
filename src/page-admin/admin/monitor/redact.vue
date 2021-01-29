@@ -49,13 +49,13 @@ export default {
           title: "设备名称",
           value: "",
           placeholder:"输入设备名称",
-          disabled:true
+          disabled:false
         },
         {
           title: "设备监控编号",
           value: "",
           placeholder:"输入设备监控编号",
-          disabled:false,
+          disabled:true,
         },
         {
           title: "自动关闭时间(分钟)",
