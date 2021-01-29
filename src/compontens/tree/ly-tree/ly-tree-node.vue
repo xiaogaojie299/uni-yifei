@@ -62,9 +62,12 @@
 					]" /> -->
 
 			<view v-if="isEdit" class="operation">
-				<text @click.stop="editNode(node)">编辑</text>
-				<text @click.stop="delNode(node)" v-if="node.data.canDelete" class="allow-del">删除</text>
-				<text v-else @click.stop="placeholder(node)" class="no-del">删除</text>
+				<!-- <text @click.stop="editNode(node)">编辑</text> -->
+				<u-button @click.stop="editNode(node)" style="color:#1539AF;border:1px solid #1539AF;" :hair-line="false">编辑</u-button>
+				<u-button :hair-line="false" style="border:1px solid RGBA(105, 105, 105, 1);color:RGBA(105, 105, 105, 1);margin-left:20rpx;" @click.stop="placeholder(node)" v-if="!node.data.canDelete" class="allow-del">删除</u-button>
+				<u-button style="color:red;border:1px solid red;margin-left:20rpx;" :hair-line="false" v-else @click.stop="delNode(node)" class="no-del">删除</u-button>
+				<!-- <text @click.stop="delNode(node)" v-if="node.data.canDelete" class="allow-del">删除</text>
+				<text v-else @click.stop="placeholder(node)" class="no-del">删除</text> -->
 			</view>
 
 
@@ -120,7 +123,7 @@
 
 <script>
 	// 自己的业务逻辑
-	import {listRegionChildren} from '@/utils/api' 
+	import {listRegionChildren,sysDepartmentDelete} from '@/utils/api' 
 	import {getNodeKey} from './tool/util.js';
 	import lyCheckbox from './components/ly-checkbox.vue';
 
@@ -211,16 +214,43 @@
 				}
 			}
 		},
-		
+		 
 		methods: {
 			editNode(node){
+				console.log(node);
 				uni.navigateTo({
 					url:"/page-admin/admin/isystem/edit-depart"+"?node="+JSON.stringify(node)
 				})
 				console.log("跳转编辑页面");
 			},
 			delNode(node){
-				console.log("删除",node);
+				let that = this;
+				let params = {id:this.node.data.id}
+					uni.showModal({
+                title: '提示',
+                content: '确认删除该组织？',
+                success: function (res) {
+                    if (res.confirm) {
+						that.tree.$emit("delDep");                        
+							sysDepartmentDelete(params).then(res=>{
+							let {code,result,message} = res;
+							if(code == 200){
+								that.$emit("delDep")
+								uni.showToast({title:"删除组织成功",icon:"none"})
+								setTimeout(()=>{
+									that.$store.dispatch("getLeftTreeData")
+								},1000)
+							}else{
+								uni.showToast({title:message,icon:"none"})
+							}
+                        })
+                        
+                    } else if (res.cancel) {
+                        console.log('用户点击取消');
+                    }
+                }
+            })
+
 			},
 			placeholder(){
 				// 占位
@@ -371,7 +401,16 @@
 	};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+/deep/ .u-btn{
+			width: 120rpx;
+			height: 56rpx;
+			z-index:0;
+			border-radius: 30rpx;
+			font-size: 24rpx;
+			font-family: PingFang-SC-Medium, PingFang-SC;
+			font-weight: 500;
+}
 .placeholder-box{
 	}
 .container{
@@ -391,6 +430,7 @@
 	
 	.ly-tree-node__content>.operation{
 		position: absolute;
+		display: flex;
 		right: 24rpx;
 		text{
 			display: inline-block;

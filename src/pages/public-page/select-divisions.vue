@@ -41,7 +41,7 @@
             <view v-else @tap="submit">
                 确定
             </view>
-        </view>
+        </view> 
       </view>
     <!-- <u-button @click="test">测试</u-button> -->
 </view>

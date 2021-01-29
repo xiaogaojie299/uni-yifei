@@ -15,7 +15,7 @@
         </view> 
 		</u-sticky>
        <view class="content">
-        <scroll-view scroll-y="true" style="height:calc(100vh - 200rpx)">
+        <scroll-view scroll-y="true" style="height:calc(100vh - 300rpx)">
           <ly-tree
             ref="tree"
             :isEdit="false"
@@ -44,9 +44,6 @@
                     /> -->
         </scroll-view>
           <view class="btn-group">
-            <view @tap="quite" class="">
-                取消
-            </view>
             <view v-if="checkoutValue.checkedKeys.length==0"  class="opcity">
                 确定
             </view>
@@ -282,23 +279,14 @@
             width: 100%;
             box-shadow: 1px 1px 8px #c7c7c7;
             view{
-                width: 50%;
+                width: 100%;
                 height: 100rpx;
                 text-align: center;
                 line-height: 100rpx;
                 font-size:26rpx;
-                color: black;
-            }
-                view:nth-of-type(1){
-                    border: 1px solid #FAFAFA;
-                    background:  #f5f5f5;
-                    color:#333
-                }
-                view:nth-of-type(2){
                     background: $my-main-color;
                     border: 1px solid $my-main-color;
                     color: #fff;
-                }
-
+            }
             }
 </style>

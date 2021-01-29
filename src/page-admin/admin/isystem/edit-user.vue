@@ -179,9 +179,10 @@
                         icon:"none"
                     })
                     setTimeout(()=>{
-                         uni.navigateTo({
-                        url:"./user"
-                    })
+                    //      uni.navigateTo({
+                    //     url:"./user"
+                    // })
+                    uni.navigateBack()
                     },1500)
                    
                 }

@@ -51,6 +51,8 @@ import { login, getMenu, } from "@/utils/api.js";
 export default {
   data() {
     return {
+      // 17708110425 超级管理员
+      // 15892310721  医院管理员
       list: [
         {
           placeholder: "请输入用户名",
@@ -71,6 +73,7 @@ export default {
   },
   async onLoad(option) {
     let res = await getMenu();
+    this.$store.dispatch("getTreeData")
     console.log("res", res);
   },
   methods: {

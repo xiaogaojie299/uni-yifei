@@ -28,7 +28,8 @@
     </view>
     <view class="main" v-if="tableTitle.length>0">
       <view class="my-box pt-20">
-        <view class="main-title"> 医疗废物转移联单 </view>
+        <!-- <view class="main-title"> 医疗废物转移联单 </view> -->
+        <view class="main-title"> {{tableData.departmentName}}医疗废物报表 </view>
         <!-- 详情 -->
         <view class="detail-box">
           <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
@@ -50,6 +51,7 @@
     <u-select v-model="statisticalShow" :default-value="statisticalIndex" mode="single-column" :list="statisticalList" @confirm="confirmStatistical"></u-select>
     <!-- 开始时间 -->
     <u-picker v-if="selectStatistical.value==2" mode="time" v-model="timerShow" :params="timerParams" :default-time="defaultMonthTime" @confirm="confirmTimer"></u-picker>
+    <!-- <s-picker v-if="selectStatistical.value==2" v-model="timerShow" mode="time" @confirm="confirmTimer" :params="timerParams" :default-time="defaultMonthTime"></s-picker> -->
     <u-picker v-else mode="time" v-model="timerShow" :params="{year: true,month: false,day: false,}" :default-time="defaultYearTime" @confirm="confirmTimer"></u-picker>
     <!-- <s-picker v-model="timerShow" mode="time" @confirm="confirmTimer" :params="timerParams" :default-time="defaultTime"></s-picker> -->
     <!-- 按照季度 -->
@@ -257,6 +259,7 @@ export default {
     },
     confirmStatistical(e){
       console.log(e);
+      this.clearTable()
       this.statisticalIndex=[e[0].value -1]
       this.selectStatistical=e[0];
       switch(this.selectStatistical.value){
@@ -276,8 +279,13 @@ export default {
       }
       console.log(this.timerParams);
     },
+    clearTable(){ // 清空table
+      this.tableData = {};       //表格中的数据
+      this.tableTitle =[];
+      this.timeStar=``;
+      this.timeEnd=``;
+    },
      confirmTimer(e){
-       console.log(e);
        this.selectTime=e;
        let {year,month} = e;
        console.log(e.month==undefined);
@@ -286,7 +294,8 @@ export default {
         this.timeStar=`${year}-${month}-01 00:00:00`;
         this.timeEnd=`${year}-${month}-${monthDays} 23:59:59`;
         this.timeText =`${year}-${month}`;
-        this.defaultMonthTime=`${year}-${month}`;
+        this.defaultMonthTime=`${year}-${month}-10`;
+        console.log("timerParams=",this.timerParams);
         console.log("this.defaultMonthTime==>",this.defaultMonthTime);
        }else if(e.month==undefined){    //按年查询
         this.timeStar=`${year}-01-01 00:00:00`;

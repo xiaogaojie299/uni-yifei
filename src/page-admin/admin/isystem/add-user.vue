@@ -27,24 +27,24 @@
         </view>
         <view class="header my-box h-100">
             <view class="label flex-center">密码</view>
-            <input type="text" v-model="form.password" placeholder="请输入你的密码" value="" />
+            <input type="password" v-model="form.password" placeholder="请输入你的密码" value="" />
             
         </view>
         
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
-            保 存{{isSubmit}}
+            保 存
         </view>
         <view v-else @tap="submit" class="footer-btn flex-ver-center allow">
-            保 存{{isSubmit}}
+            保 存 
         </view>
-        <leftree @checkoutValue="checkoutValue" ref="handleModel" />
+        <leftree :isRoleTree="true" @checkoutValue="checkoutValue" ref="handleModel" />
          <!-- 角色弹框 -->
         <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
     </view>
 </template>
-<script>
-import {getParent,sysDepartmentEdit} from "@/utils/api"
+<script> 
+import {getParent,sysDepartmentEdit,userAdd} from "@/utils/api"
 import sSelect from '@/compontens/s-select';
 import leftree from "./cmps/left-tree"
 import {actions} from "vuex"
@@ -94,13 +94,15 @@ export default {
     },
     computed:{
             isSubmit(){
-                for (var k in this.form &&this.form.departmentId){
-                    if(!this.form[k]){
-                        return false
-                    }else{
-                        return true
-                    }
-                }
+              let {account,phone,departmentId,name,roleId,roleName,password} = this.form;
+                return account && phone && departmentId && name && roleId && roleName && password
+                // for (var k in this.form &&this.form.departmentId){
+                //     if(!this.form[k]){
+                //         return false
+                //     }else{ 
+                //         return true
+                //     }
+                // }
             },
         orgType(){
             console.log(this.$store.state);
@@ -159,21 +161,25 @@ export default {
            
         },
         submit(){
-            let params = this.node;
-            delete params.childrenList;
-            params.parentId = this.parent.id;
-            params.departName = this.name;
-            console.log("params",params);
-            sysDepartmentEdit(params).then(res=>{
+                let params = {};
+               let {account,departmentId,name,password,phone,roleId} = this.form;
+                params.account = account;
+                params.departmentId=departmentId;
+                params.name = name;
+                params.password = password;
+                params.phone = phone;
+                params.roleIdList  = [roleId]
+            userAdd(params).then(res=>{
                 if(res.code==200){
                     uni.showToast({
-                        title:"编辑成功",
+                        title:"添加成功",
                         icon:"none"
                     })
                     setTimeout(()=>{
-                         uni.navigateTo({
-                        url:"./depart"
-                    })
+                    //      uni.navigateTo({
+                    //         url:"./depart"
+                    // })
+                    uni.navigateBack()
                     },1500)
                    
                 }

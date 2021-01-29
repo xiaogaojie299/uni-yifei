@@ -189,9 +189,11 @@ export default {
 
     // emmmmm 这个错别单词真是让我脑壳痛
     url = url.replace(/wraning/g, 'warning');
+    url = url.replace(/trajectory/g, 'travel')
     uni.navigateTo({
       url: prefix + url
     })
+    console.log(prefix + url);
   },
   warningSetting() {
     let menus = [
