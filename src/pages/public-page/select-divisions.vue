@@ -149,7 +149,7 @@
                         this.treeData = result;
                     });
                 } else {
-                    sysDepartmentTreeList().then(({result})=>{
+                    getMyDepartmentTreeList().then(({result})=>{
                         // uni.setStorageSync("treeData", JSON.stringify(result))
                         this.treeData = result;
                     })
