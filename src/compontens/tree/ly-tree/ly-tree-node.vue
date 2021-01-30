@@ -78,12 +78,6 @@
 				:indeterminate="node.indeterminate" 
 				:disabled="!!node.disabled"
 				@check="handleCheckChange(!node.checked)"/>
-			
-			<text v-if="node.loading" 
-				class="ly-tree-node__loading-icon ly-iconfont ly-icon-loading">
-				测试
-			</text>
-			
 			<template v-if="node.icon && node.icon.length > 0">
 				<image 
 					v-if="node.icon.indexOf('/') !== -1" 

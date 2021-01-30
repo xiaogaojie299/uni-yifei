@@ -211,9 +211,17 @@ export default {
   methods: {
     change(e){
       console.log(e);
-        this.timeText = e.startDate + " " + e.endDate;
-        this.timeStar=`${e.startDate} 00:00:00`;
-        this.timeEnd=`${e.endDate} 23:59:59`;
+       
+        if(e.endDate){
+          this.timeStar=`${e.startDate} 00:00:00`;
+          this.timeEnd=`${e.endDate} 23:59:59`;
+          this.timeText = e.startDate + " " + e.endDate;
+        }else{
+          this.timeStar=`${e.startDate} 23:59:59`;
+          this.timeEnd=``;
+          this.timeText = e.startDate
+        }
+        
         this.getTableList() //获取数据
     },
     handle_time(){  // 按日期选择开始时间和结束时间
@@ -382,13 +390,14 @@ export default {
       }
        this.tableData = {};       //表格中的数据
       this.tableTitle =[];
+      console.log(this.timeStar);
       let params = {
         departmentId:this.selectTree.value,
         statisticalWayType:this.selectStatistical.value,
         startTime:this.timeStar,
         endTime:this.timeEnd
       }
-      console.log("params=",params);
+      this.timeEnd || delete params.endTime
       let {code,result,msg} =await getOfficeReportList(params);
       try{
         if(code==200){

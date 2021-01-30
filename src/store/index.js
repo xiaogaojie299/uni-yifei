@@ -18,7 +18,8 @@ let store = new vuex.Store({
         checkedDepartment: {}, // 选中的科室列表
         checkedParams: {}, // 选中的默认配置数据
         checkedDepartmentUser: {}, // 选中的科室人员列表
-        roleTree:[]         // 角色树状图
+        roleTree:[],         // 角色树状图
+        defaultParams:{},
     },
     mutations:{
         setAreaList(state,list){
@@ -68,8 +69,23 @@ let store = new vuex.Store({
         },
         setUserInfo(state,list){
             state.userInfo = list;
+            let {departmentId,departmentIdList,orgType} = list;
+            let lastId = departmentIdList[departmentIdList.length-1];
+            let params = {};
+            if(orgType>2){  // 如果区域ID 为3,4  则医院ID = 登陆信息中的的 departmentId 
+                params = {
+                    departmentId:lastId,
+                    hospitalId:departmentId
+                }
+            }else{  // 否则区域ID 为 1,2 的时候 医院ID取登陆信息中的departmentIdList数组中的最后一个
+                params = {
+                    hospitalId:lastId
+                }
+            }
+            state.defaultParams = params;
+            uni.setStorageSync("defaultParams",JSON.stringify(params))
             uni.setStorageSync("userInfo",JSON.stringify(list))
-        }
+        },
     },
     actions:{
         async getAreaList(context){

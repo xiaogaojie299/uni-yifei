@@ -34,7 +34,7 @@
         </view>
       </view>
       <!-- table表格 -->
-      <transfer-table v-if="tableData.length>0" :tableData="tableData"></transfer-table>
+      <transfer-table v-if="tableData.list && tableData.list.length>0" :tableData="tableData"></transfer-table>
       <no-data v-else></no-data>
     </view>
     <!-- 选择运输公司 -->
@@ -131,6 +131,9 @@ export default {
       })
       this.timeDisab = false;
       this.selectCmp = obj[0];
+      if(this.timeStar){
+        this.getTableList()
+      }
     },
     selTime(){
       if(!this.selectCmp.value){
@@ -223,24 +226,23 @@ export default {
       }
       */
      this.tableData = [];
-     this.tableTitle=null;
+     this.tableTitle={};
      let {value,label} = this.selectTree;
       let params={
         departmentId:value, //医院区域ID
-        transitCompany:this.selectCmp.value, //运输处置中心
+        transitCompany:this.selectCmp.label, //运输处置中心
         startTime:this.timeStar,
         endTime:this.timeEnd
       }
-      
+      console.log(params);
       try {
         let {code,result,message} = await getTransformList(params);
         this.tableData = result;
-        console.log();
         this.transitConfigNameText = this.selectCmp.label;
         this.tableTitle=result.legend;  //表头菜单
         //this.tableData =result.list;    //表格中的数据
       } catch (error) {
-        
+        // console.log(error);
       }
     },
     selectArea(value) {
@@ -280,7 +282,6 @@ export default {
       //   })
       // }
       // 选择月份调用获取table方法
-      this.getTableList()
     },
     // 时间转化工具
     timerType(value3){
