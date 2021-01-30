@@ -33,6 +33,7 @@ export default {
     return {
         options: {
           cascade: true,
+          department: true,
           warningStatus: true,
           warningType: true,
           timestamp: true
