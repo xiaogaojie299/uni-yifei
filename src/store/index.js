@@ -95,7 +95,7 @@ let store = new vuex.Store({
             }
         },
         async getLeftTreeData(context){
-            sysDepartmentTreeList().then(({code,result})=>{
+            getMyDepartmentTreeList().then(({code,result})=>{
                 if(code==200){
                     context.commit('setLeftTreeData', result);
                 }

@@ -91,7 +91,6 @@ export default {
            console.log(res.result);
            this.unitList = res.result;
        })
-        console.log("加载成功",this.orgType);
         this.list.forEach(((item,idnex)=>{
            if(this.orgType==1 || this.orgType==1){
                 this.list[0].disabled = true;
