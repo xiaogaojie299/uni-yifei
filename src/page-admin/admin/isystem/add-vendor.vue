@@ -10,7 +10,7 @@
             <!-- 支持信息 -->
             <view class="col-2">
                 <view class="">
-                    支持信息
+                    支持信息 
                 </view>
                 <!-- 留言板 -->
                 <textarea v-model="params.description" placeholder="请输入支持信息" :auto-height="true" />

@@ -37,7 +37,7 @@
         <view class="main-title"> {{tableData.departmentName}}医疗废物报表 </view>
         <!-- 详情 -->
         <view class="detail-box">
-          <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
+          <!-- <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view> -->
           <!-- <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view> -->
           <view class="">时间：{{timeText}}</view>
         </view>
@@ -210,6 +210,7 @@ export default {
   },
   methods: {
     change(e){
+      console.log(e);
         this.timeText = e.startDate + " " + e.endDate;
         this.timeStar=`${e.startDate} 00:00:00`;
         this.timeEnd=`${e.endDate} 23:59:59`;
@@ -507,7 +508,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 142rpx;
+    height: 62rpx;
     font-size: 24rpx;
     font-family: PingFang-SC-Medium, PingFang-SC;
     font-weight: 500;

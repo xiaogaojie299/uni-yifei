@@ -17,7 +17,7 @@
               :auto-color="true"
               :dot-scale="1"
               :text="userInfo.qrUrl" />
-          </view>
+          </view> 
           <view v-else>
             <img src="@/static/images/logo.png" alt="">
           </view>
