@@ -13,7 +13,7 @@
       </u-sticky>
       <view class="list-container">
         <s-loading v-show="loading" />
-        <view style="height: 70rpx;line-height: 70rpx;width: 100%;text-align: center;" v-show="list.length == 0">没有更多数据了</view>
+        <view style="height: 70rpx;line-height: 70rpx;width: 100%;text-align: center;" v-show="list.length == 0 && !loading">没有更多数据了</view>
         <outbound-setting-card v-for="(item, index) in list" :key="index" :item="item" @remove="remove(index)" />
       </view>
       <view class="button-container" v-if="canEdit">

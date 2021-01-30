@@ -275,8 +275,8 @@ export default {
     },
     mounted() {
         // 设置默认医院
-        let { departmentIdList, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
-        this.cascadeId = departmentIdList[departmentIdList.length -1];
+        let { departmentId, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
+        this.cascadeId = departmentId;
         let cascadeLabel = departmentName
         this.cascadeData = {
             value: this.cascadeId,
