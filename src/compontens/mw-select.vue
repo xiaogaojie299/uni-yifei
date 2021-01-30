@@ -315,19 +315,7 @@ export default {
             for (let i in this.defaultValue) {
                 this.$set(this.$data, i, this.defaultValue[i]);
             }
-            this.emitConfirm();
-
-            // if (this.defaultValue.startTime && this.defaultValue.endTime) {
-            //     this.startTime = this.defaultValue.startTime;
-            //     this.endTime = this.defaultValue.endTime;
-            //     this.emitConfirm();
-            // }
-            // if (this.warningStatus) {
-            //     this.warningStatus = this.defaultValue.warningStatus;
-            // }
-            // if (this.status) {
-            //     this.status = this.defaultValue.
-            // }
+            // this.emitConfirm();
         },
         showCascade() {
             this.$toTree(Object.assign(this.cascadeData, {
