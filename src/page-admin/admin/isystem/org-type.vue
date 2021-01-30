@@ -12,7 +12,7 @@
 			>
             <view class="header flex-center my-box h-100">
 				{{item.name}}
-                <input v-if="index==1" disabled placeholder="选择单位名称" @tap="openSelect" :value="iptValue" />
+                <input class="ipt" v-if="index==1" disabled placeholder="请选择" @tap="openSelect()" :value="iptValue" />
                 <!-- <img v-if="index==1" src="@/static/images/down_arrow.png" /> -->
                 <view class="icon-img" v-if="index==1">
                     <u-icon name="arrow-up"  color="#dddddd"></u-icon> 
@@ -23,7 +23,9 @@
 		</u-radio-group>
 
 	</view>
+    <view class="u-prop">
         <u-picker v-model="show" :default-selector="[index]" @confirm="confirm" title="单位部门" :range="unitList" range-key="itemText" mode="selector"></u-picker>
+    </view>
     </view>
 </template>
 <script>
@@ -62,6 +64,7 @@ export default {
             show:false,      // 弹出框的显示和隐藏
             index:0,        //弹出框选择的index下标
             iptValue:"",         // input 框中显示的值
+            isTap:false
            // orgType:null        // 判断新增用户选择的父节点 1,2,3,4
         }
     },
@@ -84,6 +87,10 @@ export default {
         }
     },
     created(){
+        unitData().then(res=>{
+           console.log(res.result);
+           this.unitList = res.result;
+       })
         console.log("加载成功",this.orgType);
         this.list.forEach(((item,idnex)=>{
            if(this.orgType==1 || this.orgType==1){
@@ -96,12 +103,19 @@ export default {
        }))
     },
     methods:{
-        openSelect(){
-            this.show = true;
+        openSelect(index){
+            if(this.isTap){
+                this.show = true;
+            }
         },
         // 选中某个单选框时，由radio时触发
 		radioChange(e) {
             console.log(e);
+            if(e=="单位"){
+                    this.isTap=true
+            }else{
+                this.isTap=false
+            }
             let selectValue={};
             selectValue.name =e;
             switch (e){
@@ -160,10 +174,7 @@ export default {
         getParent(params).then(res=>{
         })
         */
-    //    unitData().then(res=>{
-    //        console.log(res.result);
-    //        this.unitList = res.result;
-    //    })
+       
     //    this.orgType = options.orgType; 
        console.log("options.orgType=",this.orgType);
        
@@ -175,17 +186,21 @@ export default {
             .header{
                 // line-height: 100rpx;
                 position: relative;
-                input{
-                    position: absolute;
+                .ipt{
+                      position: absolute;
                     display: inline-block;
-                    border: 1px solid #dddddd;
-                    border-radius: 20rpx;
+                    border: 1px solid #aeaeae;
+                    border-radius: 30rpx;
+                    // color: 1px solid #3f3e3e;
                     width: 300rpx;
                     height: 60rpx;
                     left:100rpx;
                     z-index: 1000;
-                    padding-left:20rpx;
+                    // padding-left:20rpx;
                     // top:50%;
+                }
+                input{
+                  
                 }
                 .icon-img{
                     position: absolute;

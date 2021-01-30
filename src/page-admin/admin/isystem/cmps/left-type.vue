@@ -3,7 +3,9 @@
     <u-popup mode="right" width="550" v-model="show">
       <view class="content">
         <scroll-view scroll-y="true" style="height:calc(100vh - 100rpx)">
-            <orgType :orgType="orgTypeNum" />
+           <view class="pl-20">
+           <orgType :orgType="orgTypeNum" />
+           </view> 
         </scroll-view>
           <view class="btn-group">
             <view @tap="quite" class="">
@@ -99,7 +101,7 @@ export default {
 <style lang="scss" scoped>
 .content {
   text-align: center;
-  padding-left:30rpx;
+  // padding-left:30rpx;
 }
 .opcity{
     opacity: 0.3;
