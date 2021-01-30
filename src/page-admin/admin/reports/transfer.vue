@@ -5,19 +5,22 @@
       <view class="dropdown" @click.stop="open">
         <view class="dropdown_hosp">
           <view @click="goTree" class="flex-ver-center select nowrap-hidden">
-            <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> <u-icon name="arrow-down"></u-icon>
+            <text class="nowrap-hidden">{{selectTree.label||"请选择医院"}}</text> 
+            <!-- <u-icon name="arrow-down"></u-icon> -->
           </view>
         </view>
         <view class="dropdown_hosp">
           <view @click="selectArea" class="flex-ver-center select nowrap-hidden">
-            <text class="nowrap-hidden">{{selectCmp.label||"运输公司"}}</text> <u-icon name="arrow-down"></u-icon>
+            <text class="nowrap-hidden">{{selectCmp.label||"运输公司"}}</text> 
+            <!-- <u-icon name="arrow-down"></u-icon> -->
           </view>
         </view>
         <view class="dropdown_hosp">
           <view @tap="selTime" class="flex-ver-center select nowrap-hidden">
-            <text class="nowrap-hidden">{{timeText||"请选择时间"}}</text> <u-icon name="arrow-down"></u-icon>
+            <text class="nowrap-hidden">{{timeText||"请选择时间"}}</text> 
+            <!-- <u-icon name="arrow-down"></u-icon> -->
           </view>
-        </view>
+        </view> 
       </view>
     </view>
     <view class="main" v-if="tableTitle.length>0">
@@ -26,7 +29,7 @@
         <!-- 详情 -->
         <view class="detail-box">
           <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
-          <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view>
+          <view class="">医疗废物处置单位：{{transitConfigNameText}}</view>
           <view class="">时间：2020年{{timeStar.split(" ")[0].split("-")[1]}}月</view>
         </view>
       </view>
@@ -35,7 +38,7 @@
       <no-data v-else></no-data>
     </view>
     <!-- 选择运输公司 -->
-    <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="transitCompany" :default-value="selectIndex2" value-name="id" :list="options2" @confirm="roleBack"></s-select>
+    <s-select mode="mutil-column-auto" title="运输公司" v-model="roleShow" label-name="transitCompany" :default-value="selectIndex2" value-name="id" :list="options2" @confirm="roleBack"></s-select>
     <!-- 选择年月 -->
      <s-picker v-model="timerShow" mode="time" @confirm="confirmTimer" :params="{year: true,month: true,day: false,}" :default-time="defaultMonthTime"></s-picker>
     <view class="footer"> </view> 
@@ -59,6 +62,7 @@ export default {
       value3: "",     // 选择月份值
       options1: [],   // 医院列表
       options2: [],   //运输列表
+      transitConfigNameText:"",
       title1:"",      //选中的菜单标题1
       title2:"",      //选中的菜单标题2
       title3:"",      //选中的菜单标题3
@@ -112,6 +116,8 @@ export default {
       this.timeStar = "";         //月份开始
       this.timerEnd = "";          //月份结束
       this.timeText="";
+      this.tableData={};       //表格中的数据
+      this.tableTitle=[];
     },
     roleBack(obj){  // 运输单位选择确定
        // this.selectIndex1=value;
@@ -225,9 +231,12 @@ export default {
         startTime:this.timeStar,
         endTime:this.timeEnd
       }
+      
       try {
         let {code,result,message} = await getTransformList(params);
         this.tableData = result;
+        console.log();
+        this.transitConfigNameText = this.selectCmp.label;
         this.tableTitle=result.legend;  //表头菜单
         //this.tableData =result.list;    //表格中的数据
       } catch (error) {
@@ -336,6 +345,7 @@ export default {
   display: flex;
   .dropdown_hosp{
     padding-left: 10rpx;
+    
     height: 100rpx;
     display: flex;
     align-items: center;
@@ -345,14 +355,15 @@ export default {
       font-size: 15px;
       color: #ffffff;
       width: 240rpx;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding:0 20rpx;
-    height: 44rpx;
-    border-radius: 12px;
-    background: #5b74c7;
-    font-size:22rpx;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding:0 20rpx;
+      height: 44rpx;
+      border-radius: 12px;
+      background: #5b74c7;
+      font-size:22rpx;
     text{
       width: 200rpx;
     }
@@ -365,6 +376,7 @@ export default {
 }
 .main {
   .main-title {
+    text-align: center;
     height: 40rpx;
     font-size: 28rpx;
     font-family: PingFangSC-Medium, PingFang SC;

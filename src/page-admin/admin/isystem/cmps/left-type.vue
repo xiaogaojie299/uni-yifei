@@ -3,14 +3,13 @@
     <u-popup mode="right" width="550" v-model="show">
       <view class="content">
         <scroll-view scroll-y="true" style="height:calc(100vh - 100rpx)">
-          
+            <orgType :orgType="orgTypeNum" />
         </scroll-view>
-          <!-- <u-button @click="show = false;">{{checkValue.label}}</u-button> -->
           <view class="btn-group">
             <view @tap="quite" class="">
                 取消
             </view>
-            <view v-if="checkoutValue.checkedKeys.length==0"  class="opcity">
+            <view v-if="!unitValue.value"  class="opcity">
                 确定
             </view>
             <view v-else @tap="submit">
@@ -24,10 +23,12 @@
 
 <script>
 import lyTree from "@/compontens/tree/ly-tree/ly-tree.vue";
-import {getMyDepartmentTreeList} from '@/utils/api' 
+import {getMyDepartmentTreeList} from '@/utils/api';
+import orgType from "../org-type"
 export default {
   data() {
     return {
+      orgTypeNum:null,
       show: false,  //遮罩层开关
       treeData: [], //树结构数据
       checkoutValue:{checkedKeys:[]},   //选择的节点数据
@@ -47,7 +48,12 @@ export default {
   },
 
   components: {
-    lyTree,
+    orgType
+  },
+  computed:{
+    unitValue(){
+      return this.$store.state.unitValue
+    }
   },
   watch:{
   },
@@ -56,19 +62,6 @@ export default {
   },
   methods: {
     init(){
-      try{
-          if(this.$store.state.leftTreeData.length==0){
-      this.$store.dispatch('getLeftTreeData')
-       getMyDepartmentTreeList().then(res=>{
-        this.treeData = res.result;
-      })
-    }else{
-      this.treeData = this.$store.state.leftTreeData;
-    }
-      }catch(e){
-        console.log(e);
-        //TODO handle the exception
-      }
       
     },
       quite(){
@@ -77,45 +70,20 @@ export default {
           this.checkoutValue={checkedKeys:[]}
       },
       submit(){
-          this.$emit("checkoutValue",this.checkoutValue);
-        //   this.parentId = this.checkoutValue;
           this.show = false;
-          uni.setStorageSync("checkoutValue",JSON.stringify(this.checkoutValue));
       },
-      openModel(params={}) {
+      openModelOrg(type) {
+        console.log(type);
+        this.orgTypeNum=type
         this.show = true;
-        this.init()
-        console.log(params);
-        if(params.departmentId){
-          setTimeout(()=> {
-             this.expandKeys = [params.departmentId];
-            this.checkedKeys= [params.id];
-            console.log(this.checkedKeys= [params.id]);
-        }, 500);
-        }
-        // this.expandKeys = [];
-        // this.checkedKeys= [];
-      if(this.checkoutValue.checkedKeys.length>0){   //判断用户之前已经选择好了的id，默认展开
-        this.checkoutValue = JSON.parse(uni.getStorageSync("checkoutValue")) ;
-          setTimeout(()=> {
-            this.expandKeys.push(this.checkoutValue.data.parentId)
-            // this.checkedKeys.push(this.checkoutValue.data.id);
-            this.checkedKeys = this.checkoutValue.checkedKeys;
-        }, 500);
-      }
-        
-    },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.departName.indexOf(value) !== -1;
-    },
-    handleNodeClick(obj) {
-    },
-    handleCheck(node) {
-      this.checkoutValue = node
-    },
-    handleRadioChange(obj) {
-    },
+      },
+      handleNodeClick(obj) {
+      },
+      handleCheck(node) {
+        this.checkoutValue = node
+      },
+      handleRadioChange(obj) {
+      },
   },
   created() {
     // this.treeData = JSON.parse(uni.getStorageSync("treeData"));
@@ -131,6 +99,7 @@ export default {
 <style lang="scss" scoped>
 .content {
   text-align: center;
+  padding-left:30rpx;
 }
 .opcity{
     opacity: 0.3;

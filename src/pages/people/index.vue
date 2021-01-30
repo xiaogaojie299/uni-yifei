@@ -72,6 +72,11 @@ export default {
       return JSON.parse(uni.getStorageSync("userInfo")); 
     }
   },
+  // onShow(){
+  //   console.log("onshow","加载成功");
+  //     this.userInfo = JSON.parse(uni.getStorageSync("userInfo")); 
+  //     console.log("userInfo ",this.userInfo);
+  // },
   components:{
     vueQr
   },

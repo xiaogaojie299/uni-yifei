@@ -5,16 +5,16 @@
       </view>
       <!-- 下拉框 -->
       <view class="header-item my-box">
-        <view class="hospitalName nowrap-hidden" @tap="handleHospitalShow">
+        <view class="hospitalName nowrap-hidden pl-10 pr-10" @tap="handleHospitalShow">
           {{ selectTree.label||"请选择医院"}}
         </view>
-        <view class="hospitalName nowrap-hidden" @tap="handleStatisticalShow">
+        <view class="hospitalName nowrap-hidden pl-10 pr-10" @tap="handleStatisticalShow">
           {{ selectStatistical.label||"统计方式"}}
         </view>
         <!-- <view v-if="selectStatistical.value!=3" class="hospitalName pl-10 nowrap-hidden" @tap="handleTimerShow">
           {{ timeText||"统计时间"}}
         </view> -->
-        <view v-if="selectStatistical.value==1" class="hospitalName nowrap-hidden" @tap="handle_time">
+        <view v-if="selectStatistical.value==1" class="hospitalName nowrap-hidden pl-10 pr-10" @tap="handle_time">
           {{ timeText||"统计时间"}}
           <!-- <text class="day__time" v-if="timeText">
             <text>{{timeText.split(" ")[0]}}</text>
@@ -22,11 +22,11 @@
           </text>
           <text v-else>统计时间</text> -->
         </view>
-        <view v-else-if="selectStatistical.value==3" class="hospitalName nowrap-hidden" @tap="handleQuarterShow">
+        <view v-else-if="selectStatistical.value==3" class="hospitalName nowrap-hidden pl-10 pr-10" @tap="handleQuarterShow">
           <!-- {{quarterYear.value?quarterYear.value+'年'+selectQuarter.label:"统计时2"}} -->
           {{timeText ||"统计时间" }}
         </view>
-        <view v-else class="hospitalName nowrap-hidden" @tap="handleTimerShow">
+        <view v-else class="hospitalName nowrap-hidden pl-10 pr-10" @tap="handleTimerShow">
           {{ timeText||"统计时间"}}
         </view>
       </view>
@@ -39,7 +39,7 @@
         <view class="detail-box">
           <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
           <!-- <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view> -->
-          <view class="">时间：2020年{{timeStar.split(" ")[0].split("-")[1]}}月</view>
+          <view class="">时间：{{timeText}}</view>
         </view>
       </view>
       <!-- table表格 -->
@@ -495,6 +495,7 @@ export default {
 }
 .main {
   .main-title {
+    text-align: center;
     height: 40rpx;
     font-size: 28rpx;
     font-family: PingFangSC-Medium, PingFang SC;

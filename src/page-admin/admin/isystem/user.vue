@@ -17,14 +17,14 @@
                         <view class="select-title-box nowrap-hidden">
                             <view class="">{{selectTree.label ||'选择组织'}}</view>
                         </view>
-                            <img src="@/static/images/down_arrow.png" alt="">
+                            <!-- <img src="@/static/images/down_arrow.png" alt=""> -->
                     </view>
                     
                     <view @tap="handleRoleShow" class="checkDrop">
                         <view class="select-title-box nowrap-hidden">
                             <view class="">{{selectRole[0].label || "选择角色"}}</view>
                         </view>
-                            <img src="@/static/images/down_arrow.png" alt="">
+                            <!-- <img src="@/static/images/down_arrow.png" alt=""> -->
                     </view>
 
                 </view>
@@ -147,7 +147,11 @@ export default {
         },
         deep:true
     },
-    
+    computed:{
+        userInfo(){
+            return JSON.parse(uni.getStorageSync("userInfo"))
+        }
+    },
     components:{
         sSelect,
         hSelect
@@ -206,8 +210,13 @@ export default {
             })
         },
         sysRole(){  // 获取角色列表
+        let {roleType} = this.userInfo;
+        // console.log(roleType);
             let params = {
-                type:-1
+                type:roleType,
+                type:2,
+                pageNo:1,
+                pageSize:1000
             }
             sysRole(params).then(res=>{
                 this.roleList = res.result
@@ -495,11 +504,14 @@ export default {
                 border-radius: 22rpx;
                 color: #FFFFFF;
                 .select-title-box{
+                    // text-align: center;
+                    margin: 0 auto;
                     width: 280rpx;
                     height: 44rpx;
                     display: flex;
+                    justify-content: center;
                     align-items: center;
-                    padding-left:12px;
+                    font-size:22rpx;
                 }
                 img{
                     position: absolute;

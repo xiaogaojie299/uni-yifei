@@ -6,6 +6,7 @@ import createPersistedState from 'vuex-persistedstate'; // vuex数据状态state
 Vue.use(vuex);
 let store = new vuex.Store({
     state:{
+        userInfo:{},
         areaList:[],     //区域下拉列表
         permissionKeyList: [], // 权限KEY列表
         permissionList: [], // 权限列表(元数据)
@@ -36,7 +37,8 @@ let store = new vuex.Store({
             uni.setStorageSync("unitValue",JSON.stringify(list));
         },
         setTreeData(state,list){
-            state.treeData = list
+            state.treeData = list;
+            // uni.setStorageSync("treeData123",JSON.stringify(list));
         },
         setLeftTreeData(state,list){
             state.leftTreeData = list;
@@ -64,6 +66,10 @@ let store = new vuex.Store({
             state.roleTree = list;
             uni.setStorageSync('roleTree',list);
         },
+        setUserInfo(state,list){
+            state.userInfo = list;
+            uni.setStorageSync("userInfo",JSON.stringify(list))
+        }
     },
     actions:{
         async getAreaList(context){
