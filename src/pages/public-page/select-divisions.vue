@@ -216,14 +216,12 @@
                     }
                     this.$store.commit('setCheckedDepartment', params);
                 } else if (this.pageParams.departmentId) {
-                    console.log(checkedNodes);
                     let params = {
                         label: checkedNodes.data.label,
                         value: checkedNodes.data.value
                     }
                     this.$store.commit('setCheckedDepartmentUser', params);
                 } else {
-                    console.log('showYou ?');
                     let params = {
                         label: checkedNodes.data.label,
                         value: checkedNodes.data.value,

@@ -262,6 +262,7 @@ export default {
             transList: [],
             cascadeType: 0,
             cascadeId: '', // 选中的医院ID
+            departmentId: '', // 选中的科室ID
             wasteId: '', // 选中的类型ID
             status: '', // 入库状态
             startTime: '', // 开始时间
@@ -275,9 +276,11 @@ export default {
     },
     mounted() {
         // 设置默认医院
-        let { departmentId, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
+        // let { departmentId, departmentName } = JSON.parse(uni.getStorageSync("userInfo"));
+        let { departmentId, departmentName } = this.$util.getMyDepartment();
         this.cascadeId = departmentId;
         let cascadeLabel = departmentName
+
         this.cascadeData = {
             value: this.cascadeId,
             label: cascadeLabel
@@ -350,8 +353,16 @@ export default {
             this.emitConfirm();
         },
         emitConfirm() {
+            let departmentId = '';
+            let hospitalId = '';
+            if (this.cascadeType > 2) {
+                departmentId = this.cascadeId;
+            } else {
+                hospitalId = this.cascadeId;
+            }
             this.$emit('confirm', {
-                cascade: this.cascadeId,
+                cascade: hospitalId,
+                department: departmentId,
                 status: !this.status ? '' : this.status,
                 auditStatus: !this.auditStatus ? '' : this.auditStatus,
                 waste: this.wasteId,

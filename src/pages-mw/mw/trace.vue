@@ -102,6 +102,7 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
+          departmentId: this.departmentId,
           status: this.status,
           wasteType: this.wasteType,
           startTime: this.startTime,
@@ -121,6 +122,7 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
+        this.departmentId = e.department;
         // 审核状态
         this.status = e.status;
         // 医废类型

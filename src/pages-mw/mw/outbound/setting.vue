@@ -48,6 +48,7 @@ export default {
         pageNo: 1,
         pageSize: 10,
         hospitalId: '', // 医院ID
+        departmentId: '', // 科室ID
         keyWord: '',
         list: [],
     };
@@ -99,6 +100,7 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
+          departmentId: this.departmentId,
           keyWord: this.keyWord, // 车牌号
         }).then(resp => {
             if (resp.code == 200) {
@@ -114,6 +116,8 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
+        
+        this.departmentId = e.department;
         this.reload();
       },
       create() {

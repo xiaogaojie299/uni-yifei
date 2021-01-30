@@ -50,8 +50,9 @@ export default {
   },
   onLoad(option) {
         // 设置默认医院
-        let { departmentId } = JSON.parse(uni.getStorageSync("userInfo"));
-        this.hospitalId = departmentId;
+    let { departmentId, departmentName } = this.$util.getMyDepartment();
+    // let { departmentId } = JSON.parse(uni.getStorageSync("userInfo"));
+    this.hospitalId = departmentId;
       this.type = option.type;
       this.reload();
   },
