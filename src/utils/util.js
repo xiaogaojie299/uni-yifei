@@ -1,4 +1,15 @@
 import store from '@/store';
+export function getMyDepartment() {
+    let { departmentIdList, departmentName, departmentId, orgType } = JSON.parse(uni.getStorageSync('userInfo'));
+    if (orgType === 1 || orgType === 2) {
+        departmentId = departmentIdList[departmentIdList.length - 1];
+    }
+    return {
+        departmentId, departmentName
+    }
+}
+
+
 // 检查指定的权限是否存在
 export function checkPermission(key) {
     // 暂时用Storage, 后期优化

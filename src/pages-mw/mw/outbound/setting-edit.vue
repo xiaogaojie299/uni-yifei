@@ -59,12 +59,11 @@ import sSelect from '@/compontens/s-select';
 import sSelectMulti from '@/compontens/s-select-multi';
 import sPicker from '@/compontens/s-picker';
 import sCheckbox from '@/compontens/s-checkbox';
-import hospitalSelect from '@/compontens/hospital-select';
 import { getMyHospitalCascadeList, getWasteTypeList, editTransitConfig, addTransitConfig } from "@/utils/api.js";
 import { mapState } from 'vuex';
 export default {
   components:{
-    sSelect, sPicker, sCheckbox, sSelectMulti, hospitalSelect
+    sSelect, sPicker, sCheckbox, sSelectMulti
   },
   data() {
     return {
@@ -139,6 +138,11 @@ export default {
         this.id = detail.id;
 
         this.hospitalLabel = detail.hospitalName;
+
+        this.cascadeData = {
+          label: detail.hospitalName,
+          value: detail.hospitalId
+        }
         this.wasteLabel = detail.wasteType;
         this.hospitalIds = detail.hospitalIdList.slice(1);
         uni.setNavigationBarTitle({
