@@ -162,7 +162,10 @@ export default {
             // 某种情况下可以支持小数
             result = this.$u.test.number(this.defaultValue)
         }
-        let dialogText = (isDigits ? '时长' : '重量') + '应该为一个' + (isDigits ? '正整数' : '正数');
+        if (this.defaultValue <= 0) {
+            result = false;
+        }
+        let dialogText = (isDigits ? '时长' : '重量') + '应该为一个大于0的' + (isDigits ? '正整数' : '正数');
         if (!result) {
             uni.showToast({
                 title: dialogText,
