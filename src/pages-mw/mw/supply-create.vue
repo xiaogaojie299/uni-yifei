@@ -256,6 +256,7 @@ export default {
         }));
     },
     showDepartmentUser() {
+        this.isSelectDepartmentUser = true;
         if (!this.departmentId) {
           uni.showToast({
             title: '请先选择科室',
