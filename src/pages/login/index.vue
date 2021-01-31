@@ -16,22 +16,43 @@
             v-for="(item, index) in list"
             :key="index"
             class="list-item h-100 flex-center"
+            @mouseleave="leave"
           >
             <img :src="item.imgUrl" alt="" />
             <input
+              required="required"
               class="ml-10 ipt pl-10"
               :type="item.type"
               :placeholder="item.placeholder"
+              @focus="showIcon(index)"
+              @blur="hiddenIcon(index)"
               v-model="item.value"
             />
-
-            <view style="height: 100%; width: 60rpx">
-              <!-- <img class="eys" v-if="index==1" :src="isWatch?require('@/static/images/iseys.png'):require('@/static/images/uneys.png')" alt="" /> -->
+            <!-- @tap.stop="clearIpt(index)" -->
+            <view
+              v-if="closeIcon === index"
+              @tap.stop="clearIpt(index)"
+              class="close"
+            >
+              <u-icon name="close-circle" size="28"></u-icon>
             </view>
+
+            <!-- <view style="height: 100%; width: 60rpx">
+              <img
+                class="eys"
+                v-if="index == 1"
+                :src="
+                  isWatch
+                    ? require('@/static/images/iseys.png')
+                    : require('@/static/images/uneys.png')
+                "
+                alt=""
+              />
+            </view> -->
           </view>
           <!-- <button form-type="submit" class="btn flex-dev-center">确定</button> -->
         </form>
-        <view @tap="goforgetPwd" class="forPwd"> <text @tap="goforgetPwd"> 忘记密码 </text></view>
+        <view class="forPwd"> <text @tap="goforgetPwd"> 忘记密码 </text></view>
         <!-- 提交按钮 -->
         <view class="login-btn">
           <button @tap="submit" class="btn flex-dev-center">登录</button>
@@ -47,7 +68,7 @@
   </view>
 </template>
 <script>
-import { login, getMenu, } from "@/utils/api.js";
+import { login, getMenu } from "@/utils/api.js";
 export default {
   data() {
     return {
@@ -57,10 +78,10 @@ export default {
         {
           placeholder: "请输入用户名",
           // value: "17708110425",
-          value: '17708110425',
+          value: "17708110425",
           name: "oldPwd",
           type: "text",
-          imgUrl: require("@/static/images/userIcon.png")
+          imgUrl: require("@/static/images/userIcon.png"),
         },
         {
           placeholder: "请输入密码",
@@ -68,9 +89,10 @@ export default {
           // value: '123456',
           name: "newPwd",
           type: "password",
-          imgUrl: require("@/static/images/upwd.png")
+          imgUrl: require("@/static/images/upwd.png"),
         },
       ],
+      closeIcon: false, // 显示input框中的 关闭图标
     };
   },
   async onLoad(option) {
@@ -78,6 +100,21 @@ export default {
     this.$store.dispatch("getTreeData");
   },
   methods: {
+    showIcon(e) {
+      this.closeIcon = e;
+    },
+    hiddenIcon(e) {
+      // this.closeIcon = null;
+    },
+    clearIpt(index) {
+      this.list[index].value = "";
+    },
+    preventBlur(event) {
+      event.preventDefault();
+    },
+    leave() {
+      this.closeIcon = null;
+    },
     async submit() {
       //提交表单
       let uName = this.list[0].value;
@@ -102,19 +139,19 @@ export default {
       if (res.code == 200) {
         try {
           let result = res.result;
-          uni.setStorageSync("token",result.token)
-          this.$store.commit('setUserInfo', result)
+          uni.setStorageSync("token", result.token);
+          this.$store.commit("setUserInfo", result);
           // 在这里捞一次用户权限数据，存入Storage和Vuex
-          this.$store.dispatch('setPermissionList');
+          this.$store.dispatch("setPermissionList");
           this.$refs.uToast.show({
-            title:"登陆成功",
-            type: 'success',
-          })
-          setTimeout(()=>{
+            title: "登陆成功",
+            type: "success",
+          });
+          setTimeout(() => {
             uni.switchTab({
-              url:"../home/index"
-            })
-          },1500)
+              url: "../home/index",
+            });
+          }, 1500);
         } catch (e) {
           console.log(e);
         }
@@ -130,7 +167,7 @@ export default {
       uni.navigateTo({
         url: "./forgetPwd",
       });
-    }
+    },
   },
 };
 </script>
@@ -177,12 +214,20 @@ export default {
         right: 0;
         transform: translateY(-50%);
       }
+      .close {
+        height: 100%;
+        width: 60rpx;
+        line-height: 100rpx;
+      }
+      .ipt:valid + .close {
+        display: block;
+      }
       .ipt {
-        width: 100%;
+        width: 90%;
+        // widows: 600rpx;
         height: 100%;
         padding-right: 44rpx;
-        font-size:30rpx;
-        border: 1px solid red;
+        font-size: 30rpx;
         border: none;
         outline: none;
       }
@@ -193,12 +238,12 @@ export default {
     display: flex;
     justify-content: flex-end;
 
-    text{
+    text {
       display: inline-block;
       line-height: 102rpx;
     }
   }
-  .login-btn{
+  .login-btn {
     width: 100%;
     display: flex;
     align-items: center;
