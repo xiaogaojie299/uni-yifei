@@ -146,6 +146,14 @@ export default {
     watch:{
         
     },
+    onBackPress() {
+        // console.log("后退成功");
+        // window.history.back();
+        // window.history.go(-1);
+        console.log("后退成功");
+        // console.log(window.history);
+        return true
+    },
     onLoad(options){
         /* 
             canDelete: true

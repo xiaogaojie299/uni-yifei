@@ -37,7 +37,7 @@
         <view class="main-title"> {{tableData.departmentName}}医疗废物报表 </view>
         <!-- 详情 -->
         <view class="detail-box">
-          <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view>
+          <!-- <view class="">医疗卫生机构名称：{{tableData.departmentName}}</view> -->
           <!-- <view class="">医疗废物处置单位：{{tableData.transitConfigName}}</view> -->
           <view class="">时间：{{timeText}}</view>
         </view>
@@ -210,9 +210,18 @@ export default {
   },
   methods: {
     change(e){
-        this.timeText = e.startDate + " " + e.endDate;
-        this.timeStar=`${e.startDate} 00:00:00`;
-        this.timeEnd=`${e.endDate} 23:59:59`;
+      console.log(e);
+       
+        if(e.endDate){
+          this.timeStar=`${e.startDate} 00:00:00`;
+          this.timeEnd=`${e.endDate} 23:59:59`;
+          this.timeText = e.startDate + " " + e.endDate;
+        }else{
+          this.timeStar=`${e.startDate} 23:59:59`;
+          this.timeEnd=``;
+          this.timeText = e.startDate
+        }
+        
         this.getTableList() //获取数据
     },
     handle_time(){  // 按日期选择开始时间和结束时间
@@ -381,13 +390,14 @@ export default {
       }
        this.tableData = {};       //表格中的数据
       this.tableTitle =[];
+      console.log(this.timeStar);
       let params = {
         departmentId:this.selectTree.value,
         statisticalWayType:this.selectStatistical.value,
         startTime:this.timeStar,
         endTime:this.timeEnd
       }
-      console.log("params=",params);
+      this.timeEnd || delete params.endTime
       let {code,result,msg} =await getOfficeReportList(params);
       try{
         if(code==200){
@@ -507,7 +517,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 142rpx;
+    height: 62rpx;
     font-size: 24rpx;
     font-family: PingFang-SC-Medium, PingFang-SC;
     font-weight: 500;

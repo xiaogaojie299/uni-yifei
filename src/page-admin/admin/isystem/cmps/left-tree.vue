@@ -91,10 +91,10 @@ export default {
     init(){
       try{
         if(this.isRoleTree){
-          this.treeData = this.$store.state.treeData
+          this.treeData = this.$store.state.leftTreeData
           // this.treeData =JSON.parse(uni.getStorageSync("add:treeData"));
         }else{
-           sysDepartmentTreeList().then(({code,result})=>{
+           getMyDepartmentTreeList().then(({code,result})=>{
                 if(code==200){
                   this.treeData = result
                 }

@@ -325,7 +325,7 @@ export function restoreMedicalTrace(data) {
 }
 // 添加监控设备 
 export function addMonitor(data){
-  let url = "/medical/mwMonitorDevice/add"
+  let url = "/medical/mwMonitorDevice/add" 
   return request.post(url,data)
 }
 // 编辑监控设备

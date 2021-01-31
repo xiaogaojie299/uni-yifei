@@ -150,7 +150,9 @@ export default {
       } catch (error) {}
     },
   },
-  created() {},
+  created() {
+    console.log("tableData",this.tableData);
+  },
 };
 </script>
 <style lang="scss" scoped>

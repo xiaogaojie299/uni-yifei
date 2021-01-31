@@ -24,7 +24,7 @@ import traceCard from '@/compontens/trace-card';
 import sLoading from '@/compontens//s-loading';
 import { listMedicalTrace } from "@/utils/api.js";
 import mwSelectMixin from '@/mixins/mw-select.js';
-export default {
+export default { 
   mixins: [ mwSelectMixin ],
   components:{
     mwSelect, traceCard, sLoading
@@ -60,7 +60,7 @@ export default {
     };
   },
   onLoad(option) {
-      this.reload();
+      // this.reload();    // 这个接口掉了两次 所以数据重复 ,我就先注释这个^_^
   },
   onPullDownRefresh() {
     this.reload();
@@ -78,7 +78,7 @@ export default {
         this.list = [];
         this.total = 0;
         this.pages = 0;
-        this.paginate();
+        this.paginate(); 
       },
       // 加载下一页
       next() {

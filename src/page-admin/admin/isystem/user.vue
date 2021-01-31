@@ -54,9 +54,14 @@
                         <text class="label font-w-500">{{item.office || ""}}</text>
                     </view>
                      <view class="">
-                        <text class="label font-w-400">用户名称：</text>
+                        <text class="label font-w-400">姓名：</text>
                         <text class="label font-w-500">{{item.name || ""}}</text>
                     </view>
+                     <view class="">
+                        <text class="label font-w-400">用户名：</text>
+                        <text class="label font-w-500">{{item.account || ""}}</text>
+                    </view>
+                    
                      <view class="">
                         <text class="label font-w-400">手机号：</text>
                         <text class="label font-w-500">{{item.phone || ""}}</text>
@@ -143,14 +148,16 @@ export default {
     watch:{
         selectTree(){
             this.cascadeCallback();
-            
         },
         deep:true
     },
     computed:{
         userInfo(){
             return JSON.parse(uni.getStorageSync("userInfo"))
-        }
+        },
+        defaultParams(){
+            return this.$store.state.defaultParams
+        },
     },
     components:{
         sSelect,
@@ -177,7 +184,8 @@ export default {
     this.cascadeCallback()
   },
     onShow(){
-        console.log("onShow加载成功");
+          this.selectTree.label = this.userInfo.departmentName;
+        this.selectTree.value = this.defaultParams.hospitalId;
         this.cascadeCallback();
     },
     methods:{

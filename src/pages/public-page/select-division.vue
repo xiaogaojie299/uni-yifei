@@ -76,10 +76,13 @@
             treeData(){
                 let checkOnlyLeaf = this.pageParams.checkOnlyLeaf;   // 判断树结构显示的数据 为true只能选择医院
                 let hospital = this.pageParams.hospital;                // 选择医院 也可选择科室
-                console.log(hospital);
                 if(hospital){
                     this.treeDataOpt.nodeKey = "value";
-                     return JSON.parse(localStorage.getItem("hospital"))
+                    // getMyDepartmentTreeList().then(({result})=>{
+                    //     console.log("result===>",result);
+                    //     return result
+                    // })
+                     return JSON.parse(localStorage.getItem("leftTreeData"))
                 }
                 if(checkOnlyLeaf){
                     this.treeDataOpt.nodeKey = "value";
@@ -93,9 +96,13 @@
                     */
                     return JSON.parse(localStorage.getItem("hospital"))
                 }else{
-                    this.treeDataOpt.nodeKey = "id";
+                    
+                    getMyDepartmentTreeList().then(({result})=>{
+                        this.treeDataOpt.nodeKey = "id";
+                        return result
+                    })
                     // return JSON.parse(localStorage.getItem("treeData"))
-                    return this.$store.state.leftTreeData
+                    // return this.$store.state.leftTreeData
                 }
             },
         },
@@ -132,6 +139,7 @@
 		// 如果不需要不用到这些方法，需要删除相应代码，打印大量日志会造成性能损耗
 		onLoad(options) {
             this.pageParams = JSON.parse(options.params);
+
 			this.$nextTick(() => {
 				// expand-current-node-parent配置表示展开当前节点的父节点
 				//this.$refs.tree.setCurrentKey(9);
@@ -142,9 +150,10 @@
             this.init()
         },
         created(){
-                sysDepartmentTreeList().then(({result})=>{
-                    uni.setStorageSync("treeData",JSON.stringify(result))
-                })
+           this.$store.dispatch("getLeftTreeData")
+                // sysDepartmentTreeList().then(({result})=>{
+                //     uni.setStorageSync("treeData",JSON.stringify(result))
+                // })
                 this.getTreeDalta()
         },
         methods:{
