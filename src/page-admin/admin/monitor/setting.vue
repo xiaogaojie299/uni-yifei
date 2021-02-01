@@ -144,7 +144,8 @@ export default {
     handleHospitalShow() {
       let params = this.selectTree;
       // params.hospital = true;
-       params.checkOnlyLeaf = true;
+      params.monitor = true;
+      //  params.checkOnlyLeaf = true;
       this.$goTree(params);
       // this.childMethod=true;
       // this.$refs.childMethod.openShow()

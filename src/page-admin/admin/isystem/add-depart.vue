@@ -16,10 +16,23 @@
             <input @tap="goOrgType" class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType.name" />
             <img src="@/static/images/path.png" />
         </view>
-        <view v-if="orgType.value==4" class="header my-box h-100">
-            <view class="label flex-center">是否暂存间</view>
+        <view class="header my-box h-100" v-if="orgType.value==4">
+            <!-- <view class="label  flex-center">是否暂存间</view>
             <input @tap="isWarehouse" class="pr-30" type="text" placeholder="是否需要暂存间" disabled :value="wareHouse.label" />
-            <img src="@/static/images/path.png" />
+            <img src="@/static/images/path.png" /> -->
+            <view class="label flex-center">是否暂存间</view> 
+            <view class="flex-center">
+                <u-radio-group v-model="value">
+                    <u-radio 
+                        @change="radioChange" 
+                        v-for="(item, index) in list" :key="index" 
+                        :name="item.name"
+                        :disabled="item.disabled"
+                    >
+                        {{item.name}}
+                    </u-radio>
+                </u-radio-group>
+            </view>
         </view>
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
@@ -46,16 +59,27 @@ export default {
                 label:"",
                 id:null
             },
-            houselist:[
-                    {label:"否",value:0},
-                    {label:"是",value:1}
-                ],
+            // houselist:[
+            //         {label:"否",value:0},
+            //         {label:"是",value:1}
+            //     ],
+                list: [
+				{
+					name: '是',
+					disabled: false
+				},
+				{
+					name: '否',
+					disabled: false
+				}
+            ],
             houseIndex:[0],
             houseShow:false,
             name:"",    //组织名称
             listRegion:[],           // 上个页面获取的树数据
             node:null,            // 父组件传过来的值
-            wareHouse:{label:"否",value:1}
+            wareHouse:{label:"否",value:0},
+            value:"否",         // 单选框的默认值
         }
     },
     provide() {
@@ -85,6 +109,11 @@ export default {
         // uni.setStorageSync("unitValue",{})
     },
     methods:{
+        // 选中某个单选框时，由radio时触发
+		radioChange(e) {
+            this.value = e;
+            e=="是"?this.wareHouse.value=1:this.wareHouse.value=0
+		},
         openTree(){ 
             this.$refs.handleModel.openModel()
         },

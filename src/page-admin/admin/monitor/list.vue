@@ -140,7 +140,8 @@ export default {
     handleHospitalShow() {
       // this.cascadeShow =true;
       let params = this.selectTree;
-      params.checkOnlyLeaf = true;
+      params.monitor = true;
+      params.checkOnlyLeaf = false;
       this.$goTree(params);
     },
     selectRow(row) {

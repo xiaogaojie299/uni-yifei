@@ -41,7 +41,7 @@
         <!-- <view @tap="submit" class="footer-btn flex-ver-center allow">
             保 存
         </view>  -->
-        <leftree :expandKeys="form.departmentId" :checkedKeys="form.checkedKeys" @checkoutValue="checkoutValue" ref="handleModel" />
+        <leftree :isRoleTree="true" :expandKeys="form.departmentId" :checkedKeys="form.checkedKeys" @checkoutValue="checkoutValue" ref="handleModel" />
          <!-- 角色弹框 --> 
         <s-select mode="mutil-column-auto" title="角色" v-model="roleShow" label-name="roleName" value-name="id" :default-value="roleIndex" :list="roleList" @confirm="roleBack"></s-select>
     </view>

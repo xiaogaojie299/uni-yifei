@@ -78,14 +78,14 @@ export default {
         {
           placeholder: "请输入用户名",
           // value: "17708110425",
-          value: "17708110425",
+          value: "",
           name: "oldPwd",
           type: "text",
           imgUrl: require("@/static/images/userIcon.png"),
         },
         {
           placeholder: "请输入密码",
-          value: "17708110425",
+          value: "",
           // value: '123456',
           name: "newPwd",
           type: "password",

@@ -11,24 +11,24 @@
             <input type="text" v-model="name" placeholder="请输入你的组织名称" value="" />
             
         </view>
-        <view class="header my-box h-100">
+        <view class="header my-box h-100"> 
             <view class="label flex-center">组织类型</view>
             <input class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType" />
             <img src="@/static/images/path.png" />
         </view>
-         <view v-if="node.isWarehouse==1" class="header my-box h-100">
+         <view v-if="node.orgType==4" class="header my-box h-100">
             <view class="label flex-center">是否暂存间</view>
             <view class="flex-center">
-        <u-radio-group v-model="value">
-			<u-radio 
-				@change="radioChange" 
-				v-for="(item, index) in list" :key="index" 
-				:name="item.name"
-				:disabled="item.disabled"
-			>
-				{{item.name}}
-			</u-radio>
-		</u-radio-group>
+            <u-radio-group v-model="value">
+                <u-radio 
+                    @change="radioChange" 
+                    v-for="(item, index) in list" :key="index" 
+                    :name="item.name"
+                    :disabled="item.disabled"
+                >
+                    {{item.name}}
+                </u-radio>
+            </u-radio-group>
             </view>
         </view>
         <!-- 选择按钮 -->
@@ -66,7 +66,7 @@ export default {
 					disabled: false
 				}
             ],
-            value: 'orange',
+            value: null,
             roomStatus:null
         }
     },
@@ -86,7 +86,8 @@ export default {
         // 选中某个单选框时，由radio时触发
 		radioChange(e) {
             e=="是"?this.roomStatus=1:this.roomStatus=0
-		},
+            console.log("e==",this.roomStatus);
+        },
 		// 选中任一radio时，由radio-group触发
         openTree(){
             this.$refs.handleModel.openModel()
@@ -97,12 +98,12 @@ export default {
             this.parent.id = node.data.id;
         },
         submit(){
+            console.log(this.roomStatus);
             let params = this.node;
-            console.log(params);
             delete params.childrenList;
             params.parentId = this.parent.id;
             params.departName = this.name;
-            params.status = this.roomStatus
+            params.isWarehouse = this.roomStatus
             console.log("params",params);
             sysDepartmentEdit(params).then(res=>{
                 if(res.code==200){
@@ -142,7 +143,8 @@ export default {
         console.log("node",node);
         this.parent.label = node.parentlabel || node.parent.label;
         this.parent.id = node.parent.key
-        this.value = node.status ===0?"否":"是"
+        console.log(node.data.isWarehouse);
+        this.value = node.data.isWarehouse ===0?"否":"是"
         this.node = node.data;
         this.name = node.label;
         switch( node.data.orgType){

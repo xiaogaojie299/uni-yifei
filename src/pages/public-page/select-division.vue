@@ -87,7 +87,7 @@ export default {
     treeData() {
       let checkOnlyLeaf = this.pageParams.checkOnlyLeaf; // 判断树结构显示的数据 为true只能选择医院
       let hospital = this.pageParams.hospital; // 选择医院 也可选择科室
-      if (hospital) {
+      if (hospital) { 
         this.treeDataOpt.nodeKey = "value";
         // getMyDepartmentTreeList().then(({result})=>{
         //     console.log("result===>",result);
@@ -107,11 +107,16 @@ export default {
                     */
         return JSON.parse(localStorage.getItem("hospital"));
       } else {
-        getMyDepartmentTreeList().then(({ result }) => {
-          this.treeDataOpt.nodeKey = "id";
-          return result;
-        });
-        // return JSON.parse(localStorage.getItem("treeData"))
+        if(this.pageParams.monitor){ // 这是监控列表的树状图, 可以选择区域和医院
+        this.treeDataOpt.nodeKey = "value";
+         return JSON.parse(localStorage.getItem("hospital"))
+        }
+        return JSON.parse(localStorage.getItem("hospital"))
+        // getMyDepartmentTreeList().then(({ result }) => {
+        //   this.treeDataOpt.nodeKey = "id";
+        //   return result;
+        // });
+        // return JSON.parse(localStorage.getItem("hospital"));
         // return this.$store.state.leftTreeData
       }
     },
