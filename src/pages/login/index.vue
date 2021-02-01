@@ -29,13 +29,13 @@
               v-model="item.value"
             />
             <!-- @tap.stop="clearIpt(index)" -->
-            <view
+            <!-- <view
               v-if="closeIcon === index"
               @tap.stop="clearIpt(index)"
               class="close"
             >
               <u-icon name="close-circle" size="28"></u-icon>
-            </view>
+            </view> -->
 
             <!-- <view style="height: 100%; width: 60rpx">
               <img
