@@ -28,6 +28,12 @@
             <view class="mb-10">
               <text class="label font-w-400">医院名称：</text>
               <text class="label font-w-500">{{ item.hospitalName }}</text>
+              <view class="status">
+                <text class="succee-color" v-if="item.stateName == '在线'">
+                  {{ item.stateName }}
+                </text>
+                <text class="fail-color" v-else> {{ item.stateName }} </text>
+              </view>
             </view>
             <view class="">
               <text class="label font-w-400">监控名称：</text>
@@ -76,7 +82,7 @@ export default {
   created() {
     this.init();
   },
-  onReachBottom: function () {
+  onReachBottom: function() {
     //上拉触底加载更多
     this.pageNo++;
     this.search();
@@ -134,7 +140,7 @@ export default {
     handleHospitalShow() {
       // this.cascadeShow =true;
       let params = this.selectTree;
-      params.hospital = true;
+      params.checkOnlyLeaf = true;
       this.$goTree(params);
     },
     selectRow(row) {
@@ -195,6 +201,12 @@ export default {
 <style lang="scss" scoped>
 page {
   background: RGBA(243, 245, 247, 1);
+}
+.succee-color {
+  color: green;
+}
+.fail-color {
+  color: #999999;
 }
 .mw-select-item {
   background: rgba(82, 75, 75, 0.3);
@@ -294,6 +306,15 @@ page {
         min-height: 134rpx;
         padding-top: 22rpx;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        view:first-child {
+          position: relative;
+        }
+        .status {
+          color: green;
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
         & > view:nth-of-type(2) {
         }
       }
