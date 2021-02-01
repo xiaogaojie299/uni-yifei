@@ -105,7 +105,7 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
-          departmentId: this.departmentId,
+          officeId: this.departmentId,
           status: this.warningStatus,
           type: this.type,
           startTime: this.startTime,

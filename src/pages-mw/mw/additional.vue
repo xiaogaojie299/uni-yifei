@@ -55,6 +55,7 @@ export default {
         startTime: '',
         endTime: '',
         hospitalId: '', // 医院ID
+        departmentId: '',
         status: '', // 状态
         transitCompany: '', // 搜索关键词
         transitConfigId: 0, // 出库配置ID
@@ -115,6 +116,7 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hospitalId: this.hospitalId,
+          departmentId: this.departmentId,
           status: this.status,
           auditStatus: this.auditStatus,
           wasteType: this.wasteType,
@@ -135,6 +137,7 @@ export default {
       searchConfirm(e) {
         // 医院ID
         this.hospitalId = e.cascade;
+        this.departmentId = e.department;
         // 审核状态
         this.auditStatus = e.auditStatus;
         // 医废类型

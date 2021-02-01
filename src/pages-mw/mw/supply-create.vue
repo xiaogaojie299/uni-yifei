@@ -58,7 +58,7 @@
         <u-loading style="margin-right: 10rpx" v-if="submitLoading" /> {{submitLoading ? '提交中' : '提交'}}
       </view>
     </view>
-    <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="weightShow"></u-keyboard>
+    <u-keyboard :tips="weight" mode="number" @change="valChange" @backspace="backspace" v-model="weightShow"></u-keyboard>
     <s-picker v-model="dateShow" mode="time" @confirm="dateCallback" :params="dateParams" :default-time="dateTime"></s-picker>
 
     <s-select title="选择医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
@@ -286,12 +286,16 @@ export default {
     // 按键被点击(点击退格键不会触发此事件)
     valChange(val) {
       if (val == '.') {
-          if (this.defaultValue.indexOf('.') > -1) {
+          if (this.weight.indexOf('.') > -1) {
           return ;
           }
       }
       // 将每次按键的值拼接到value变量中，注意+=写法
-      this.weight += val;
+      if (this.weight == '0') {
+          this.weight = '' + val;
+      } else {
+          this.weight += val;
+      }
     },
     // 退格键被点击
     backspace() {

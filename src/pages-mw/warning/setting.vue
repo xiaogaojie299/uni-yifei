@@ -20,7 +20,7 @@
                 </view>
             </view>
         </block>
-        <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="valueShow" :dot-enabled="type >= 5"></u-keyboard>
+        <u-keyboard :tips="defaultValue" mode="number" @change="valChange" @backspace="backspace" v-model="valueShow" :dot-enabled="type >= 5"></u-keyboard>
     </view>
 </template>
 <script>
