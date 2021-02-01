@@ -94,7 +94,7 @@ export default {
           this.treeData = this.$store.state.leftTreeData
           // this.treeData =JSON.parse(uni.getStorageSync("add:treeData"));
         }else{
-           getMyDepartmentTreeList().then(({code,result})=>{
+           sysDepartmentTreeList().then(({code,result})=>{
                 if(code==200){
                   this.treeData = result
                 }

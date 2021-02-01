@@ -4,7 +4,7 @@
             <view class="label flex-center">父级组织</view>
             <input @tap="openTree" class="pr-30" type="text" placeholder="请选择你的父级组织" disabled :value="parent.label" />
             <img src="@/static/images/path.png" />
-            
+             
         </view>
         <view class="header my-box h-100">
             <view class="label flex-center">组织名称</view>
@@ -15,6 +15,21 @@
             <view class="label flex-center">组织类型</view>
             <input class="pr-30" type="text" placeholder="请选择你的组织类型" disabled :value="orgType" />
             <img src="@/static/images/path.png" />
+        </view>
+         <view v-if="node.isWarehouse==1" class="header my-box h-100">
+            <view class="label flex-center">是否暂存间</view>
+            <view class="flex-center">
+        <u-radio-group v-model="value">
+			<u-radio 
+				@change="radioChange" 
+				v-for="(item, index) in list" :key="index" 
+				:name="item.name"
+				:disabled="item.disabled"
+			>
+				{{item.name}}
+			</u-radio>
+		</u-radio-group>
+            </view>
         </view>
         <!-- 选择按钮 -->
         <view v-if="!isSubmit" class="footer-btn flex-ver-center">
@@ -40,7 +55,19 @@ export default {
             name:"",    //组织名称
             listRegion:[],           // 上个页面获取的树数据
             node:null,            // 父组件传过来的值
-            orgType:""
+            orgType:"",
+            list: [
+				{
+					name: '是',
+					disabled: false
+				},
+				{
+					name: '否',
+					disabled: false
+				}
+            ],
+            value: 'orange',
+            roomStatus:null
         }
     },
     provide() {
@@ -56,6 +83,11 @@ export default {
         }
     },
     methods:{
+        // 选中某个单选框时，由radio时触发
+		radioChange(e) {
+            e=="是"?this.roomStatus=1:this.roomStatus=0
+		},
+		// 选中任一radio时，由radio-group触发
         openTree(){
             this.$refs.handleModel.openModel()
         },
@@ -70,6 +102,7 @@ export default {
             delete params.childrenList;
             params.parentId = this.parent.id;
             params.departName = this.name;
+            params.status = this.roomStatus
             console.log("params",params);
             sysDepartmentEdit(params).then(res=>{
                 if(res.code==200){
@@ -106,10 +139,10 @@ export default {
             treeCode: "0000170002"
         */
         let node = JSON.parse(options.node);
-        console.log("node",node.data.parent);
+        console.log("node",node);
         this.parent.label = node.parentlabel || node.parent.label;
         this.parent.id = node.parent.key
-        
+        this.value = node.status ===0?"否":"是"
         this.node = node.data;
         this.name = node.label;
         switch( node.data.orgType){

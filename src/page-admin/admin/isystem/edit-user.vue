@@ -50,6 +50,7 @@
  import {getParent,sysDepartmentEdit,getMyDepartmentTreeList,userEdit} from "@/utils/api"
  import sSelect from '@/compontens/s-select';
  import leftree from "./cmps/left-tree"
+ import {validateUname,validatePhoneNumber} from "@/utils/regular"
  import {actions} from "vuex"
  export default {
     data(){
@@ -167,11 +168,38 @@
         },
         submit(){
             try{
-            console.log("this.form==>",this.form);
+                if(this.form.name.length>20){
+                    return uni.showToast({
+                        title:"姓名不可超过20个字符",
+                        icon:"none"
+                    })
+                }
+                if(!validateUname(this.form.account)){
+                    return uni.showToast({
+                        title:"用户名只支持英文、数字与下划线/5-20个字符",
+                        icon:"none"
+                    })
+                }
+                if(!validatePhoneNumber(this.form.phone)){
+                    return uni.showToast({
+                        title:"手机号格式不正确",
+                        icon:"none"
+                    })
+                }
+                if( this.form.password && (this.form.password.length<6 || this.form.password.length>20)){
+                    return uni.showToast({
+                        title:"密码请输入6～20位字符",
+                        icon:"none"
+                    })
+                }
+               
+            console.log("this.form111==>",this.form);
             let params = this.form;
+            console.log(this.parent);
             delete params.childrenList;
-            params.parentId = this.parent.id;
+            params.departmentId = this.form.value || this.parent.value;
             params.departName = this.name;
+
             userEdit(params).then(res=>{
                 if(res.code==200){
                     uni.showToast({
@@ -201,7 +229,8 @@
         //         k = "roleIdList"
         //     }
         // }
-        this.form.roleIdList = this.form['roleIdSet'] 
+        this.parent.value=this.form.departmentId
+        this.form.roleIdList = this.form['roleIdSet']
         delete this.form.roleIdSet
         console.log("this.form==",this.form);
         /* 

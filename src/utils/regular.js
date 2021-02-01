@@ -27,6 +27,11 @@ export function validatestockWarn(str) {
     const reg = /^(0|[1-9][0-9]*)$/
     return reg.test(str)
 }
+/* 只支持英文、数字与下划线/5-20个字符 */
+export function validateUname(str) {
+    const reg = /^[a-zA-Z0-9_]{5,20}$/
+    return reg.test(str)
+}
 /* 比价网站 只验证京东和苏宁网站 */
 export function validateCompareWebsite(str) {
     const reg = /^((https\:\/\/[0-9a-zA-Z\_]+\.|http\:\/\/[0-9a-zA-Z\_]+\.|https\:\/\/|http\:\/\/)|([0-9a-zA-Z\_]+\.){0,1})(jd|suning)\.(com$|com\/[\S]*)/i

@@ -46,7 +46,10 @@ export default {
                 label:"",
                 id:null
             },
-            houselist:[{label:"是",value:1},{label:"否",value:0}],
+            houselist:[
+                    {label:"否",value:0},
+                    {label:"是",value:1}
+                ],
             houseIndex:[0],
             houseShow:false,
             name:"",    //组织名称
@@ -118,7 +121,9 @@ export default {
             this.houseShow =true
         },
         roleBack(obj){
-                this.wareHouse = obj[0]
+                this.wareHouse = obj[0];
+                this.houseIndex =  [obj[0].value]
+                console.log(obj);
         },
 
         submit(){
@@ -150,9 +155,7 @@ export default {
         // console.log("后退成功");
         // window.history.back();
         // window.history.go(-1);
-        console.log("后退成功");
         // console.log(window.history);
-        return true
     },
     onLoad(options){
         /* 
