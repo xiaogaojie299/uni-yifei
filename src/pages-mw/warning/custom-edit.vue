@@ -16,7 +16,7 @@
       </view>
     </view>
     <s-select title="医废类型" v-model="wasteShow" :list="wasteList" @confirm="selectCallback($event, 'wasteLabel', 'waste', 'wasteList', 'wasteIndex')" :default-value="wasteIndex"></s-select>
-    <u-keyboard mode="number" @change="valChange" @backspace="backspace" v-model="timeoutShow" :dot-enabled="type >= 5"></u-keyboard>
+    <u-keyboard :tips="defaultValue" mode="number" @change="valChange" @backspace="backspace" v-model="timeoutShow" :dot-enabled="type >= 5"></u-keyboard>
   </view>
 </template>
 <script>
